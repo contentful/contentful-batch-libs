@@ -9,7 +9,7 @@
     "clean:build": "rimraf *.js utils get push transform",
     "prepublish": "npm run build",
     "postpublish": "npm run clean",
-    "pretest": "standard",
+    "pretest": "standard lib",
     "test": "npm run test:cover",
     "test:cover": "BABEL_ENV=test isparta cover test/runner",
     "test:only": "BABEL_ENV=test ./test/runner",
