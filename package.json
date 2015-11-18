@@ -1,6 +1,5 @@
 {
   "name": "contentful-batch-libs",
-  "version": "1.0.0",
   "description": "Library modules used by contentful batch utility CLI tools.",
   "main": "index.js",
   "scripts": {
@@ -42,7 +41,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/contentful/contentful-batch-tools.git"
+    "url": "git+https://github.com/contentful/contentful-batch-libs.git"
   },
   "standard": {
     "parser": "babel-eslint"
@@ -59,7 +58,7 @@
   "author": "Tiago Rodrigues <tiago@contentful.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/contentful/contentful-batch-tools/issues"
+    "url": "https://github.com/contentful/contentful-batch-libs/issues"
   },
-  "homepage": "https://github.com/contentful/contentful-batch-tools#readme"
+  "homepage": "https://github.com/contentful/contentful-batch-libs#readme"
 }
