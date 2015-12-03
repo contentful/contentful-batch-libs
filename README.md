@@ -7,3 +7,7 @@ and while these parts are fairly independent, they might not be easy to
 understand and use for your own projects right now.
 
 More documentation will come.
+
+# Changelog
+
+Check out the [releases](https://github.com/contentful/contentful-space-sync/releases) page.
