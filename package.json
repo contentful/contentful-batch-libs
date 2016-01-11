@@ -17,9 +17,8 @@
   },
   "dependencies": {
     "bluebird": "^3.1.1",
-    "bluebird": "^3.0.5",
-    "contentful": "^1.2.0",
     "contentful-management": "^0.8.3",
+    "contentful": "^2.1.0",
     "lodash": "^3.10.1",
     "npmlog": "^2.0.0"
   },
