@@ -24,19 +24,18 @@ const assetsMock = {
   checkAssets: sinon.stub().returns(Promise.resolve())
 }
 
-const responses = {
-  source: {
-    deletedEntries: [],
-    deletedAssets: [],
-    deletedLocales: [],
-    deletedContentTypes: [],
-    locales: [],
-    contentTypes: [],
-    assets: [],
-    entries: []
-  },
-  destination: {}
+const sourceResponse = {
+  deletedEntries: [],
+  deletedAssets: [],
+  deletedLocales: [],
+  deletedContentTypes: [],
+  locales: [],
+  contentTypes: [],
+  assets: [],
+  entries: []
 }
+
+const destinationResponse = {}
 
 const clientMock = {
   getSpace: sinon.stub().returns(Promise.resolve({}))
@@ -62,7 +61,11 @@ function teardown () {
 
 test('Push content to destination space', t => {
   setup()
-  pushToSpace(responses, clientMock, 'spaceid', {
+  pushToSpace({
+    sourceContent: sourceResponse,
+    destinationContent: destinationResponse,
+    managementClient: clientMock,
+    spaceId: 'spaceid',
     prePublishDelay: 0
   })
   .then(() => {
@@ -80,7 +83,11 @@ test('Push content to destination space', t => {
 
 test('Push only content types and locales to destination space', t => {
   setup()
-  pushToSpace(responses, clientMock, 'spaceid', {
+  pushToSpace({
+    sourceContent: sourceResponse,
+    destinationContent: destinationResponse,
+    managementClient: clientMock,
+    spaceId: 'spaceid',
     prePublishDelay: 0,
     contentModelOnly: true
   })
@@ -99,7 +106,11 @@ test('Push only content types and locales to destination space', t => {
 
 test('Push only entries and assets to destination space', t => {
   setup()
-  pushToSpace(responses, clientMock, 'spaceid', {
+  pushToSpace({
+    sourceContent: sourceResponse,
+    destinationContent: destinationResponse,
+    managementClient: clientMock,
+    spaceId: 'spaceid',
     prePublishDelay: 0,
     skipContentModel: true
   })
