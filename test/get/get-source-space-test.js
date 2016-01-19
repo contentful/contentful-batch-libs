@@ -53,7 +53,11 @@ const preparedResponse = {
 test('Get source space with no file token', t => {
   setup()
   fsMock.readFileAsync.returns(Promise.reject('file not found'))
-  getSourceSpace(deliveryClientMock, managementClientMock, 'spaceid')
+  getSourceSpace({
+    deliveryClient: deliveryClientMock,
+    managementClient: managementClientMock,
+    sourceSpaceId: 'spaceid'
+  })
   .then(response => {
     const newResponse = Object.assign({}, preparedResponse)
     newResponse.isInitialSync = true
@@ -66,7 +70,12 @@ test('Get source space with no file token', t => {
 test('Get source space with file token', t => {
   setup()
   fsMock.readFileAsync.withArgs('tokenfile').returns(Promise.resolve('newtoken'))
-  getSourceSpace(deliveryClientMock, managementClientMock, 'spaceid', 'tokenfile')
+  getSourceSpace({
+    deliveryClient: deliveryClientMock,
+    managementClient: managementClientMock,
+    sourceSpaceId: 'spaceid',
+    nextSyncTokenFile: 'tokenfile'
+  })
   .then(response => {
     t.equals(deliveryClientMock.sync.secondCall.args[0].nextSyncToken, 'newtoken', 'syncs with provided token')
     t.deepLooseEqual(response, Object.assign({}, preparedResponse))
@@ -78,7 +87,13 @@ test('Get source space with file token', t => {
 test('Get source space with forced sync from scratch', t => {
   setup()
   fsMock.readFileAsync.withArgs('tokenfile').returns(Promise.resolve('newtoken'))
-  getSourceSpace(deliveryClientMock, managementClientMock, 'spaceid', 'tokenfile', true)
+  getSourceSpace({
+    deliveryClient: deliveryClientMock,
+    managementClient: managementClientMock,
+    sourceSpaceId: 'spaceid',
+    nextSyncTokenFile: 'tokenfile',
+    syncFromScratch: true
+  })
   .then(response => {
     const newResponse = Object.assign({}, preparedResponse)
     newResponse.isInitialSync = true
