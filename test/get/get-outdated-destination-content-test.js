@@ -5,13 +5,8 @@ import {times} from 'lodash/utility'
 
 import getOutdatedDestinationContent from '../../lib/get/get-outdated-destination-content'
 
-const mockSourceResponse = {
-  entries: [],
-  assets: []
-}
-
-times(2000, n => mockSourceResponse.entries.push({sys: {id: `e${n}`, revision: 2}}))
-times(2000, n => mockSourceResponse.assets.push({sys: {id: `a${n}`, revision: 2}}))
+const sourceEntryIds = times(2000, n => `e${n}`)
+const sourceAssetIds = times(2000, n => `a${n}`)
 
 const mockSpace = {
   getContentTypes: sinon.stub().returns(Promise.resolve([])),
@@ -25,7 +20,12 @@ const mockClient = {
 }
 
 test('Gets destination content', t => {
-  getOutdatedDestinationContent(mockClient, 'spaceid', mockSourceResponse)
+  getOutdatedDestinationContent({
+    managementClient: mockClient,
+    spaceId: 'spaceid',
+    entryIds: sourceEntryIds,
+    assetIds: sourceAssetIds
+  })
   .then(response => {
     t.equals(mockSpace.getEntries.callCount, 6, 'getEntries is split into multiple calls')
     testQueryLength(t, 'getEntries')
