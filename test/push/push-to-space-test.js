@@ -126,3 +126,27 @@ test('Push only entries and assets to destination space', t => {
     t.end()
   })
 })
+
+test('Push only entries and assets to destination space and skip publishing', t => {
+  setup()
+  pushToSpace({
+    sourceContent: sourceResponse,
+    destinationContent: destinationResponse,
+    managementClient: clientMock,
+    spaceId: 'spaceid',
+    prePublishDelay: 0,
+    skipContentModel: true,
+    skipContentPublishing: true
+  })
+  .then(() => {
+    t.equals(deletionMock.deleteEntities.callCount, 2, 'delete entities')
+    t.equals(publishingMock.unpublishEntities.callCount, 2, 'unpublish entities')
+    t.equals(creationMock.createEntities.callCount, 1, 'create entities')
+    t.equals(creationMock.createEntries.callCount, 1, 'create entries')
+    t.equals(publishingMock.publishEntities.callCount, 0, 'publish entities')
+    t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
+    t.equals(assetsMock.checkAssets.callCount, 1, 'check assets')
+    teardown()
+    t.end()
+  })
+})
