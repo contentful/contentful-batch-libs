@@ -98,12 +98,12 @@ test('Create entries and remove unknown fields', t => {
   })
 })
 
-test('Fails to create entities due to validation', t => {
+test('Fails to create locale if it already exists', t => {
   setup()
   const space = {
-    createAsset: sinon.stub()
+    createLocale: sinon.stub()
   }
-  space.createAsset.returns(Promise.reject({
+  space.createLocale.returns(Promise.reject({
     error: {
       sys: {id: 'ValidationFailed'},
       details: {
@@ -112,7 +112,7 @@ test('Fails to create entities due to validation', t => {
     }
   }))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
-  creation.createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
+  creation.createEntities({space: space, type: 'Locale'}, [entity], [{sys: {}}])
   .then(entities => {
     t.equals(entities[0], entity)
     t.end()
