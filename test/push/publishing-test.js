@@ -8,10 +8,14 @@ const logMock = {
   info: sinon.stub()
 }
 
+const errorBufferMock = {
+  push: sinon.stub()
+}
+
 function setup () {
   logMock.info.reset()
   publishing.__Rewire__('log', logMock)
-  publishing.__Rewire__('errorBuffer', {push: sinon.stub()})
+  publishing.__Rewire__('errorBuffer', errorBufferMock)
 }
 
 function teardown () {
@@ -40,14 +44,41 @@ test('Publish entities', t => {
 test('Fails to publish entities', t => {
   setup()
   const space = {
-    publishAsset: sinon.stub().returns(Promise.reject({}))
+    publishAsset: sinon.stub()
   }
+  space.publishAsset.onFirstCall().returns(Promise.reject({}))
+  space.publishAsset.onSecondCall().returns(Promise.reject({
+    sys: {
+      type: 'Error',
+      id: 'UnresolvedLinks'
+    },
+    message: 'Validation error',
+    details: {
+      errors: [
+        {
+          name: 'notResolvable',
+          link: {
+            type: 'Link',
+            linkType: 'Entry',
+            id: 'linkedEntryId'
+          },
+          path: [
+            'fields',
+            'category',
+            'en-US',
+            0
+          ]
+        }
+      ]
+    }
+  }))
   publishing.publishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
   .then(errors => {
     t.equals(space.publishAsset.callCount, 2, 'tries to publish assets')
+    t.equals(errorBufferMock.push.callCount, 2, 'logs 2 errors')
     teardown()
     t.end()
   })
