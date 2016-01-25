@@ -82,15 +82,19 @@ test('Create entries and remove unknown fields', t => {
     sys: {type: 'Entry'},
     fields: {}
   }))
-  const entries = [
-    { original: { sys: {contentType: {}} }, transformed: { sys: {id: '123'}, fields: {gonefield: ''} } }
-  ]
+
+  const entries = [{
+    original: { sys: {contentType: {}} },
+    transformed: { sys: {id: '123'}, fields: {gonefield: '', existingfield: ''} }
+  }]
   const destinationEntries = [
     {sys: {id: '123', version: 6}}
   ]
+
   creation.createEntries({space: space, skipContentModel: true}, entries, destinationEntries)
   .then(response => {
     t.equals(space.updateEntry.callCount, 2, 'update entries')
+    t.ok('existingfield' in space.updateEntry.args[1][0].fields, 'keeps known field')
     t.notOk('gonefield' in space.updateEntry.args[1][0].fields, 'removes unknown field')
     t.equals(logMock.info.callCount, 1, 'logs creation of one entry')
     teardown()

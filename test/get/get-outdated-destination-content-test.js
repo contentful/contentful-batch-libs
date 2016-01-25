@@ -1,7 +1,7 @@
 import test from 'tape'
 import sinon from 'sinon'
 import Promise from 'bluebird'
-import {times} from 'lodash/utility'
+import {times} from 'lodash/util'
 
 import getOutdatedDestinationContent from '../../lib/get/get-outdated-destination-content'
 
