@@ -12,6 +12,7 @@
     "test": "npm run test:cover",
     "test:cover": "BABEL_ENV=test babel-node ./node_modules/istanbul/lib/cli.js cover test/runner",
     "test:only": "BABEL_ENV=test babel-node ./test/runner",
+    "test:debug": "BABEL_ENV=test babel-node debug ./test/runner",
     "browser-coverage": "npm run test:cover && opener coverage/lcov-report/index.html",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
@@ -20,7 +21,7 @@
     "bluebird": "^3.1.1",
     "contentful": "^2.1.0",
     "contentful-management": "^0.8.3",
-    "lodash": "^3.10.1",
+    "lodash": "^4.0.1",
     "npmlog": "^2.0.0"
   },
   "devDependencies": {
