@@ -1,5 +1,11 @@
 # Contentful Batch Libs
 
+[![Travis](https://img.shields.io/travis/contentful/contentful-batch-libs.svg)](https://travis-ci.org/contentful/contentful-batch-libs)
+[![Dependency Status](https://david-dm.org/contentful/contentful-batch-libs.svg)](https://david-dm.org/contentful/contentful-batch-libs)
+[![devDependency Status](https://david-dm.org/contentful/contentful-batch-libs/dev-status.svg)](https://david-dm.org/contentful/contentful-batch-libs#info=devDependencies)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+
 Modules used on Contentful's JS batch operation tools.
 
 At the moment this module is just some extracted parts of [contentful-space-sync](https://github.com/contentful/contentful-space-sync)
