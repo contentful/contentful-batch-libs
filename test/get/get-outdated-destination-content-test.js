@@ -8,6 +8,11 @@ import getOutdatedDestinationContent from '../../lib/get/get-outdated-destinatio
 const sourceEntryIds = times(2000, n => `e${n}`)
 const sourceAssetIds = times(2000, n => `a${n}`)
 
+const logMock = {
+  info: sinon.stub(),
+  error: sinon.stub()
+}
+
 const mockSpace = {
   getContentTypes: sinon.stub().returns(Promise.resolve([])),
   getEntries: sinon.stub().returns(Promise.resolve([{}])),
@@ -16,10 +21,21 @@ const mockSpace = {
 }
 
 const mockClient = {
-  getSpace: sinon.stub().returns(Promise.resolve(mockSpace))
+  getSpace: sinon.stub()
+}
+
+function setup () {
+  logMock.error.reset()
+  getOutdatedDestinationContent.__Rewire__('log', logMock)
+}
+
+function teardown () {
+  getOutdatedDestinationContent.__ResetDependency__('log')
 }
 
 test('Gets destination content', t => {
+  setup()
+  mockClient.getSpace.returns(Promise.resolve(mockSpace))
   getOutdatedDestinationContent({
     managementClient: mockClient,
     spaceId: 'spaceid',
@@ -33,6 +49,7 @@ test('Gets destination content', t => {
     testQueryLength(t, 'getAssets')
     t.equals(response.entries.length, 6, 'number of entries matched (one per call)')
     t.equals(response.assets.length, 6, 'number of assets matched (one per call)')
+    teardown()
     t.end()
   })
 })
@@ -46,3 +63,23 @@ function testQueryLength (t, method) {
   )
   t.notEqual(query[query.length - 1], ',', `${method} query last character is not a comma`)
 }
+
+test('Fails to get destination space', t => {
+  setup()
+  mockClient.getSpace.returns(Promise.reject({
+    name: 'NotFound'
+  }))
+
+  getOutdatedDestinationContent({
+    managementClient: mockClient,
+    spaceId: 'spaceid',
+    entryIds: sourceEntryIds,
+    assetIds: sourceAssetIds
+  })
+  .catch(err => {
+    t.ok(err.name === 'NotFound')
+    t.equal(logMock.error.callCount, 1, 'User is shown a more helpful error')
+    teardown()
+    t.end()
+  })
+})
