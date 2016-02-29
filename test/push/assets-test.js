@@ -11,6 +11,7 @@ const logMock = {
 
 function setup () {
   logMock.info.reset()
+  logMock.warn.reset()
   assets.__Rewire__('log', logMock)
 }
 
@@ -36,18 +37,19 @@ test('Process assets', t => {
   })
 })
 
-test('Fails to process assets', t => {
+test.only('Fails to process assets', t => {
   setup()
   const space = {
-    processAssetFile: sinon.stub().returns(Promise.reject({}))
+    processAssetFile: sinon.stub().returns(Promise.reject({name: 'ProcessingError'}))
   }
   assets.processAssets({space: space}, [
     { sys: {id: '123'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} },
     { sys: {id: '456'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} }
   ])
-  .catch(response => {
+  .catch((response, r2, r3) => {
+    console.log('in test', response, r2, r3)
     t.equals(space.processAssetFile.callCount, 4, 'processes assets')
-    t.equals(logMock.warn.callCount, 1, 'logs processing failure of assets')
+    t.equals(logMock.warn.callCount, 2, 'logs processing failure of assets')
     teardown()
     t.end()
   })
