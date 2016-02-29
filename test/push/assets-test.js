@@ -29,7 +29,8 @@ test('Process assets', t => {
   ])
   .then(response => {
     t.equals(space.processAssetFile.callCount, 4, 'processes assets')
-    t.equals(logMock.info.callCount, 4, 'logs processing of assets')
+    // 2 for each asset at the start, 4 for each 2 locales in 2 assets
+    t.equals(logMock.info.callCount, 6, 'logs processing of assets')
     teardown()
     t.end()
   })
