@@ -23,7 +23,7 @@ const entries = [
   }
 ]
 
-test('Sorts entries by link order', t => {
+test('Sorts entries by link order', (t) => {
   const sortedEntries = sortEntries(entries)
   t.equals(sortedEntries[0].sys.id, '123')
   t.equals(sortedEntries[1].sys.id, '456')

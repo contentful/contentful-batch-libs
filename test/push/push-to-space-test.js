@@ -42,10 +42,10 @@ const clientMock = {
 }
 
 function setup () {
-  each(creationMock, fn => fn.reset())
-  each(publishingMock, fn => fn.reset())
-  each(deletionMock, fn => fn.reset())
-  each(assetsMock, fn => fn.reset())
+  each(creationMock, (fn) => fn.reset())
+  each(publishingMock, (fn) => fn.reset())
+  each(deletionMock, (fn) => fn.reset())
+  each(assetsMock, (fn) => fn.reset())
   pushToSpace.__Rewire__('creation', creationMock)
   pushToSpace.__Rewire__('publishing', publishingMock)
   pushToSpace.__Rewire__('deletion', deletionMock)
@@ -59,7 +59,7 @@ function teardown () {
   pushToSpace.__ResetDependency__('assets')
 }
 
-test('Push content to destination space', t => {
+test('Push content to destination space', (t) => {
   setup()
   pushToSpace({
     sourceContent: sourceResponse,
@@ -81,7 +81,7 @@ test('Push content to destination space', t => {
   })
 })
 
-test('Push only content types and locales to destination space', t => {
+test('Push only content types and locales to destination space', (t) => {
   setup()
   pushToSpace({
     sourceContent: sourceResponse,
@@ -104,7 +104,7 @@ test('Push only content types and locales to destination space', t => {
   })
 })
 
-test('Push only entries and assets to destination space', t => {
+test('Push only entries and assets to destination space', (t) => {
   setup()
   pushToSpace({
     sourceContent: sourceResponse,
@@ -127,7 +127,7 @@ test('Push only entries and assets to destination space', t => {
   })
 })
 
-test('Push only entries and assets to destination space and skip publishing', t => {
+test('Push only entries and assets to destination space and skip publishing', (t) => {
   setup()
   pushToSpace({
     sourceContent: sourceResponse,

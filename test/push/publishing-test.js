@@ -23,7 +23,7 @@ function teardown () {
   publishing.__ResetDependency__('errorBuffer')
 }
 
-test('Publish entities', t => {
+test('Publish entities', (t) => {
   setup()
   const space = {
     publishAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
@@ -32,7 +32,7 @@ test('Publish entities', t => {
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
-  .then(response => {
+  .then((response) => {
     t.equals(space.publishAsset.callCount, 2, 'publish assets')
     t.ok(response[0].sys.publishedVersion, 'has published version')
     t.equals(logMock.info.callCount, 2, 'logs publishing of two assets')
@@ -41,7 +41,7 @@ test('Publish entities', t => {
   })
 })
 
-test('Fails to publish entities', t => {
+test('Fails to publish entities', (t) => {
   setup()
   const space = {
     publishAsset: sinon.stub()
@@ -76,7 +76,7 @@ test('Fails to publish entities', t => {
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
-  .then(errors => {
+  .then((errors) => {
     t.equals(space.publishAsset.callCount, 2, 'tries to publish assets')
     t.equals(errorBufferMock.push.callCount, 2, 'logs 2 errors')
     teardown()
@@ -84,7 +84,7 @@ test('Fails to publish entities', t => {
   })
 })
 
-test('Unpublish entities', t => {
+test('Unpublish entities', (t) => {
   setup()
   const space = {
     unpublishAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
@@ -93,7 +93,7 @@ test('Unpublish entities', t => {
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
-  .then(response => {
+  .then((response) => {
     t.equals(space.unpublishAsset.callCount, 2, 'unpublish assets')
     t.equals(logMock.info.callCount, 2, 'logs unpublishing of two assets')
     teardown()
@@ -101,7 +101,7 @@ test('Unpublish entities', t => {
   })
 })
 
-test('Fails to unpublish entities', t => {
+test('Fails to unpublish entities', (t) => {
   setup()
   const space = {
     unpublishAsset: sinon.stub().returns(Promise.reject({}))
@@ -110,14 +110,14 @@ test('Fails to unpublish entities', t => {
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
-  .catch(errors => {
+  .catch((errors) => {
     t.equals(space.unpublishAsset.callCount, 2, 'tries to unpublish assets')
     teardown()
     t.end()
   })
 })
 
-test('Fails to unpublish entities because theyre already unpublished', t => {
+test('Fails to unpublish entities because theyre already unpublished', (t) => {
   setup()
   const space = {
     unpublishAsset: sinon.stub().returns(Promise.reject({name: 'BadRequest'}))
@@ -125,7 +125,7 @@ test('Fails to unpublish entities because theyre already unpublished', t => {
   publishing.unpublishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123', type: 'Asset'} }
   ])
-  .then(entities => {
+  .then((entities) => {
     t.equals(space.unpublishAsset.callCount, 1, 'tries to unpublish assets')
     t.equals(entities[0].sys.type, 'Asset', 'is an entity')
     teardown()

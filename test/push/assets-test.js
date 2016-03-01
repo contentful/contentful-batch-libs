@@ -19,7 +19,7 @@ function teardown () {
   assets.__ResetDependency__('log')
 }
 
-test('Process assets', t => {
+test('Process assets', (t) => {
   setup()
   const space = {
     processAssetFile: sinon.stub().returns(Promise.resolve())
@@ -28,7 +28,7 @@ test('Process assets', t => {
     { sys: {id: '123'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} },
     { sys: {id: '456'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} }
   ])
-  .then(response => {
+  .then((response) => {
     t.equals(space.processAssetFile.callCount, 4, 'processes assets')
     // 2 for each asset at the start, 4 for each 2 locales in 2 assets
     t.equals(logMock.info.callCount, 6, 'logs processing of assets')
@@ -37,7 +37,7 @@ test('Process assets', t => {
   })
 })
 
-test('Fails to process assets', t => {
+test('Fails to process assets', (t) => {
   setup()
   const space = {
     processAssetFile: sinon.stub().returns(Promise.reject({name: 'ProcessingError'}))
@@ -54,7 +54,7 @@ test('Fails to process assets', t => {
   })
 })
 
-test('Check if assets are processed', t => {
+test('Check if assets are processed', (t) => {
   setup()
   const space = { getAsset: sinon.stub() }
   space.getAsset.onFirstCall().returns(Promise.resolve({
@@ -77,7 +77,7 @@ test('Check if assets are processed', t => {
   assets.checkAssets({space: space}, [
     { sys: {id: '123'}, fields: {file: {'en-US': {}, 'en-GB': {}}} }
   ])
-  .then(assets => {
+  .then((assets) => {
     t.equals(space.getAsset.callCount, 2, 'gets assets')
     t.ok(assets[0].fields.file['en-US'].url, 'first asset has url')
     t.ok(assets[0].fields.file['en-GB'].url, 'second asset has url')

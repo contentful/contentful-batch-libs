@@ -5,8 +5,8 @@ import {times} from 'lodash/util'
 
 import getOutdatedDestinationContent from '../../lib/get/get-outdated-destination-content'
 
-const sourceEntryIds = times(2000, n => `e${n}`)
-const sourceAssetIds = times(2000, n => `a${n}`)
+const sourceEntryIds = times(2000, (n) => `e${n}`)
+const sourceAssetIds = times(2000, (n) => `a${n}`)
 
 const logMock = {
   info: sinon.stub(),
@@ -33,7 +33,7 @@ function teardown () {
   getOutdatedDestinationContent.__ResetDependency__('log')
 }
 
-test('Gets destination content', t => {
+test('Gets destination content', (t) => {
   setup()
   mockClient.getSpace.returns(Promise.resolve(mockSpace))
   getOutdatedDestinationContent({
@@ -42,7 +42,7 @@ test('Gets destination content', t => {
     entryIds: sourceEntryIds,
     assetIds: sourceAssetIds
   })
-  .then(response => {
+  .then((response) => {
     t.equals(mockSpace.getEntries.callCount, 6, 'getEntries is split into multiple calls')
     testQueryLength(t, 'getEntries')
     t.equals(mockSpace.getAssets.callCount, 6, 'getAssets is split into multiple calls')
@@ -64,7 +64,7 @@ function testQueryLength (t, method) {
   t.notEqual(query[query.length - 1], ',', `${method} query last character is not a comma`)
 }
 
-test('Fails to get destination space', t => {
+test('Fails to get destination space', (t) => {
   setup()
   mockClient.getSpace.returns(Promise.reject({
     name: 'NotFound'
@@ -76,7 +76,7 @@ test('Fails to get destination space', t => {
     entryIds: sourceEntryIds,
     assetIds: sourceAssetIds
   })
-  .catch(err => {
+  .catch((err) => {
     t.ok(err.name === 'NotFound')
     t.equal(logMock.error.callCount, 1, 'User is shown a more helpful error')
     teardown()

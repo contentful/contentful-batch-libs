@@ -18,7 +18,7 @@ function teardown () {
   creation.__ResetDependency__('log')
 }
 
-test('Create entities', t => {
+test('Create entities', (t) => {
   setup()
   const space = {
     createAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}})),
@@ -30,7 +30,7 @@ test('Create entities', t => {
   ], [
     {sys: {id: '123', version: 6}}
   ])
-  .then(response => {
+  .then((response) => {
     t.equals(space.createAsset.callCount, 1, 'create assets')
     t.equals(space.updateAsset.callCount, 1, 'update assets')
     t.equals(space.updateAsset.args[0][0].sys.version, 6, 'updates asset version')
@@ -40,7 +40,7 @@ test('Create entities', t => {
   })
 })
 
-test('Create entries', t => {
+test('Create entries', (t) => {
   setup()
   const space = {
     createEntry: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}})),
@@ -54,7 +54,7 @@ test('Create entries', t => {
     {sys: {id: '123', version: 6}}
   ]
   creation.createEntries({space: space, skipContentModel: false}, entries, destinationEntries)
-  .then(response => {
+  .then((response) => {
     t.equals(space.createEntry.callCount, 1, 'create entries')
     t.equals(space.updateEntry.callCount, 1, 'update entries')
     t.equals(space.updateEntry.args[0][0].sys.version, 6, 'updates entry version')
@@ -64,7 +64,7 @@ test('Create entries', t => {
   })
 })
 
-test('Create entries and remove unknown fields', t => {
+test('Create entries and remove unknown fields', (t) => {
   setup()
   const space = { updateEntry: sinon.stub() }
   space.updateEntry.onFirstCall().returns(Promise.reject({
@@ -92,7 +92,7 @@ test('Create entries and remove unknown fields', t => {
   ]
 
   creation.createEntries({space: space, skipContentModel: true}, entries, destinationEntries)
-  .then(response => {
+  .then((response) => {
     t.equals(space.updateEntry.callCount, 2, 'update entries')
     t.ok('existingfield' in space.updateEntry.args[1][0].fields, 'keeps known field')
     t.notOk('gonefield' in space.updateEntry.args[1][0].fields, 'removes unknown field')
@@ -102,7 +102,7 @@ test('Create entries and remove unknown fields', t => {
   })
 })
 
-test('Fails to create locale if it already exists', t => {
+test('Fails to create locale if it already exists', (t) => {
   setup()
   const space = {
     createLocale: sinon.stub()
@@ -117,14 +117,14 @@ test('Fails to create locale if it already exists', t => {
   }))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
   creation.createEntities({space: space, type: 'Locale'}, [entity], [{sys: {}}])
-  .then(entities => {
+  .then((entities) => {
     t.equals(entities[0], entity)
     t.end()
     teardown()
   })
 })
 
-test('Fails to create entities due to version mismatch', t => {
+test('Fails to create entities due to version mismatch', (t) => {
   setup()
   const space = {
     createAsset: sinon.stub()
@@ -132,7 +132,7 @@ test('Fails to create entities due to version mismatch', t => {
   space.createAsset.returns(Promise.reject({error: {sys: {id: 'VersionMismatch'}}}))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
   creation.createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
-  .catch(err => {
+  .catch((err) => {
     t.equals(err.error.sys.id, 'VersionMismatch')
     teardown()
     t.end()

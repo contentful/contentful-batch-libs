@@ -9,7 +9,7 @@ const logMock = {
 }
 deletion.__Rewire__('log', logMock)
 
-test('Delete entities', t => {
+test('Delete entities', (t) => {
   logMock.info.reset()
   const space = {
     deleteAsset: sinon.stub().returns(Promise.resolve())
@@ -18,7 +18,7 @@ test('Delete entities', t => {
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
-  .then(response => {
+  .then((response) => {
     t.equals(space.deleteAsset.callCount, 2, 'delete assets')
     t.equals(logMock.info.callCount, 2, 'logs deletion of two assets')
     deletion.__ResetDependency__('log')

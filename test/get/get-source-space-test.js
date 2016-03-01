@@ -57,7 +57,7 @@ function teardown () {
   getSourceSpace.__ResetDependency__('fs')
 }
 
-test('Get source space with no file token', t => {
+test('Get source space with no file token', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
   fsMock.readFileAsync.returns(Promise.reject('file not found'))
   getSourceSpace({
@@ -65,7 +65,7 @@ test('Get source space with no file token', t => {
     managementClient: managementClientMock,
     sourceSpaceId: 'spaceid'
   })
-  .then(response => {
+  .then((response) => {
     const newResponse = Object.assign({}, preparedResponse)
     newResponse.isInitialSync = true
     t.deepLooseEqual(response, newResponse)
@@ -74,7 +74,7 @@ test('Get source space with no file token', t => {
   })
 })
 
-test('Get source space with file token', t => {
+test('Get source space with file token', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
   fsMock.readFileAsync.withArgs('tokenfile').returns(Promise.resolve('newtoken'))
   getSourceSpace({
@@ -83,7 +83,7 @@ test('Get source space with file token', t => {
     sourceSpaceId: 'spaceid',
     nextSyncTokenFile: 'tokenfile'
   })
-  .then(response => {
+  .then((response) => {
     t.equals(deliveryClientMock.sync.firstCall.args[0].nextSyncToken, 'newtoken', 'syncs with provided token')
     t.deepLooseEqual(response, Object.assign({}, preparedResponse))
     teardown()
@@ -91,7 +91,7 @@ test('Get source space with file token', t => {
   })
 })
 
-test('Get source space with forced sync from scratch', t => {
+test('Get source space with forced sync from scratch', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
   fsMock.readFileAsync.withArgs('tokenfile').returns(Promise.resolve('newtoken'))
   getSourceSpace({
@@ -101,7 +101,7 @@ test('Get source space with forced sync from scratch', t => {
     nextSyncTokenFile: 'tokenfile',
     syncFromScratch: true
   })
-  .then(response => {
+  .then((response) => {
     const newResponse = Object.assign({}, preparedResponse)
     newResponse.isInitialSync = true
     t.deepLooseEqual(response, newResponse)

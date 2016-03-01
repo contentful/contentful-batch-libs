@@ -8,7 +8,7 @@
     "clean:build": "rimraf *.js utils get push transform",
     "prepublish": "in-publish && npm run build || not-in-publish",
     "postpublish": "npm run clean",
-    "pretest": "standard lib/*.js && standard lib/**/*.js",
+    "pretest": "standard lib/*.js && standard lib/**/*.js && standard test/**/*.js",
     "test": "npm run test:cover",
     "test:cover": "BABEL_ENV=test babel-node ./node_modules/istanbul/lib/cli.js cover test/runner",
     "test:only": "BABEL_ENV=test babel-node ./test/runner",
@@ -41,7 +41,7 @@
     "rimraf": "^2.4.3",
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.2",
-    "standard": "^5.3.1",
+    "standard": "^6.0.7",
     "tape": "^4.2.2"
   },
   "files": [
