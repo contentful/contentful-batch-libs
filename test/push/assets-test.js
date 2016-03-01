@@ -47,7 +47,6 @@ test.only('Fails to process assets', t => {
     { sys: {id: '456'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} }
   ])
   .catch((response, r2, r3) => {
-    console.log('in test', response, r2, r3)
     t.equals(space.processAssetFile.callCount, 4, 'processes assets')
     t.equals(logMock.warn.callCount, 2, 'logs processing failure of assets')
     teardown()
