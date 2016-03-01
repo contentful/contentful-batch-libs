@@ -37,7 +37,7 @@ test('Process assets', t => {
   })
 })
 
-test.only('Fails to process assets', t => {
+test('Fails to process assets', t => {
   setup()
   const space = {
     processAssetFile: sinon.stub().returns(Promise.reject({name: 'ProcessingError'}))
