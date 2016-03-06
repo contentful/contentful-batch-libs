@@ -42,7 +42,7 @@
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.2",
     "standard": "^6.0.7",
-    "tape": "^4.2.2"
+    "tape": "^4.5.1"
   },
   "files": [
     "index.js",
