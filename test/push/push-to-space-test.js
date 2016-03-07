@@ -104,6 +104,30 @@ test('Push only content types and locales to destination space', (t) => {
   })
 })
 
+test('Push only content types', (t) => {
+  setup()
+  pushToSpace({
+    sourceContent: sourceResponse,
+    destinationContent: destinationResponse,
+    managementClient: clientMock,
+    spaceId: 'spaceid',
+    prePublishDelay: 0,
+    contentModelOnly: true,
+    skipLocales: true
+  })
+  .then(() => {
+    t.equals(deletionMock.deleteEntities.callCount, 1, 'delete entities')
+    t.equals(publishingMock.unpublishEntities.callCount, 1, 'unpublish entities')
+    t.equals(creationMock.createEntities.callCount, 1, 'create entities')
+    t.equals(creationMock.createEntries.callCount, 0, 'create entries')
+    t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
+    t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
+    t.equals(assetsMock.checkAssets.callCount, 0, 'check assets')
+    teardown()
+    t.end()
+  })
+})
+
 test('Push only entries and assets to destination space', (t) => {
   setup()
   pushToSpace({
