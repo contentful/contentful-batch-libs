@@ -2,7 +2,7 @@ import test from 'tape'
 import sinon from 'sinon'
 import Promise from 'bluebird'
 
-import * as creation from '../../lib/push/creation'
+import {createEntities, createEntries, __RewireAPI__ as creationRewireAPI} from '../../lib/push/creation'
 
 const logMock = {
   info: sinon.stub(),
@@ -11,11 +11,11 @@ const logMock = {
 
 function setup () {
   logMock.info.reset()
-  creation.__Rewire__('log', logMock)
+  creationRewireAPI.__Rewire__('log', logMock)
 }
 
 function teardown () {
-  creation.__ResetDependency__('log')
+  creationRewireAPI.__ResetDependency__('log')
 }
 
 test('Create entities', (t) => {
@@ -24,7 +24,7 @@ test('Create entities', (t) => {
     createAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}})),
     updateAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
   }
-  creation.createEntities({space: space, type: 'Asset'}, [
+  createEntities({space: space, type: 'Asset'}, [
     { original: { sys: {} }, transformed: { sys: {id: '123'} } },
     { original: { sys: {} }, transformed: { sys: {id: '456'} } }
   ], [
@@ -53,7 +53,7 @@ test('Create entries', (t) => {
   const destinationEntries = [
     {sys: {id: '123', version: 6}}
   ]
-  creation.createEntries({space: space, skipContentModel: false}, entries, destinationEntries)
+  createEntries({space: space, skipContentModel: false}, entries, destinationEntries)
   .then((response) => {
     t.equals(space.createEntry.callCount, 1, 'create entries')
     t.equals(space.updateEntry.callCount, 1, 'update entries')
@@ -91,7 +91,7 @@ test('Create entries and remove unknown fields', (t) => {
     {sys: {id: '123', version: 6}}
   ]
 
-  creation.createEntries({space: space, skipContentModel: true}, entries, destinationEntries)
+  createEntries({space: space, skipContentModel: true}, entries, destinationEntries)
   .then((response) => {
     t.equals(space.updateEntry.callCount, 2, 'update entries')
     t.ok('existingfield' in space.updateEntry.args[1][0].fields, 'keeps known field')
@@ -116,7 +116,7 @@ test('Fails to create locale if it already exists', (t) => {
     }
   }))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
-  creation.createEntities({space: space, type: 'Locale'}, [entity], [{sys: {}}])
+  createEntities({space: space, type: 'Locale'}, [entity], [{sys: {}}])
   .then((entities) => {
     t.equals(entities[0], entity)
     t.end()
@@ -131,7 +131,7 @@ test('Fails to create entities due to version mismatch', (t) => {
   }
   space.createAsset.returns(Promise.reject({error: {sys: {id: 'VersionMismatch'}}}))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
-  creation.createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
+  createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
   .catch((err) => {
     t.equals(err.error.sys.id, 'VersionMismatch')
     teardown()

@@ -2,7 +2,7 @@ import test from 'tape'
 import sinon from 'sinon'
 import Promise from 'bluebird'
 
-import * as publishing from '../../lib/push/publishing'
+import {publishEntities, unpublishEntities, __RewireAPI__ as publishingRewireAPI} from '../../lib/push/publishing'
 
 const logMock = {
   info: sinon.stub()
@@ -14,13 +14,13 @@ const errorBufferMock = {
 
 function setup () {
   logMock.info.reset()
-  publishing.__Rewire__('log', logMock)
-  publishing.__Rewire__('errorBuffer', errorBufferMock)
+  publishingRewireAPI.__Rewire__('log', logMock)
+  publishingRewireAPI.__Rewire__('errorBuffer', errorBufferMock)
 }
 
 function teardown () {
-  publishing.__ResetDependency__('log')
-  publishing.__ResetDependency__('errorBuffer')
+  publishingRewireAPI.__ResetDependency__('log')
+  publishingRewireAPI.__ResetDependency__('errorBuffer')
 }
 
 test('Publish entities', (t) => {
@@ -28,7 +28,7 @@ test('Publish entities', (t) => {
   const space = {
     publishAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
   }
-  return publishing.publishEntities({space: space, type: 'Asset'}, [
+  return publishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
@@ -72,7 +72,7 @@ test('Fails to publish entities', (t) => {
       ]
     }
   }))
-  publishing.publishEntities({space: space, type: 'Asset'}, [
+  publishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
@@ -89,7 +89,7 @@ test('Unpublish entities', (t) => {
   const space = {
     unpublishAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
   }
-  publishing.unpublishEntities({space: space, type: 'Asset'}, [
+  unpublishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
@@ -106,7 +106,7 @@ test('Fails to unpublish entities', (t) => {
   const space = {
     unpublishAsset: sinon.stub().returns(Promise.reject({}))
   }
-  publishing.unpublishEntities({space: space, type: 'Asset'}, [
+  unpublishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123'} },
     { sys: {id: '456'} }
   ])
@@ -122,7 +122,7 @@ test('Fails to unpublish entities because theyre already unpublished', (t) => {
   const space = {
     unpublishAsset: sinon.stub().returns(Promise.reject({name: 'BadRequest'}))
   }
-  publishing.unpublishEntities({space: space, type: 'Asset'}, [
+  unpublishEntities({space: space, type: 'Asset'}, [
     { sys: {id: '123', type: 'Asset'} }
   ])
   .then((entities) => {

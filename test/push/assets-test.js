@@ -2,7 +2,7 @@ import test from 'tape'
 import sinon from 'sinon'
 import Promise from 'bluebird'
 
-import * as assets from '../../lib/push/assets'
+import {processAssets, checkAssets, __RewireAPI__ as assetsRewireAPI} from '../../lib/push/assets'
 
 const logMock = {
   info: sinon.stub(),
@@ -12,11 +12,11 @@ const logMock = {
 function setup () {
   logMock.info.reset()
   logMock.warn.reset()
-  assets.__Rewire__('log', logMock)
+  assetsRewireAPI.__Rewire__('log', logMock)
 }
 
 function teardown () {
-  assets.__ResetDependency__('log')
+  assetsRewireAPI.__ResetDependency__('log')
 }
 
 test('Process assets', (t) => {
@@ -24,7 +24,7 @@ test('Process assets', (t) => {
   const space = {
     processAssetFile: sinon.stub().returns(Promise.resolve())
   }
-  assets.processAssets({space: space}, [
+  processAssets({space: space}, [
     { sys: {id: '123'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} },
     { sys: {id: '456'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} }
   ])
@@ -42,7 +42,7 @@ test('Fails to process assets', (t) => {
   const space = {
     processAssetFile: sinon.stub().returns(Promise.reject({name: 'ProcessingError'}))
   }
-  assets.processAssets({space: space}, [
+  processAssets({space: space}, [
     { sys: {id: '123'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} },
     { sys: {id: '456'}, fields: {file: {'en-US': 'file object', 'en-GB': {}}} }
   ])
@@ -74,7 +74,7 @@ test('Check if assets are processed', (t) => {
     }
   }))
 
-  assets.checkAssets({space: space}, [
+  checkAssets({space: space}, [
     { sys: {id: '123'}, fields: {file: {'en-US': {}, 'en-GB': {}}} }
   ])
   .then((assets) => {
