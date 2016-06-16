@@ -11,15 +11,13 @@ function setup () {
 
   const deliveryClientMock = {
     sync: sinon.stub().returns(Promise.resolve({
-      items: [
-        {sys: {type: 'Entry'}},
-        {sys: {type: 'Asset'}},
-        {sys: {type: 'DeletedEntry'}},
-        {sys: {type: 'DeletedAsset'}}
-      ],
+      entries: [{sys: {type: 'Entry'}}],
+      assets: [{sys: {type: 'Asset'}}],
+      deletedEntries: [{sys: {type: 'DeletedEntry'}}],
+      deletedAssets: [{sys: {type: 'DeletedAsset'}}],
       nextSyncToken: 'token'
     })),
-    space: sinon.stub().returns(Promise.resolve({
+    getSpace: sinon.stub().returns(Promise.resolve({
       locales: ['en-US']
     }))
   }
