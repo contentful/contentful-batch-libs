@@ -20,8 +20,7 @@ const deletionMock = {
 }
 
 const assetsMock = {
-  processAssets: sinon.stub().returns(Promise.resolve()),
-  checkAssets: sinon.stub().returns(Promise.resolve())
+  processAssets: sinon.stub().returns(Promise.resolve())
 }
 
 const sourceResponse = {
@@ -75,7 +74,6 @@ test('Push content to destination space', (t) => {
     t.equals(creationMock.createEntries.callCount, 1, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 3, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
-    t.equals(assetsMock.checkAssets.callCount, 1, 'check assets')
     teardown()
     t.end()
   })
@@ -98,7 +96,6 @@ test('Push only content types and locales to destination space', (t) => {
     t.equals(creationMock.createEntries.callCount, 0, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
-    t.equals(assetsMock.checkAssets.callCount, 0, 'check assets')
     teardown()
     t.end()
   })
@@ -122,7 +119,6 @@ test('Push only content types', (t) => {
     t.equals(creationMock.createEntries.callCount, 0, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
-    t.equals(assetsMock.checkAssets.callCount, 0, 'check assets')
     teardown()
     t.end()
   })
@@ -145,7 +141,6 @@ test('Push only entries and assets to destination space', (t) => {
     t.equals(creationMock.createEntries.callCount, 1, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 2, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
-    t.equals(assetsMock.checkAssets.callCount, 1, 'check assets')
     teardown()
     t.end()
   })
@@ -169,7 +164,6 @@ test('Push only entries and assets to destination space and skip publishing', (t
     t.equals(creationMock.createEntries.callCount, 1, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 0, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
-    t.equals(assetsMock.checkAssets.callCount, 1, 'check assets')
     teardown()
     t.end()
   })

@@ -20,20 +20,19 @@ function teardown () {
 
 test('Create entities', (t) => {
   setup()
+  const updateStub = sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
   const space = {
-    createAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}})),
-    updateAsset: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
+    createAssetWithId: sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
   }
   createEntities({space: space, type: 'Asset'}, [
     { original: { sys: {} }, transformed: { sys: {id: '123'} } },
     { original: { sys: {} }, transformed: { sys: {id: '456'} } }
   ], [
-    {sys: {id: '123', version: 6}}
+    {sys: {id: '123', version: 6}, update: updateStub}
   ])
   .then((response) => {
-    t.equals(space.createAsset.callCount, 1, 'create assets')
-    t.equals(space.updateAsset.callCount, 1, 'update assets')
-    t.equals(space.updateAsset.args[0][0].sys.version, 6, 'updates asset version')
+    t.equals(space.createAssetWithId.callCount, 1, 'create assets')
+    t.equals(updateStub.callCount, 1, 'update assets')
     t.equals(logMock.info.callCount, 2, 'logs creation of two assets')
     teardown()
     t.end()
@@ -42,22 +41,21 @@ test('Create entities', (t) => {
 
 test('Create entries', (t) => {
   setup()
+  const updateStub = sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}}))
   const space = {
-    createEntry: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}})),
-    updateEntry: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}}))
+    createEntryWithId: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}}))
   }
   const entries = [
-    { original: { sys: {contentType: {}} }, transformed: { sys: {id: '123'} } },
-    { original: { sys: {contentType: {}} }, transformed: { sys: {id: '456'} } }
+    { original: { sys: {contentType: {sys: {id: 'ctid'}}} }, transformed: { sys: {id: '123'} } },
+    { original: { sys: {contentType: {sys: {id: 'ctid'}}} }, transformed: { sys: {id: '456'} } }
   ]
   const destinationEntries = [
-    {sys: {id: '123', version: 6}}
+    {sys: {id: '123', version: 6}, update: updateStub}
   ]
   createEntries({space: space, skipContentModel: false}, entries, destinationEntries)
   .then((response) => {
-    t.equals(space.createEntry.callCount, 1, 'create entries')
-    t.equals(space.updateEntry.callCount, 1, 'update entries')
-    t.equals(space.updateEntry.args[0][0].sys.version, 6, 'updates entry version')
+    t.equals(space.createEntryWithId.callCount, 1, 'create entries')
+    t.equals(updateStub.callCount, 1, 'update entries')
     t.equals(logMock.info.callCount, 2, 'logs creation of two entries')
     teardown()
     t.end()
@@ -66,8 +64,8 @@ test('Create entries', (t) => {
 
 test('Create entries and remove unknown fields', (t) => {
   setup()
-  const space = { updateEntry: sinon.stub() }
-  space.updateEntry.onFirstCall().returns(Promise.reject({
+  const updateStub = sinon.stub()
+  updateStub.onFirstCall().returns(Promise.reject({
     name: 'UnknownField',
     error: {
       details: {
@@ -78,24 +76,24 @@ test('Create entries and remove unknown fields', (t) => {
       }
     }
   }))
-  space.updateEntry.onSecondCall().returns(Promise.resolve({
-    sys: {type: 'Entry'},
+  updateStub.onSecondCall().returns(Promise.resolve({
+    sys: {type: 'Entry', id: '123'},
     fields: {}
   }))
 
   const entries = [{
-    original: { sys: {contentType: {}} },
+    original: { sys: {contentType: {sys: {id: 'ctid'}}} },
     transformed: { sys: {id: '123'}, fields: {gonefield: '', existingfield: ''} }
   }]
   const destinationEntries = [
-    {sys: {id: '123', version: 6}}
+    {sys: {id: '123', version: 6}, update: updateStub}
   ]
 
-  createEntries({space: space, skipContentModel: true}, entries, destinationEntries)
+  createEntries({space: {}, skipContentModel: true}, entries, destinationEntries)
   .then((response) => {
-    t.equals(space.updateEntry.callCount, 2, 'update entries')
-    t.ok('existingfield' in space.updateEntry.args[1][0].fields, 'keeps known field')
-    t.notOk('gonefield' in space.updateEntry.args[1][0].fields, 'removes unknown field')
+    t.equals(updateStub.callCount, 2, 'update entries')
+    t.ok('existingfield' in entries[0].transformed.fields, 'keeps known field')
+    t.notOk('gonefield' in entries[0].transformed.fields, 'removes unknown field')
     t.equals(logMock.info.callCount, 1, 'logs creation of one entry')
     teardown()
     t.end()

@@ -11,15 +11,14 @@ deletionRewireAPI.__Rewire__('log', logMock)
 
 test('Delete entities', (t) => {
   logMock.info.reset()
-  const space = {
-    deleteAsset: sinon.stub().returns(Promise.resolve())
-  }
-  deleteEntities({space: space, type: 'Asset'}, [
-    { sys: {id: '123'} },
-    { sys: {id: '456'} }
-  ])
+  const entities = [
+    { sys: {id: '123'}, delete: sinon.stub().returns(Promise.resolve()) },
+    { sys: {id: '456'}, delete: sinon.stub().returns(Promise.resolve()) }
+  ]
+  deleteEntities(entities)
   .then((response) => {
-    t.equals(space.deleteAsset.callCount, 2, 'delete assets')
+    t.ok(entities[0].delete.called, 'delete asset 1')
+    t.ok(entities[1].delete.called, 'delete asset 2')
     t.equals(logMock.info.callCount, 2, 'logs deletion of two assets')
     deletionRewireAPI.__ResetDependency__('log')
     t.end()

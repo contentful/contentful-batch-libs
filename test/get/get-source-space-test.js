@@ -24,9 +24,11 @@ function setup () {
 
   const managementClientMock = {
     getSpace: sinon.stub().returns(Promise.resolve({
-      getContentTypes: sinon.stub().returns(Promise.resolve([
-        {sys: {type: 'ContentType'}}
-      ]))
+      getContentTypes: sinon.stub().returns(Promise.resolve({
+        items: [
+          {sys: {type: 'ContentType'}}
+        ]
+      }))
     }))
   }
 
