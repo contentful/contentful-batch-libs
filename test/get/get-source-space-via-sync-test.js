@@ -2,7 +2,7 @@ import test from 'tape'
 import sinon from 'sinon'
 import Promise from 'bluebird'
 
-import getSourceSpace from '../../lib/get/get-source-space'
+import getSourceSpaceViaSync from '../../lib/get/get-source-space-via-sync'
 
 function setup () {
   const fsMock = {
@@ -43,7 +43,7 @@ function setup () {
     isInitialSync: false
   }
 
-  getSourceSpace.__Rewire__('fs', fsMock)
+  getSourceSpaceViaSync.__Rewire__('fs', fsMock)
 
   return {
     fsMock,
@@ -54,13 +54,13 @@ function setup () {
 }
 
 function teardown () {
-  getSourceSpace.__ResetDependency__('fs')
+  getSourceSpaceViaSync.__ResetDependency__('fs')
 }
 
 test('Get source space with no file token', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
   fsMock.readFileAsync.returns(Promise.reject('file not found'))
-  getSourceSpace({
+  getSourceSpaceViaSync({
     deliveryClient: deliveryClientMock,
     managementClient: managementClientMock,
     sourceSpaceId: 'spaceid'
@@ -77,7 +77,7 @@ test('Get source space with no file token', (t) => {
 test('Get source space with file token', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
   fsMock.readFileAsync.withArgs('tokenfile').returns(Promise.resolve('newtoken'))
-  getSourceSpace({
+  getSourceSpaceViaSync({
     deliveryClient: deliveryClientMock,
     managementClient: managementClientMock,
     sourceSpaceId: 'spaceid',
@@ -94,7 +94,7 @@ test('Get source space with file token', (t) => {
 test('Get source space with forced sync from scratch', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
   fsMock.readFileAsync.withArgs('tokenfile').returns(Promise.resolve('newtoken'))
-  getSourceSpace({
+  getSourceSpaceViaSync({
     deliveryClient: deliveryClientMock,
     managementClient: managementClientMock,
     sourceSpaceId: 'spaceid',
