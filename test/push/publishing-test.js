@@ -75,7 +75,7 @@ test('Fails to publish entities', (t) => {
   ])
   .then((errors) => {
     t.equals(publishStub.callCount, 2, 'tries to publish assets')
-    t.equals(errorBufferMock.push.callCount, 3, 'logs 3 errors')
+    t.equals(errorBufferMock.push.callCount, 2, 'logs 2 errors')
     teardown()
     t.end()
   })
