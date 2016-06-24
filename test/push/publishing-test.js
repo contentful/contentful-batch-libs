@@ -70,11 +70,12 @@ test('Fails to publish entities', (t) => {
   }))
   publishEntities([
     { sys: {id: '123'}, publish: publishStub },
+    undefined,
     { sys: {id: '456'}, publish: publishStub }
   ])
   .then((errors) => {
     t.equals(publishStub.callCount, 2, 'tries to publish assets')
-    t.equals(errorBufferMock.push.callCount, 2, 'logs 2 errors')
+    t.equals(errorBufferMock.push.callCount, 3, 'logs 3 errors')
     teardown()
     t.end()
   })
@@ -113,7 +114,7 @@ test('Fails to unpublish entities because theyre already unpublished', (t) => {
   setup()
   const unpublishStub = sinon.stub().returns(Promise.reject({name: 'BadRequest'}))
   unpublishEntities([
-    { sys: {id: '123', type: 'Asset'}, unpublish: unpublishStub }
+    { sys: {id: '123', type: 'Asset'}, undefined, unpublish: unpublishStub }
   ])
   .then((entities) => {
     t.equals(unpublishStub.callCount, 1, 'tries to unpublish assets')
