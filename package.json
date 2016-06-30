@@ -1,6 +1,5 @@
 {
   "name": "contentful-batch-libs",
-  "version": "1.0.0-determined-by-semantic-release",
   "description": "Library modules used by contentful batch utility CLI tools.",
   "main": "index.js",
   "scripts": {
