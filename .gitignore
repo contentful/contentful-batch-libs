@@ -13,3 +13,4 @@ test-*.json
 /transform
 /utils
 /index.js
+*.swp
