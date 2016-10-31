@@ -40,7 +40,7 @@ const sourceResponse = {
   assets: [],
   webhooks: []
   editorInterfaces: [],
-  entries: []
+  webhooks: []
 }
 
 const destinationResponse = {}
