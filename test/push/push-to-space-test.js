@@ -11,7 +11,7 @@ const creationMock = {
 }
 
 const publishingMock = {
-  publishEntities: sinon.stub().returns(Promise.resolve()),
+  publishEntities: sinon.stub().returns(Promise.resolve([])),
   unpublishEntities: sinon.stub().returns(Promise.resolve())
 }
 
@@ -22,6 +22,13 @@ const deletionMock = {
 const assetsMock = {
   processAssets: sinon.stub().returns(Promise.resolve())
 }
+const editorInterfaceMock = {
+  controls: [],
+  update: sinon.stub().returns(Promise.resolve())
+}
+const spaceMock = {
+  getEditorInterfaceForContentType: sinon.stub().returns(Promise.resolve(editorInterfaceMock))
+}
 
 const sourceResponse = {
   deletedEntries: [],
@@ -31,8 +38,9 @@ const sourceResponse = {
   locales: [],
   contentTypes: [],
   assets: [],
-  entries: [],
   webhooks: []
+  editorInterfaces: [],
+  entries: []
 }
 
 const destinationResponse = {}
@@ -50,6 +58,7 @@ function setup () {
   pushToSpace.__Rewire__('publishing', publishingMock)
   pushToSpace.__Rewire__('deletion', deletionMock)
   pushToSpace.__Rewire__('assets', assetsMock)
+  pushToSpace.__Rewire__('space', spaceMock)
 }
 
 function teardown () {
@@ -57,8 +66,8 @@ function teardown () {
   pushToSpace.__ResetDependency__('publishing')
   pushToSpace.__ResetDependency__('deletion')
   pushToSpace.__ResetDependency__('assets')
+  pushToSpace.__ResetDependency__('space')
 }
-
 test('Push content to destination space', (t) => {
   setup()
   pushToSpace({
