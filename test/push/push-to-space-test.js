@@ -79,7 +79,7 @@ test('Push content to destination space', (t) => {
   .then(() => {
     t.equals(deletionMock.deleteEntities.callCount, 4, 'delete entities')
     t.equals(publishingMock.unpublishEntities.callCount, 3, 'unpublish entities')
-    t.equals(creationMock.createEntities.callCount, 3, 'create entities')
+    t.equals(creationMock.createEntities.callCount, 4, 'create entities')
     t.equals(creationMock.createEntries.callCount, 1, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 3, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
@@ -146,7 +146,7 @@ test('Push only entries and assets to destination space', (t) => {
   .then(() => {
     t.equals(deletionMock.deleteEntities.callCount, 2, 'delete entities')
     t.equals(publishingMock.unpublishEntities.callCount, 2, 'unpublish entities')
-    t.equals(creationMock.createEntities.callCount, 1, 'create entities')
+    t.equals(creationMock.createEntities.callCount, 2, 'create entities')
     t.equals(creationMock.createEntries.callCount, 1, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 2, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
@@ -169,7 +169,7 @@ test('Push only entries and assets to destination space and skip publishing', (t
   .then(() => {
     t.equals(deletionMock.deleteEntities.callCount, 2, 'delete entities')
     t.equals(publishingMock.unpublishEntities.callCount, 2, 'unpublish entities')
-    t.equals(creationMock.createEntities.callCount, 1, 'create entities')
+    t.equals(creationMock.createEntities.callCount, 2, 'create entities')
     t.equals(creationMock.createEntries.callCount, 1, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 0, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
