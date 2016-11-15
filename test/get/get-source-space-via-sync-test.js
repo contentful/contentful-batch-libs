@@ -13,6 +13,7 @@ function setup () {
     sync: sinon.stub().returns(Promise.resolve({
       entries: [{sys: {type: 'Entry'}}],
       assets: [{sys: {type: 'Asset'}}],
+      webhooks: [],
       deletedEntries: [{sys: {type: 'DeletedEntry'}}],
       deletedAssets: [{sys: {type: 'DeletedAsset'}}],
       nextSyncToken: 'token'
@@ -35,6 +36,7 @@ function setup () {
   const preparedResponse = {
     entries: [{sys: {type: 'Entry'}}],
     assets: [{sys: {type: 'Asset'}}],
+    webhooks: [],
     deletedEntries: [{sys: {type: 'DeletedEntry'}}],
     deletedAssets: [{sys: {type: 'DeletedAsset'}}],
     contentTypes: [{sys: {type: 'ContentType'}}],
