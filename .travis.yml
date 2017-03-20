@@ -3,14 +3,13 @@ before_install:
   - npm set progress=false
 language: node_js
 node_js:
-  - "0.10"
-  - "3.3"
-  - "4.2"
-  - "5.0"
+  - "4.7"
+  - "6.9"
+install:
+  - npm install
 after_success:
   - curl -Lo travis_after_all.py https://raw.githubusercontent.com/contentful/travis_after_all/master/travis_after_all.py
   - python travis_after_all.py
   - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
   - export $(cat .to_export_back) &> /dev/null
   - npm run semantic-release
-
