@@ -61,7 +61,7 @@ function teardown () {
 
 test('Get source space with no file token', (t) => {
   const {deliveryClientMock, managementClientMock, preparedResponse, fsMock} = setup()
-  fsMock.readFileAsync.returns(Promise.reject('file not found'))
+  fsMock.readFileAsync.returns(Promise.reject(new Error('file not found')))
   getSourceSpaceViaSync({
     deliveryClient: deliveryClientMock,
     managementClient: managementClientMock,

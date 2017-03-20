@@ -42,32 +42,32 @@ test('Publish entities', (t) => {
 test('Fails to publish entities', (t) => {
   setup()
   const publishStub = sinon.stub()
-  publishStub.onFirstCall().returns(Promise.reject({}))
-  publishStub.onSecondCall().returns(Promise.reject({
-    sys: {
-      type: 'Error',
-      id: 'UnresolvedLinks'
-    },
-    message: 'Validation error',
-    details: {
-      errors: [
-        {
-          name: 'notResolvable',
-          link: {
-            type: 'Link',
-            linkType: 'Entry',
-            id: 'linkedEntryId'
-          },
-          path: [
-            'fields',
-            'category',
-            'en-US',
-            0
-          ]
-        }
-      ]
-    }
-  }))
+  publishStub.onFirstCall().returns(Promise.reject(new Error()))
+  const errorValidation = new Error()
+  errorValidation.message = 'Validation error'
+  errorValidation.sys = {
+    type: 'Error',
+    id: 'UnresolvedLinks'
+  }
+  errorValidation.details = {
+    errors: [
+      {
+        name: 'notResolvable',
+        link: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: 'linkedEntryId'
+        },
+        path: [
+          'fields',
+          'category',
+          'en-US',
+          0
+        ]
+      }
+    ]
+  }
+  publishStub.onSecondCall().returns(Promise.reject(errorValidation))
   publishEntities([
     { sys: {id: '123'}, publish: publishStub },
     undefined,
@@ -98,7 +98,7 @@ test('Unpublish entities', (t) => {
 
 test('Fails to unpublish entities', (t) => {
   setup()
-  const unpublishStub = sinon.stub().returns(Promise.reject({}))
+  const unpublishStub = sinon.stub().returns(Promise.reject(new Error()))
   unpublishEntities([
     { sys: {id: '123'}, unpublish: unpublishStub },
     { sys: {id: '456'}, unpublish: unpublishStub }
@@ -112,7 +112,9 @@ test('Fails to unpublish entities', (t) => {
 
 test('Fails to unpublish entities because theyre already unpublished', (t) => {
   setup()
-  const unpublishStub = sinon.stub().returns(Promise.reject({name: 'BadRequest'}))
+  const errorBadRequest = new Error()
+  errorBadRequest.name = 'BadRequest'
+  const unpublishStub = sinon.stub().returns(Promise.reject(errorBadRequest))
   unpublishEntities([
     { sys: {id: '123', type: 'Asset'}, undefined, unpublish: unpublishStub }
   ])
