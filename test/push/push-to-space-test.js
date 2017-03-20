@@ -49,10 +49,10 @@ const clientMock = {
 }
 
 function setup () {
-  each(creationMock, (fn) => fn.reset())
-  each(publishingMock, (fn) => fn.reset())
-  each(deletionMock, (fn) => fn.reset())
-  each(assetsMock, (fn) => fn.reset())
+  each(creationMock, (fn) => fn.resetHistory())
+  each(publishingMock, (fn) => fn.resetHistory())
+  each(deletionMock, (fn) => fn.resetHistory())
+  each(assetsMock, (fn) => fn.resetHistory())
   pushToSpace.__Rewire__('creation', creationMock)
   pushToSpace.__Rewire__('publishing', publishingMock)
   pushToSpace.__Rewire__('deletion', deletionMock)
