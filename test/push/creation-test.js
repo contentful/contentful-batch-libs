@@ -65,17 +65,17 @@ test('Create entries', (t) => {
 test('Create entries and remove unknown fields', (t) => {
   setup()
   const updateStub = sinon.stub()
-  updateStub.onFirstCall().returns(Promise.reject({
-    name: 'UnknownField',
-    error: {
-      details: {
-        errors: [{
-          name: 'unknown',
-          path: ['fields', 'gonefield']
-        }]
-      }
+  const errorUnkownField = new Error()
+  errorUnkownField.name = 'UnknownField'
+  errorUnkownField.error = {
+    details: {
+      errors: [{
+        name: 'unknown',
+        path: ['fields', 'gonefield']
+      }]
     }
-  }))
+  }
+  updateStub.onFirstCall().returns(Promise.reject(errorUnkownField))
   updateStub.onSecondCall().returns(Promise.resolve({
     sys: {type: 'Entry', id: '123'},
     fields: {}
@@ -105,14 +105,14 @@ test('Fails to create locale if it already exists', (t) => {
   const space = {
     createLocale: sinon.stub()
   }
-  space.createLocale.returns(Promise.reject({
-    error: {
-      sys: {id: 'ValidationFailed'},
-      details: {
-        errors: [{name: 'taken'}]
-      }
+  const errorValidationFailed = new Error()
+  errorValidationFailed.error = {
+    sys: {id: 'ValidationFailed'},
+    details: {
+      errors: [{name: 'taken'}]
     }
-  }))
+  }
+  space.createLocale.returns(Promise.reject(errorValidationFailed))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
   createEntities({space: space, type: 'Locale'}, [entity], [{sys: {}}])
   .then((entities) => {
@@ -127,7 +127,13 @@ test('Fails to create entities due to version mismatch', (t) => {
   const space = {
     createAsset: sinon.stub()
   }
-  space.createAsset.returns(Promise.reject({error: {sys: {id: 'VersionMismatch'}}}))
+  const errorVersionMismatch = new Error()
+  errorVersionMismatch.error = {
+    sys: {
+      id: 'VersionMismatch'
+    }
+  }
+  space.createAsset.returns(Promise.reject(errorVersionMismatch))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
   createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
   .catch((err) => {

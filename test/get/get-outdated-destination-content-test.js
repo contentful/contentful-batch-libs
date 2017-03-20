@@ -66,9 +66,9 @@ function testQueryLength (t, method) {
 
 test('Fails to get destination space', (t) => {
   setup()
-  mockClient.getSpace.returns(Promise.reject({
-    name: 'NotFound'
-  }))
+  const errorNotFound = new Error()
+  errorNotFound.name = 'NotFound'
+  mockClient.getSpace.returns(Promise.reject(errorNotFound))
 
   getOutdatedDestinationContent({
     managementClient: mockClient,

@@ -12,7 +12,7 @@
     "clean:build": "rimraf *.js utils get push transform",
     "prepublish": "in-publish && npm run build || not-in-publish",
     "postpublish": "npm run clean",
-    "lint": "standard lib/*.js && standard lib/**/*.js && standard test/**/*.js",
+    "lint": "eslint lib test/* test",
     "pretest": "npm run lint",
     "test": "npm run test:cover",
     "test:cover": "BABEL_ENV=test babel-node ./node_modules/istanbul/lib/cli.js cover test/runner",
@@ -45,6 +45,10 @@
     "babel-types": "^6.23.0",
     "coveralls": "^2.11.8",
     "cz-conventional-changelog": "^2.0.0",
+    "eslint": "^3.18.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
     "husky": "^0.13.2",
     "in-publish": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
@@ -54,7 +58,6 @@
     "rimraf": "^2.4.3",
     "semantic-release": "^6.3.2",
     "sinon": "^1.17.7",
-    "standard": "^7.1.2",
     "tape": "^4.5.1"
   },
   "files": [
@@ -65,9 +68,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/contentful/contentful-batch-libs.git"
-  },
-  "standard": {
-    "parser": "babel-eslint"
   },
   "config": {
     "commitizen": {
