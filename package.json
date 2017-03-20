@@ -9,7 +9,8 @@
     "clean:build": "rimraf *.js utils get push transform",
     "prepublish": "in-publish && npm run build || not-in-publish",
     "postpublish": "npm run clean",
-    "pretest": "standard lib/*.js && standard lib/**/*.js && standard test/**/*.js",
+    "lint": "standard lib/*.js && standard lib/**/*.js && standard test/**/*.js",
+    "pretest": "npm run lint",
     "test": "npm run test:cover",
     "test:cover": "BABEL_ENV=test babel-node ./node_modules/istanbul/lib/cli.js cover test/runner",
     "test:only": "BABEL_ENV=test babel-node ./test/runner",
@@ -19,7 +20,9 @@
     "devdep:build": "pushd ../contentful-management.js && npm run build && popd",
     "devdep:clean": "pushd ../contentful-management.js && npm run clean && popd",
     "devdep:install": "npm run devdep:build && rm -rf node_modules/contentful-management.js && npm install ../contentful-management.js && npm run devdep:clean",
-    "devdep:uninstall": "npm run devdep:clean && rimraf node_modules/contentful-management.js"
+    "devdep:uninstall": "npm run devdep:clean && rimraf node_modules/contentful-management.js",
+    "precommit": "npm run lint",
+    "prepush": "npm run test:only"
   },
   "dependencies": {
     "babel-runtime": "^6.3.19",
@@ -38,7 +41,7 @@
     "babel-register": "^6.24.0",
     "coveralls": "^2.11.8",
     "cz-conventional-changelog": "^2.0.0",
-    "ghooks": "^2.0.0",
+    "husky": "^0.13.2",
     "in-publish": "^2.0.0",
     "istanbul": "^1.0.0-alpha.2",
     "mkdirp": "^0.5.1",
@@ -67,9 +70,6 @@
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
-    },
-    "ghooks": {
-      "pre-commit": "npm run test:only"
     }
   },
   "keywords": [
