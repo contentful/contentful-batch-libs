@@ -20,7 +20,7 @@ const deletionMock = {
 }
 
 const assetsMock = {
-  processAssets: sinon.stub().returns(Promise.resolve())
+  processAssets: sinon.stub().returns(Promise.resolve([]))
 }
 const editorInterfaceMock = {
   controls: [],
