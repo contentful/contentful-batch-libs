@@ -85,5 +85,8 @@
   "bugs": {
     "url": "https://github.com/contentful/contentful-batch-libs/issues"
   },
-  "homepage": "https://github.com/contentful/contentful-batch-libs#readme"
+  "homepage": "https://github.com/contentful/contentful-batch-libs#readme",
+  "publishConfig": {
+    "tag": "beta"
+  }
 }
