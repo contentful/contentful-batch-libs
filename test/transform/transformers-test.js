@@ -57,3 +57,14 @@ test('It should transform webhook with credentials to normal webhook', (t) => {
   t.notOk(transformedWebhook.httpBasicUsername)
   t.end()
 })
+
+test('It should transform a locale and return it', (t) => {
+  const localeMock = cloneMock('locale')
+  localeMock.code = 'de-DE'
+  const destinationLocalesMock = [cloneMock('locale'), cloneMock('locale')]
+  destinationLocalesMock[0].code = 'de-DE'
+  destinationLocalesMock[0].sys.id = 'destinationLocaleId'
+  const transformedLocale = transformers.locales(localeMock, destinationLocalesMock)
+  t.equal(transformedLocale.sys.id, destinationLocalesMock[0].sys.id)
+  t.end()
+})
