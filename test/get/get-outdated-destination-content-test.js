@@ -5,8 +5,8 @@ import {times} from 'lodash/util'
 
 import getOutdatedDestinationContent from '../../lib/get/get-outdated-destination-content'
 
-const sourceEntryIds = times(2000, (n) => `e${n}`)
-const sourceAssetIds = times(2000, (n) => `a${n}`)
+const sourceEntryIds = times(2000, (n) => `e-${n}`)
+const sourceAssetIds = times(1500, (n) => `a-${n}`)
 
 const logMock = {
   info: sinon.stub(),
@@ -43,12 +43,12 @@ test('Gets destination content', (t) => {
     assetIds: sourceAssetIds
   })
   .then((response) => {
-    t.equals(mockSpace.getEntries.callCount, 6, 'getEntries is split into multiple calls')
+    t.equals(mockSpace.getEntries.callCount, 20, 'getEntries is split into multiple calls')
     testQueryLength(t, 'getEntries')
-    t.equals(mockSpace.getAssets.callCount, 6, 'getAssets is split into multiple calls')
+    t.equals(mockSpace.getAssets.callCount, 15, 'getAssets is split into multiple calls')
     testQueryLength(t, 'getAssets')
-    t.equals(response.entries.length, 6, 'number of entries matched (one per call)')
-    t.equals(response.assets.length, 6, 'number of assets matched (one per call)')
+    t.equals(response.entries.length, 20, 'number of entries matched (one per call)')
+    t.equals(response.assets.length, 15, 'number of assets matched (one per call)')
     teardown()
     t.end()
   })
