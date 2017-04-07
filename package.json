@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run clean && babel lib --out-dir dist",
     "clean": "npm run clean:build && rimraf coverage",
-    "clean:build": "rimraf *.js utils get push transform",
+    "clean:build": "rimraf dist",
     "prepublish": "in-publish && npm run build || not-in-publish",
     "postpublish": "npm run clean",
     "lint": "eslint lib test/* test",
