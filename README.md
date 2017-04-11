@@ -9,13 +9,14 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
-Modules used on Contentful's JS batch operation tools.
+This repository contains shared methods used within [Contentful's](https://www.contentful.com) [import](https://github.com/contentful/contentful-import) and [export](https://github.com/contentful/contentful-export) tools.
 
-At the moment this module is just some extracted parts of [contentful-space-sync](https://github.com/contentful/contentful-space-sync)
-and while these parts are fairly independent, they might not be easy to
-understand and use for your own projects right now.
+Even when these parts are fairly small and independent, they might not be easy to understand and use for your own projects right now.
 
 Each module has more extensive documentation in the code regarding their own purpose.
+
+## About
+[Contentful](https://www.contentful.com) is a content management platform for web applications, mobile apps and connected devices. It allows you to create, edit & manage content in the cloud and publish it anywhere via a powerful API. Contentful offers tools for managing editorial teams and enabling cooperation between organizations.
 
 ## "Get" Modules
 
