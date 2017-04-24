@@ -17,7 +17,8 @@ const mockSpace = {
   getContentTypes: sinon.stub().returns(Promise.resolve([])),
   getEntries: sinon.stub().returns(Promise.resolve([{}])),
   getAssets: sinon.stub().returns(Promise.resolve([{}])),
-  getLocales: sinon.stub().returns(Promise.resolve([]))
+  getLocales: sinon.stub().returns(Promise.resolve([])),
+  getRoles: sinon.stub().returns(Promise.resolve([]))
 }
 
 const mockClient = {

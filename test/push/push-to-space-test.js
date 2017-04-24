@@ -75,7 +75,7 @@ test('Push content to destination space', (t) => {
     prePublishDelay: 0
   })
   .then(() => {
-    t.equals(creationMock.createEntities.callCount, 5, 'create entities')
+    t.equals(creationMock.createEntities.callCount, 6, 'create entities')
     t.equals(creationMock.createEntries.callCount, 2, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 3, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
@@ -95,7 +95,7 @@ test('Push only content types and locales to destination space', (t) => {
     contentModelOnly: true
   })
   .then(() => {
-    t.equals(creationMock.createEntities.callCount, 2, 'create entities')
+    t.equals(creationMock.createEntities.callCount, 3, 'create entities')
     t.equals(creationMock.createEntries.callCount, 0, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
@@ -116,7 +116,7 @@ test('Push only content types', (t) => {
     skipLocales: true
   })
   .then(() => {
-    t.equals(creationMock.createEntities.callCount, 1, 'create entities')
+    t.equals(creationMock.createEntities.callCount, 2, 'create entities')
     t.equals(creationMock.createEntries.callCount, 0, 'create entries')
     t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
     t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
