@@ -33,7 +33,7 @@ test('Publish entities', (t) => {
   .then((response) => {
     t.equals(publishStub.callCount, 2, 'publish assets')
     t.ok(response[0].sys.publishedVersion, 'has published version')
-    t.equals(logMock.info.callCount, 2, 'logs publishing of two assets')
+    t.equals(logMock.info.callCount, 5, 'logs publishing of two assets including queue information')
     teardown()
     t.end()
   })
@@ -42,40 +42,47 @@ test('Publish entities', (t) => {
 test('Fails to publish entities', (t) => {
   setup()
   const publishStub = sinon.stub()
-  publishStub.onFirstCall().returns(Promise.reject(new Error()))
-  const errorValidation = new Error()
-  errorValidation.message = 'Validation error'
-  errorValidation.sys = {
-    type: 'Error',
-    id: 'UnresolvedLinks'
+  publishStub.onFirstCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
+  const apiError = {
+    message: 'Validation error',
+    status: 422,
+    sys: {
+      type: 'Error',
+      id: 'UnresolvedLinks'
+    },
+    details: {
+      errors: [
+        {
+          name: 'notResolvable',
+          link: {
+            type: 'Link',
+            linkType: 'Entry',
+            id: 'linkedEntryId'
+          },
+          path: [
+            'fields',
+            'category',
+            'en-US',
+            0
+          ]
+        }
+      ]
+    }
   }
-  errorValidation.details = {
-    errors: [
-      {
-        name: 'notResolvable',
-        link: {
-          type: 'Link',
-          linkType: 'Entry',
-          id: 'linkedEntryId'
-        },
-        path: [
-          'fields',
-          'category',
-          'en-US',
-          0
-        ]
-      }
-    ]
-  }
+  const errorValidation = new Error(JSON.stringify(apiError))
   publishStub.onSecondCall().returns(Promise.reject(errorValidation))
+  publishStub.onThirdCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
   publishEntities([
-    { sys: {id: '123'}, publish: publishStub },
+    { sys: {id: '123', type: 'asset'}, publish: publishStub },
     undefined,
-    { sys: {id: '456'}, publish: publishStub }
+    { sys: {id: '456', type: 'asset'}, publish: publishStub }
   ])
-  .then((errors) => {
-    t.equals(publishStub.callCount, 2, 'tries to publish assets')
-    t.equals(errorBufferMock.push.callCount, 2, 'logs 2 errors')
+  .then((result) => {
+    t.equals(publishStub.callCount, 3, 'tries to publish both assets, while retrying one asset')
+    t.equals(errorBufferMock.push.callCount, 1, 'logs 1 error')
+    t.ok(logMock.info.args[3][0].includes('Starting new publishing queue'), 'runs a fresh queue at the beginning')
+    t.ok(logMock.info.args[7][0].includes('Starting new publishing queue'), 'runs a second queue since one entity was not resolved')
+    t.equals(result.length, 2, 'Result only contains resolved & valid entities')
     teardown()
     t.end()
   })
