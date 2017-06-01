@@ -9,9 +9,14 @@ const logMock = {
   error: sinon.stub()
 }
 
+const errorBufferMock = {
+  push: sinon.stub()
+}
+
 function setup () {
   logMock.info.reset()
   creationRewireAPI.__Rewire__('log', logMock)
+  creationRewireAPI.__Rewire__('errorBuffer', errorBufferMock)
 }
 
 function teardown () {
@@ -139,9 +144,13 @@ test('Fails to create entities due to version mismatch', (t) => {
   space.createAsset.returns(Promise.reject(errorVersionMismatch))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
   createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
-  .catch((err) => {
-    t.equals(err.error.sys.id, 'VersionMismatch')
+  .then(() => {
+    t.equals(errorBufferMock.push.args[0][0].error.sys.id, 'VersionMismatch')
     teardown()
     t.end()
+  })
+  .catch((err) => {
+    console.error(err)
+    t.fail('Should no more throw error')
   })
 })
