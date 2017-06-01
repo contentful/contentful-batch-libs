@@ -20,6 +20,7 @@ function setup () {
 }
 
 function teardown () {
+  errorBufferMock.push.reset()
   publishingRewireAPI.__ResetDependency__('log')
   publishingRewireAPI.__ResetDependency__('errorBuffer')
 }
@@ -114,6 +115,7 @@ test('Unpublish entities', (t) => {
   .then((response) => {
     t.equals(unpublishStub.callCount, 2, 'unpublish assets')
     t.equals(logMock.info.callCount, 2, 'logs unpublishing of two assets')
+    t.equals(errorBufferMock.push.callCount, 0, 'logs no errors into the buffer')
     teardown()
     t.end()
   })
@@ -126,10 +128,14 @@ test('Fails to unpublish entities', (t) => {
     { sys: {id: '123'}, unpublish: unpublishStub },
     { sys: {id: '456'}, unpublish: unpublishStub }
   ])
-  .catch((errors) => {
+  .then(() => {
     t.equals(unpublishStub.callCount, 2, 'tries to unpublish assets')
+    t.equals(errorBufferMock.push.callCount, 2, 'logs two errors into the buffer')
     teardown()
     t.end()
+  })
+  .catch(() => {
+    t.fail('Should no more throw errors')
   })
 })
 
@@ -143,6 +149,7 @@ test('Fails to unpublish entities because theyre already unpublished', (t) => {
   ])
   .then((entities) => {
     t.equals(unpublishStub.callCount, 1, 'tries to unpublish assets')
+    t.equals(errorBufferMock.push.callCount, 1, 'logs one errors into the buffer')
     t.equals(entities[0].sys.type, 'Asset', 'is an entity')
     teardown()
     t.end()
