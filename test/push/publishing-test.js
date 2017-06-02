@@ -44,27 +44,11 @@ test('Fails to publish entities', (t) => {
   const publishStub = sinon.stub()
   publishStub.onFirstCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
   const apiError = {
-    message: 'Validation error',
     status: 422,
-    sys: {
-      type: 'Error',
-      id: 'UnresolvedLinks'
-    },
     details: {
       errors: [
         {
-          name: 'notResolvable',
-          link: {
-            type: 'Link',
-            linkType: 'Entry',
-            id: 'linkedEntryId'
-          },
-          path: [
-            'fields',
-            'category',
-            'en-US',
-            0
-          ]
+          name: 'notResolvable'
         }
       ]
     }
@@ -83,6 +67,41 @@ test('Fails to publish entities', (t) => {
     t.ok(logMock.info.args[3][0].includes('Starting new publishing queue'), 'runs a fresh queue at the beginning')
     t.ok(logMock.info.args[7][0].includes('Starting new publishing queue'), 'runs a second queue since one entity was not resolved')
     t.equals(result.length, 2, 'Result only contains resolved & valid entities')
+    teardown()
+    t.end()
+  })
+})
+
+test('Queue does abort itself', (t) => {
+  setup()
+  const publishStub = sinon.stub()
+  const apiError = {
+    status: 422,
+    details: {
+      errors: [
+        {
+          name: 'notResolvable'
+        }
+      ]
+    }
+  }
+  const errorValidation = new Error(JSON.stringify(apiError))
+  // First call resolves, others fail
+  publishStub.returns(Promise.reject(errorValidation))
+  publishStub.onFirstCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2, id: '123'}}))
+  return publishEntities([
+    { sys: {id: '123', type: 'asset'}, publish: publishStub },
+    { sys: {id: '456', type: 'asset'}, publish: publishStub }
+  ])
+  .then((result) => {
+    const logs = logMock.info.args.map((args) => args[0])
+    t.equals(publishStub.callCount, 3, 'publishes the first, retries the second only once')
+    t.equals(errorBufferMock.push.callCount, 4, 'logs 4 errors')
+    t.equals(errorBufferMock.push.lastCall.args[0].message, 'Queue was not able to publish at least one entitiy. Aborting.', 'Aborted queue with error')
+    t.equals(logs.filter((log) => log.includes('Starting new publishing queue')).length, 2, 'Starts queue twice')
+    t.equals(logs.filter((log) => log.includes('Unable to resolve 456 (456)')).length, 2, 'Is unable to resolve 456 twice')
+    t.equals(logs.filter((log) => log.includes('Published Asset 123')).length, 1, 'Is able to publish 123')
+    t.equals(result.filter((entity) => entity.sys.id === '123').length, 1, 'Result contains the published entity')
     teardown()
     t.end()
   })
