@@ -97,7 +97,7 @@ test('Queue does abort itself', (t) => {
     const logs = logMock.info.args.map((args) => args[0])
     t.equals(publishStub.callCount, 3, 'publishes the first, retries the second only once')
     t.equals(errorBufferMock.push.callCount, 4, 'logs 4 errors')
-    t.equals(errorBufferMock.push.lastCall.args[0].message, 'Queue was not able to publish at least one entitiy. Aborting.', 'Aborted queue with error')
+    t.equals(errorBufferMock.push.lastCall.args[0].message, 'Queue was not able to publish at least one entity. Aborting.', 'Aborted queue with error')
     t.equals(logs.filter((log) => log.includes('Starting new publishing queue')).length, 2, 'Starts queue twice')
     t.equals(logs.filter((log) => log.includes('Unable to resolve 456 (456)')).length, 2, 'Is unable to resolve 456 twice')
     t.equals(logs.filter((log) => log.includes('Published Asset 123')).length, 1, 'Is able to publish 123')
