@@ -31,7 +31,7 @@
   "dependencies": {
     "bluebird": "^3.3.3",
     "contentful": "^4.3.0",
-    "contentful-management": "^3.3.0",
+    "contentful-management": "^3.7.3",
     "listr": "^0.11.0",
     "listr-verbose-renderer": "^0.4.0",
     "lodash": "^4.0.1",
