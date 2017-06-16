@@ -63,23 +63,3 @@ function testQueryLength (t, method) {
   )
   t.notEqual(query[query.length - 1], ',', `${method} query last character is not a comma`)
 }
-
-test('Fails to get destination space', (t) => {
-  setup()
-  const errorNotFound = new Error()
-  errorNotFound.name = 'NotFound'
-  mockClient.getSpace.returns(Promise.reject(errorNotFound))
-
-  getOutdatedDestinationContent({
-    managementClient: mockClient,
-    spaceId: 'spaceid',
-    entryIds: sourceEntryIds,
-    assetIds: sourceAssetIds
-  })
-  .catch((err) => {
-    t.ok(err.name === 'NotFound')
-    t.equal(logMock.error.callCount, 1, 'User is shown a more helpful error')
-    teardown()
-    t.end()
-  })
-})

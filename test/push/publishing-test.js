@@ -4,25 +4,17 @@ import Promise from 'bluebird'
 
 import {publishEntities, unpublishEntities, __RewireAPI__ as publishingRewireAPI} from '../../lib/push/publishing'
 
-const logMock = {
-  info: sinon.stub()
-}
-
-const errorBufferMock = {
-  push: sinon.stub()
+const fakeLogEmitter = {
+  emit: sinon.stub()
 }
 
 function setup () {
-  logMock.info.reset()
-  errorBufferMock.push.reset()
-  publishingRewireAPI.__Rewire__('log', logMock)
-  publishingRewireAPI.__Rewire__('errorBuffer', errorBufferMock)
+  publishingRewireAPI.__Rewire__('logEmitter', fakeLogEmitter)
 }
 
 function teardown () {
-  errorBufferMock.push.reset()
-  publishingRewireAPI.__ResetDependency__('log')
-  publishingRewireAPI.__ResetDependency__('errorBuffer')
+  fakeLogEmitter.emit.reset()
+  publishingRewireAPI.__ResetDependency__('logEmitter')
 }
 
 test('Publish entities', (t) => {
@@ -35,29 +27,23 @@ test('Publish entities', (t) => {
   .then((response) => {
     t.equals(publishStub.callCount, 2, 'publish assets')
     t.ok(response[0].sys.publishedVersion, 'has published version')
-    t.equals(logMock.info.callCount, 4, 'logs publishing information')
+    t.equals(fakeLogEmitter.emit.callCount, 4, 'logs publishing information')
     teardown()
+    t.end()
+  })
+  .catch(() => {
+    teardown()
+    t.fail('should log errors instead of throwing them')
     t.end()
   })
 })
 
-test('Fails to publish entities', (t) => {
+test('Only publishes valid entities and does not fail when api error occur', (t) => {
   setup()
+  const errorValidation = new Error('failed to publish')
   const publishStub = sinon.stub()
   publishStub.onFirstCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
-  const apiError = {
-    status: 422,
-    details: {
-      errors: [
-        {
-          name: 'notResolvable'
-        }
-      ]
-    }
-  }
-  const errorValidation = new Error(JSON.stringify(apiError))
   publishStub.onSecondCall().returns(Promise.reject(errorValidation))
-  publishStub.onThirdCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2}}))
   publishEntities([
     { sys: {id: '123', type: 'asset'}, publish: publishStub },
     undefined,
@@ -65,42 +51,17 @@ test('Fails to publish entities', (t) => {
   ])
   .then((result) => {
     t.equals(publishStub.callCount, 2, 'tries to publish both assets, while skipping the faulty asset')
-    t.equals(errorBufferMock.push.callCount, 1, 'logs 1 error')
+    t.equals(fakeLogEmitter.emit.args[4][0], 'error', 'logs error at correct point of time')
+    t.equals(fakeLogEmitter.emit.args[4][1], errorValidation, 'logs correct error')
+    t.equals(fakeLogEmitter.emit.callCount, 6, 'should log start, end, unparseable notice, one success message and one error')
     t.equals(result.length, 2, 'Result only contains resolved & valid entities')
     teardown()
     t.end()
   })
-})
-
-test('Queue does abort itself', (t) => {
-  setup()
-  const publishStub = sinon.stub()
-  const apiError = {
-    status: 422,
-    details: {
-      errors: [
-        {
-          name: 'notResolvable'
-        }
-      ]
-    }
-  }
-  const errorValidation = new Error(JSON.stringify(apiError))
-  // First call resolves, others fail
-  publishStub.returns(Promise.reject(errorValidation))
-  publishStub.onFirstCall().returns(Promise.resolve({sys: {type: 'Asset', publishedVersion: 2, id: '123'}}))
-  return publishEntities([
-    { sys: {id: '123', type: 'asset'}, publish: publishStub },
-    { sys: {id: '456', type: 'asset'}, publish: publishStub }
-  ])
-  .then((result) => {
-    const logs = logMock.info.args.map((args) => args[0])
-    t.equals(publishStub.callCount, 2, 'publishes the first, does not retry the second one')
-    t.equals(errorBufferMock.push.callCount, 1, 'logs 1 error')
-    t.equals(logs.filter((log) => log.includes('Failed to publish 456 (456)')).length, 1, 'Is unable to publish 456')
-    t.equals(logs.filter((log) => log.includes('Published Asset 123')).length, 1, 'Is able to publish 123')
-    t.equals(result.filter((entity) => entity && entity.sys.id === '123').length, 1, 'Result contains the published entity')
+  .catch((err) => {
     teardown()
+    console.error({err})
+    t.fail('should log errors instead of throwing them')
     t.end()
   })
 })
@@ -114,28 +75,38 @@ test('Unpublish entities', (t) => {
   ])
   .then((response) => {
     t.equals(unpublishStub.callCount, 2, 'unpublish assets')
-    t.equals(logMock.info.callCount, 2, 'logs unpublishing of two assets')
-    t.equals(errorBufferMock.push.callCount, 0, 'logs no errors into the buffer')
+    t.equals(fakeLogEmitter.emit.callCount, 2, 'logs unpublishing of two assets')
+    t.equals(fakeErrorEmitter.emit.callCount, 0, 'logs no errors into the buffer')
     teardown()
+    t.end()
+  })
+  .catch(() => {
+    teardown()
+    t.fail('should log errors instead of throwing them')
     t.end()
   })
 })
 
 test('Fails to unpublish entities', (t) => {
   setup()
-  const unpublishStub = sinon.stub().returns(Promise.reject(new Error()))
+  const rejectError = new Error('publishing rejected')
+  const unpublishStub = sinon.stub().returns(Promise.reject(rejectError))
   unpublishEntities([
     { sys: {id: '123'}, unpublish: unpublishStub },
     { sys: {id: '456'}, unpublish: unpublishStub }
   ])
   .then(() => {
     t.equals(unpublishStub.callCount, 2, 'tries to unpublish assets')
-    t.equals(errorBufferMock.push.callCount, 2, 'logs two errors into the buffer')
+    t.equals(fakeErrorEmitter.emit.callCount, 2, 'logs two errors')
+    t.equals(fakeErrorEmitter.emit.args[0][1], rejectError, 'logs correct error')
+    t.equals(fakeErrorEmitter.emit.args[1][1], rejectError, 'logs correct error')
     teardown()
     t.end()
   })
   .catch(() => {
-    t.fail('Should no more throw errors')
+    teardown()
+    t.fail('should log errors instead of throwing them')
+    t.end()
   })
 })
 
@@ -149,9 +120,15 @@ test('Fails to unpublish entities because theyre already unpublished', (t) => {
   ])
   .then((entities) => {
     t.equals(unpublishStub.callCount, 1, 'tries to unpublish assets')
-    t.equals(errorBufferMock.push.callCount, 1, 'logs one errors into the buffer')
-    t.equals(entities[0].sys.type, 'Asset', 'is an entity')
+    t.equals(fakeErrorEmitter.emit.callCount, 1, 'logs one errors into the buffer')
+    t.equals(entities[0], null, 'returns empty entity')
     teardown()
+    t.end()
+  })
+  .catch((error) => {
+    console.error({error})
+    teardown()
+    t.fail('should log errors instead of throwing them')
     t.end()
   })
 })
