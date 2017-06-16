@@ -79,7 +79,6 @@ test('Fails to get destination space', (t) => {
   })
   .catch((err) => {
     t.ok(err.name === 'NotFound')
-    t.equal(logMock.error.callCount, 1, 'User is shown a more helpful error')
     teardown()
     t.end()
   })
