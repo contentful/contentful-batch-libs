@@ -43,20 +43,23 @@ test('Create entries', (t) => {
   setup()
   const updateStub = sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}}))
   const space = {
-    createEntryWithId: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}}))
+    createEntryWithId: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}})),
+    createEntry: sinon.stub().returns(Promise.resolve({sys: {type: 'Entry'}}))
   }
   const entries = [
     { original: { sys: {contentType: {sys: {id: 'ctid'}}} }, transformed: { sys: {id: '123'} } },
-    { original: { sys: {contentType: {sys: {id: 'ctid'}}} }, transformed: { sys: {id: '456'} } }
+    { original: { sys: {contentType: {sys: {id: 'ctid'}}} }, transformed: { sys: {id: '456'} } },
+    { original: { sys: {contentType: {sys: {id: 'ctid'}}} }, transformed: { sys: {} } }
   ]
   const destinationEntries = [
     {sys: {id: '123', version: 6}, update: updateStub}
   ]
   createEntries({space: space, skipContentModel: false}, entries, destinationEntries)
   .then((response) => {
-    t.equals(space.createEntryWithId.callCount, 1, 'create entries')
+    t.equals(space.createEntryWithId.callCount, 1, 'create entries with the same id')
+    t.equals(space.createEntry.callCount, 1, 'create entries even when the id is not provided')
     t.equals(updateStub.callCount, 1, 'update entries')
-    t.equals(logMock.info.callCount, 2, 'logs creation of two entries')
+    t.equals(logMock.info.callCount, 3, 'logs creation of two entries')
     teardown()
     t.end()
   })
