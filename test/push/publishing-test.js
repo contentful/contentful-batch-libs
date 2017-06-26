@@ -14,6 +14,7 @@ const errorBufferMock = {
 
 function setup () {
   logMock.info.reset()
+  errorBufferMock.push.reset()
   publishingRewireAPI.__Rewire__('log', logMock)
   publishingRewireAPI.__Rewire__('errorBuffer', errorBufferMock)
 }
@@ -33,7 +34,7 @@ test('Publish entities', (t) => {
   .then((response) => {
     t.equals(publishStub.callCount, 2, 'publish assets')
     t.ok(response[0].sys.publishedVersion, 'has published version')
-    t.equals(logMock.info.callCount, 5, 'logs publishing of two assets including queue information')
+    t.equals(logMock.info.callCount, 4, 'logs publishing information')
     teardown()
     t.end()
   })
@@ -62,10 +63,8 @@ test('Fails to publish entities', (t) => {
     { sys: {id: '456', type: 'asset'}, publish: publishStub }
   ])
   .then((result) => {
-    t.equals(publishStub.callCount, 3, 'tries to publish both assets, while retrying one asset')
+    t.equals(publishStub.callCount, 2, 'tries to publish both assets, while skipping the faulty asset')
     t.equals(errorBufferMock.push.callCount, 1, 'logs 1 error')
-    t.ok(logMock.info.args[3][0].includes('Starting new publishing queue'), 'runs a fresh queue at the beginning')
-    t.ok(logMock.info.args[7][0].includes('Starting new publishing queue'), 'runs a second queue since one entity was not resolved')
     t.equals(result.length, 2, 'Result only contains resolved & valid entities')
     teardown()
     t.end()
@@ -95,13 +94,11 @@ test('Queue does abort itself', (t) => {
   ])
   .then((result) => {
     const logs = logMock.info.args.map((args) => args[0])
-    t.equals(publishStub.callCount, 3, 'publishes the first, retries the second only once')
-    t.equals(errorBufferMock.push.callCount, 4, 'logs 4 errors')
-    t.equals(errorBufferMock.push.lastCall.args[0].message, 'Queue was not able to publish at least one entity. Aborting.', 'Aborted queue with error')
-    t.equals(logs.filter((log) => log.includes('Starting new publishing queue')).length, 2, 'Starts queue twice')
-    t.equals(logs.filter((log) => log.includes('Unable to resolve 456 (456)')).length, 2, 'Is unable to resolve 456 twice')
+    t.equals(publishStub.callCount, 2, 'publishes the first, does not retry the second one')
+    t.equals(errorBufferMock.push.callCount, 1, 'logs 1 error')
+    t.equals(logs.filter((log) => log.includes('Failed to publish 456 (456)')).length, 1, 'Is unable to publish 456')
     t.equals(logs.filter((log) => log.includes('Published Asset 123')).length, 1, 'Is able to publish 123')
-    t.equals(result.filter((entity) => entity.sys.id === '123').length, 1, 'Result contains the published entity')
+    t.equals(result.filter((entity) => entity && entity.sys.id === '123').length, 1, 'Result contains the published entity')
     teardown()
     t.end()
   })
