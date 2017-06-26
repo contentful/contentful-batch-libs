@@ -1,6 +1,6 @@
 import test from 'tape'
 
-import sortEntries from '../../lib/get/sort-entries'
+import sortEntries from '../../lib/utils/sort-entries'
 
 const entries = [
   {
