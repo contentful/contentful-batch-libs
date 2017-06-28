@@ -2,7 +2,7 @@ import test from 'tape'
 import sinon from 'sinon'
 import Promise from 'bluebird'
 
-import {publishEntities, unpublishEntities, __RewireAPI__ as publishingRewireAPI} from '../../lib/push/publishing'
+import {publishEntities, __RewireAPI__ as publishingRewireAPI} from '../../lib/push/publishing'
 
 const fakeLogEmitter = {
   emit: sinon.stub()
@@ -61,73 +61,6 @@ test('Only publishes valid entities and does not fail when api error occur', (t)
   .catch((err) => {
     teardown()
     console.error({err})
-    t.fail('should log errors instead of throwing them')
-    t.end()
-  })
-})
-
-test('Unpublish entities', (t) => {
-  setup()
-  const unpublishStub = sinon.stub().returns(Promise.resolve({sys: {type: 'Asset'}}))
-  unpublishEntities([
-    { sys: {id: '123'}, unpublish: unpublishStub },
-    { sys: {id: '456'}, unpublish: unpublishStub }
-  ])
-  .then((response) => {
-    t.equals(unpublishStub.callCount, 2, 'unpublish assets')
-    t.equals(fakeLogEmitter.emit.callCount, 2, 'logs unpublishing of two assets')
-    t.equals(fakeErrorEmitter.emit.callCount, 0, 'logs no errors into the buffer')
-    teardown()
-    t.end()
-  })
-  .catch(() => {
-    teardown()
-    t.fail('should log errors instead of throwing them')
-    t.end()
-  })
-})
-
-test('Fails to unpublish entities', (t) => {
-  setup()
-  const rejectError = new Error('publishing rejected')
-  const unpublishStub = sinon.stub().returns(Promise.reject(rejectError))
-  unpublishEntities([
-    { sys: {id: '123'}, unpublish: unpublishStub },
-    { sys: {id: '456'}, unpublish: unpublishStub }
-  ])
-  .then(() => {
-    t.equals(unpublishStub.callCount, 2, 'tries to unpublish assets')
-    t.equals(fakeErrorEmitter.emit.callCount, 2, 'logs two errors')
-    t.equals(fakeErrorEmitter.emit.args[0][1], rejectError, 'logs correct error')
-    t.equals(fakeErrorEmitter.emit.args[1][1], rejectError, 'logs correct error')
-    teardown()
-    t.end()
-  })
-  .catch(() => {
-    teardown()
-    t.fail('should log errors instead of throwing them')
-    t.end()
-  })
-})
-
-test('Fails to unpublish entities because theyre already unpublished', (t) => {
-  setup()
-  const errorBadRequest = new Error()
-  errorBadRequest.name = 'BadRequest'
-  const unpublishStub = sinon.stub().returns(Promise.reject(errorBadRequest))
-  unpublishEntities([
-    { sys: {id: '123', type: 'Asset'}, undefined, unpublish: unpublishStub }
-  ])
-  .then((entities) => {
-    t.equals(unpublishStub.callCount, 1, 'tries to unpublish assets')
-    t.equals(fakeErrorEmitter.emit.callCount, 1, 'logs one errors into the buffer')
-    t.equals(entities[0], null, 'returns empty entity')
-    teardown()
-    t.end()
-  })
-  .catch((error) => {
-    console.error({error})
-    teardown()
     t.fail('should log errors instead of throwing them')
     t.end()
   })
