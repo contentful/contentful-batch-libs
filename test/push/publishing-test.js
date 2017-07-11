@@ -24,18 +24,18 @@ test('Publish entities', (t) => {
     { sys: {id: '123'}, publish: publishStub },
     { sys: {id: '456'}, publish: publishStub }
   ])
-  .then((response) => {
-    t.equals(publishStub.callCount, 2, 'publish assets')
-    t.ok(response[0].sys.publishedVersion, 'has published version')
-    t.equals(fakeLogEmitter.emit.callCount, 4, 'logs publishing information')
-    teardown()
-    t.end()
-  })
-  .catch(() => {
-    teardown()
-    t.fail('should log errors instead of throwing them')
-    t.end()
-  })
+    .then((response) => {
+      t.equals(publishStub.callCount, 2, 'publish assets')
+      t.ok(response[0].sys.publishedVersion, 'has published version')
+      t.equals(fakeLogEmitter.emit.callCount, 4, 'logs publishing information')
+      teardown()
+      t.end()
+    })
+    .catch(() => {
+      teardown()
+      t.fail('should log errors instead of throwing them')
+      t.end()
+    })
 })
 
 test('Only publishes valid entities and does not fail when api error occur', (t) => {
@@ -49,19 +49,19 @@ test('Only publishes valid entities and does not fail when api error occur', (t)
     undefined,
     { sys: {id: '456', type: 'asset'}, publish: publishStub }
   ])
-  .then((result) => {
-    t.equals(publishStub.callCount, 2, 'tries to publish both assets, while skipping the faulty asset')
-    t.equals(fakeLogEmitter.emit.args[4][0], 'error', 'logs error at correct point of time')
-    t.equals(fakeLogEmitter.emit.args[4][1], errorValidation, 'logs correct error')
-    t.equals(fakeLogEmitter.emit.callCount, 6, 'should log start, end, unparseable notice, one success message and one error')
-    t.equals(result.length, 2, 'Result only contains resolved & valid entities')
-    teardown()
-    t.end()
-  })
-  .catch((err) => {
-    teardown()
-    console.error({err})
-    t.fail('should log errors instead of throwing them')
-    t.end()
-  })
+    .then((result) => {
+      t.equals(publishStub.callCount, 2, 'tries to publish both assets, while skipping the faulty asset')
+      t.equals(fakeLogEmitter.emit.args[4][0], 'error', 'logs error at correct point of time')
+      t.equals(fakeLogEmitter.emit.args[4][1], errorValidation, 'logs correct error')
+      t.equals(fakeLogEmitter.emit.callCount, 6, 'should log start, end, unparseable notice, one success message and one error')
+      t.equals(result.length, 2, 'Result only contains resolved & valid entities')
+      teardown()
+      t.end()
+    })
+    .catch((err) => {
+      teardown()
+      console.error({err})
+      t.fail('should log errors instead of throwing them')
+      t.end()
+    })
 })
