@@ -4,18 +4,17 @@ import Promise from 'bluebird'
 
 import {createEntities, createEntries, __RewireAPI__ as creationRewireAPI} from '../../lib/push/creation'
 
-const logMock = {
-  info: sinon.stub(),
-  error: sinon.stub()
+const fakeLogEmitter = {
+  emit: sinon.stub()
 }
 
 function setup () {
-  logMock.info.reset()
-  creationRewireAPI.__Rewire__('log', logMock)
+  creationRewireAPI.__Rewire__('logEmitter', fakeLogEmitter)
 }
 
 function teardown () {
-  creationRewireAPI.__ResetDependency__('log')
+  fakeLogEmitter.emit.reset()
+  creationRewireAPI.__ResetDependency__('logEmitter')
 }
 
 test('Create entities', (t) => {
@@ -30,13 +29,15 @@ test('Create entities', (t) => {
   ], [
     {sys: {id: '123', version: 6}, update: updateStub}
   ])
-  .then((response) => {
-    t.equals(space.createAssetWithId.callCount, 1, 'create assets')
-    t.equals(updateStub.callCount, 1, 'update assets')
-    t.equals(logMock.info.callCount, 2, 'logs creation of two assets')
-    teardown()
-    t.end()
-  })
+    .then((response) => {
+      t.equals(space.createAssetWithId.callCount, 1, 'creates one missing asset')
+      t.equals(updateStub.callCount, 1, 'updates one existing assets')
+      t.equals(fakeLogEmitter.emit.callCount, 2, 'logs creation of two assets')
+      const logLevels = fakeLogEmitter.emit.args.map((args) => args[0])
+      t.notOk(logLevels.includes('error'), 0, 'logs no errors')
+      teardown()
+      t.end()
+    })
 })
 
 test('Create entries', (t) => {
@@ -55,14 +56,16 @@ test('Create entries', (t) => {
     {sys: {id: '123', version: 6}, update: updateStub}
   ]
   createEntries({space: space, skipContentModel: false}, entries, destinationEntries)
-  .then((response) => {
-    t.equals(space.createEntryWithId.callCount, 1, 'create entries with the same id')
-    t.equals(space.createEntry.callCount, 1, 'create entries even when the id is not provided')
-    t.equals(updateStub.callCount, 1, 'update entries')
-    t.equals(logMock.info.callCount, 3, 'logs creation of two entries')
-    teardown()
-    t.end()
-  })
+    .then((response) => {
+      t.equals(space.createEntryWithId.callCount, 1, 'create entries with the same id')
+      t.equals(space.createEntry.callCount, 1, 'create entries even when the id is not provided')
+      t.equals(updateStub.callCount, 1, 'update entries')
+      t.equals(fakeLogEmitter.emit.callCount, 3, 'logs creation/update of three entries')
+      const logLevels = fakeLogEmitter.emit.args.map((args) => args[0])
+      t.notOk(logLevels.includes('error'), 0, 'logs no errors')
+      teardown()
+      t.end()
+    })
 })
 
 test('Create entries and remove unknown fields', (t) => {
@@ -93,14 +96,16 @@ test('Create entries and remove unknown fields', (t) => {
   ]
 
   createEntries({space: {}, skipContentModel: true}, entries, destinationEntries)
-  .then((response) => {
-    t.equals(updateStub.callCount, 2, 'update entries')
-    t.ok('existingfield' in entries[0].transformed.fields, 'keeps known field')
-    t.notOk('gonefield' in entries[0].transformed.fields, 'removes unknown field')
-    t.equals(logMock.info.callCount, 1, 'logs creation of one entry')
-    teardown()
-    t.end()
-  })
+    .then((response) => {
+      t.equals(updateStub.callCount, 2, 'update entries')
+      t.ok('existingfield' in entries[0].transformed.fields, 'keeps known field')
+      t.notOk('gonefield' in entries[0].transformed.fields, 'removes unknown field')
+      t.equals(fakeLogEmitter.emit.callCount, 1, 'logs creation of one entry')
+      const logLevels = fakeLogEmitter.emit.args.map((args) => args[0])
+      t.notOk(logLevels.includes('error'), 0, 'logs no errors')
+      teardown()
+      t.end()
+    })
 })
 
 test('Fails to create locale if it already exists', (t) => {
@@ -118,30 +123,11 @@ test('Fails to create locale if it already exists', (t) => {
   space.createLocale.returns(Promise.reject(errorValidationFailed))
   const entity = { original: { sys: {} }, transformed: { sys: {} } }
   createEntities({space: space, type: 'Locale'}, [entity], [{sys: {}}])
-  .then((entities) => {
-    t.equals(entities[0], entity)
-    t.end()
-    teardown()
-  })
-})
-
-test('Fails to create entities due to version mismatch', (t) => {
-  setup()
-  const space = {
-    createAsset: sinon.stub()
-  }
-  const errorVersionMismatch = new Error()
-  errorVersionMismatch.error = {
-    sys: {
-      id: 'VersionMismatch'
-    }
-  }
-  space.createAsset.returns(Promise.reject(errorVersionMismatch))
-  const entity = { original: { sys: {} }, transformed: { sys: {} } }
-  createEntities({space: space, type: 'Asset'}, [entity], [{sys: {}}])
-  .catch((err) => {
-    t.equals(err.error.sys.id, 'VersionMismatch')
-    teardown()
-    t.end()
-  })
+    .then((entities) => {
+      t.equals(entities[0], entity)
+      const logLevels = fakeLogEmitter.emit.args.map((args) => args[0])
+      t.notOk(logLevels.includes('error'), 0, 'logs no errors')
+      t.end()
+      teardown()
+    })
 })
