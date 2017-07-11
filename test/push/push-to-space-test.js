@@ -74,14 +74,14 @@ test('Push content to destination space', (t) => {
     spaceId: 'spaceid',
     prePublishDelay: 0
   })
-  .then(() => {
-    t.equals(creationMock.createEntities.callCount, 5, 'create entities')
-    t.equals(creationMock.createEntries.callCount, 2, 'create entries')
-    t.equals(publishingMock.publishEntities.callCount, 3, 'publish entities')
-    t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
-    teardown()
-    t.end()
-  })
+    .then(() => {
+      t.equals(creationMock.createEntities.callCount, 5, 'create entities')
+      t.equals(creationMock.createEntries.callCount, 2, 'create entries')
+      t.equals(publishingMock.publishEntities.callCount, 3, 'publish entities')
+      t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
+      teardown()
+      t.end()
+    })
 })
 
 test('Push only content types and locales to destination space', (t) => {
@@ -94,14 +94,14 @@ test('Push only content types and locales to destination space', (t) => {
     prePublishDelay: 0,
     contentModelOnly: true
   })
-  .then(() => {
-    t.equals(creationMock.createEntities.callCount, 2, 'create entities')
-    t.equals(creationMock.createEntries.callCount, 0, 'create entries')
-    t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
-    t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
-    teardown()
-    t.end()
-  })
+    .then(() => {
+      t.equals(creationMock.createEntities.callCount, 2, 'create entities')
+      t.equals(creationMock.createEntries.callCount, 0, 'create entries')
+      t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
+      t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
+      teardown()
+      t.end()
+    })
 })
 
 test('Push only content types', (t) => {
@@ -115,14 +115,14 @@ test('Push only content types', (t) => {
     contentModelOnly: true,
     skipLocales: true
   })
-  .then(() => {
-    t.equals(creationMock.createEntities.callCount, 1, 'create entities')
-    t.equals(creationMock.createEntries.callCount, 0, 'create entries')
-    t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
-    t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
-    teardown()
-    t.end()
-  })
+    .then(() => {
+      t.equals(creationMock.createEntities.callCount, 1, 'create entities')
+      t.equals(creationMock.createEntries.callCount, 0, 'create entries')
+      t.equals(publishingMock.publishEntities.callCount, 1, 'publish entities')
+      t.equals(assetsMock.processAssets.callCount, 0, 'process assets')
+      teardown()
+      t.end()
+    })
 })
 
 test('Push only entries and assets to destination space', (t) => {
@@ -135,14 +135,14 @@ test('Push only entries and assets to destination space', (t) => {
     prePublishDelay: 0,
     skipContentModel: true
   })
-  .then(() => {
-    t.equals(creationMock.createEntities.callCount, 3, 'create entities')
-    t.equals(creationMock.createEntries.callCount, 2, 'create entries')
-    t.equals(publishingMock.publishEntities.callCount, 2, 'publish entities')
-    t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
-    teardown()
-    t.end()
-  })
+    .then(() => {
+      t.equals(creationMock.createEntities.callCount, 3, 'create entities')
+      t.equals(creationMock.createEntries.callCount, 2, 'create entries')
+      t.equals(publishingMock.publishEntities.callCount, 2, 'publish entities')
+      t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
+      teardown()
+      t.end()
+    })
 })
 
 test('Push only entries and assets to destination space and skip publishing', (t) => {
@@ -156,12 +156,12 @@ test('Push only entries and assets to destination space and skip publishing', (t
     skipContentModel: true,
     skipContentPublishing: true
   })
-  .then(() => {
-    t.equals(creationMock.createEntities.callCount, 3, 'create entities')
-    t.equals(creationMock.createEntries.callCount, 2, 'create entries')
-    t.equals(publishingMock.publishEntities.callCount, 0, 'publish entities')
-    t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
-    teardown()
-    t.end()
-  })
+    .then(() => {
+      t.equals(creationMock.createEntities.callCount, 3, 'create entities')
+      t.equals(creationMock.createEntries.callCount, 2, 'create entries')
+      t.equals(publishingMock.publishEntities.callCount, 0, 'publish entities')
+      t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
+      teardown()
+      t.end()
+    })
 })

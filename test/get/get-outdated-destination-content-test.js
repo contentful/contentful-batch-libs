@@ -42,16 +42,16 @@ test('Gets destination content', (t) => {
     entryIds: sourceEntryIds,
     assetIds: sourceAssetIds
   })
-  .then((response) => {
-    t.equals(mockSpace.getEntries.callCount, 20, 'getEntries is split into multiple calls')
-    testQueryLength(t, 'getEntries')
-    t.equals(mockSpace.getAssets.callCount, 15, 'getAssets is split into multiple calls')
-    testQueryLength(t, 'getAssets')
-    t.equals(response.entries.length, 20, 'number of entries matched (one per call)')
-    t.equals(response.assets.length, 15, 'number of assets matched (one per call)')
-    teardown()
-    t.end()
-  })
+    .then((response) => {
+      t.equals(mockSpace.getEntries.callCount, 20, 'getEntries is split into multiple calls')
+      testQueryLength(t, 'getEntries')
+      t.equals(mockSpace.getAssets.callCount, 15, 'getAssets is split into multiple calls')
+      testQueryLength(t, 'getAssets')
+      t.equals(response.entries.length, 20, 'number of entries matched (one per call)')
+      t.equals(response.assets.length, 15, 'number of assets matched (one per call)')
+      teardown()
+      t.end()
+    })
 })
 
 function testQueryLength (t, method) {
