@@ -1,40 +1,31 @@
 import test from 'tape'
 import sinon from 'sinon'
-import Promise from 'bluebird'
 import {each} from 'lodash/collection'
 
 import pushToSpace from '../../lib/push/push-to-space'
 
 const creationMock = {
-  createEntities: sinon.stub(),
-  createEntries: sinon.stub()
+  createEntities: sinon.stub().resolves([]),
+  createEntries: sinon.stub().resolves([])
 }
 
 const publishingMock = {
-  publishEntities: sinon.stub().returns(Promise.resolve([])),
-  unpublishEntities: sinon.stub().returns(Promise.resolve())
-}
-
-const deletionMock = {
-  deleteEntities: sinon.stub().returns(Promise.resolve())
+  publishEntities: sinon.stub().resolves([]),
+  unpublishEntities: sinon.stub().resolves()
 }
 
 const assetsMock = {
-  processAssets: sinon.stub().returns(Promise.resolve([]))
+  processAssets: sinon.stub().resolves([])
 }
 const editorInterfaceMock = {
   controls: [],
-  update: sinon.stub().returns(Promise.resolve())
+  update: sinon.stub().resolves()
 }
 const spaceMock = {
-  getEditorInterfaceForContentType: sinon.stub().returns(Promise.resolve(editorInterfaceMock))
+  getEditorInterfaceForContentType: sinon.stub().resolves(editorInterfaceMock)
 }
 
 const sourceResponse = {
-  deletedEntries: [],
-  deletedAssets: [],
-  deletedLocales: [],
-  deletedContentTypes: [],
   locales: [],
   contentTypes: [],
   assets: [],
@@ -45,13 +36,12 @@ const sourceResponse = {
 const destinationResponse = {}
 
 const clientMock = {
-  getSpace: sinon.stub().returns(Promise.resolve({}))
+  getSpace: sinon.stub().resolves({})
 }
 
 function setup () {
   each(creationMock, (fn) => fn.resetHistory())
   each(publishingMock, (fn) => fn.resetHistory())
-  each(deletionMock, (fn) => fn.resetHistory())
   each(assetsMock, (fn) => fn.resetHistory())
   pushToSpace.__Rewire__('creation', creationMock)
   pushToSpace.__Rewire__('publishing', publishingMock)
@@ -74,6 +64,7 @@ test('Push content to destination space', (t) => {
     spaceId: 'spaceid',
     prePublishDelay: 0
   })
+    .run({ data: {} })
     .then(() => {
       t.equals(creationMock.createEntities.callCount, 5, 'create entities')
       t.equals(creationMock.createEntries.callCount, 2, 'create entries')
@@ -94,6 +85,7 @@ test('Push only content types and locales to destination space', (t) => {
     prePublishDelay: 0,
     contentModelOnly: true
   })
+    .run({ data: {} })
     .then(() => {
       t.equals(creationMock.createEntities.callCount, 2, 'create entities')
       t.equals(creationMock.createEntries.callCount, 0, 'create entries')
@@ -115,6 +107,7 @@ test('Push only content types', (t) => {
     contentModelOnly: true,
     skipLocales: true
   })
+    .run({ data: {} })
     .then(() => {
       t.equals(creationMock.createEntities.callCount, 1, 'create entities')
       t.equals(creationMock.createEntries.callCount, 0, 'create entries')
@@ -135,6 +128,7 @@ test('Push only entries and assets to destination space', (t) => {
     prePublishDelay: 0,
     skipContentModel: true
   })
+    .run({ data: {} })
     .then(() => {
       t.equals(creationMock.createEntities.callCount, 3, 'create entities')
       t.equals(creationMock.createEntries.callCount, 2, 'create entries')
@@ -156,6 +150,7 @@ test('Push only entries and assets to destination space and skip publishing', (t
     skipContentModel: true,
     skipContentPublishing: true
   })
+    .run({ data: {} })
     .then(() => {
       t.equals(creationMock.createEntities.callCount, 3, 'create entities')
       t.equals(creationMock.createEntries.callCount, 2, 'create entries')
