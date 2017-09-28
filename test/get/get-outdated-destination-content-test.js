@@ -5,8 +5,11 @@ import {times} from 'lodash/util'
 
 import getOutdatedDestinationContent from '../../lib/get/get-outdated-destination-content'
 
-const sourceEntryIds = times(2000, (n) => `e-${n}`)
-const sourceAssetIds = times(1500, (n) => `a-${n}`)
+const sourceResponse = {
+  contentTypes: times(150, (n) => ({sys: {id: `ct-${n}`}})),
+  entries: times(2000, (n) => ({sys: {id: `e-${n}`}})),
+  assets: times(1500, (n) => ({sys: {id: `a-${n}`}}))
+}
 
 const logMock = {
   info: sinon.stub(),
@@ -39,8 +42,7 @@ test('Gets destination content', (t) => {
   getOutdatedDestinationContent({
     managementClient: mockClient,
     spaceId: 'spaceid',
-    entryIds: sourceEntryIds,
-    assetIds: sourceAssetIds
+    sourceResponse
   })
   .then((response) => {
     t.equals(mockSpace.getEntries.callCount, 20, 'getEntries is split into multiple calls')
@@ -73,8 +75,7 @@ test('Fails to get destination space', (t) => {
   getOutdatedDestinationContent({
     managementClient: mockClient,
     spaceId: 'spaceid',
-    entryIds: sourceEntryIds,
-    assetIds: sourceAssetIds
+    sourceResponse
   })
   .catch((err) => {
     t.ok(err.name === 'NotFound')
