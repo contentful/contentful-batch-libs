@@ -77,9 +77,9 @@ test('Fails to get destination space', (t) => {
     spaceId: 'spaceid',
     sourceResponse
   })
-  .catch((err) => {
-    t.ok(err.name === 'NotFound')
-    teardown()
-    t.end()
-  })
+    .catch((err) => {
+      t.ok(err.name === 'NotFound')
+      teardown()
+      t.end()
+    })
 })
