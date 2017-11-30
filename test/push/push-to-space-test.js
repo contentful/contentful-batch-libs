@@ -11,6 +11,7 @@ const creationMock = {
 
 const publishingMock = {
   publishEntities: sinon.stub().resolves([]),
+  archiveEntities: sinon.stub().resolves([]),
   unpublishEntities: sinon.stub().resolves()
 }
 
@@ -69,6 +70,7 @@ test('Push content to destination space', (t) => {
       t.equals(creationMock.createEntities.callCount, 4, 'create entities')
       t.equals(creationMock.createEntries.callCount, 1, 'create entries')
       t.equals(publishingMock.publishEntities.callCount, 3, 'publish entities')
+      t.equals(publishingMock.archiveEntities.callCount, 2, 'publish entities')
       t.equals(assetsMock.processAssets.callCount, 1, 'process assets')
       teardown()
       t.end()
