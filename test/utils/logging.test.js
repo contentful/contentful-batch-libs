@@ -1,11 +1,9 @@
-import test from 'tape'
-
 import {
   formatLogMessageOneLine,
   formatLogMessageLogfile
 } from '../../lib/utils/logging'
 
-test('format one line api error', (t) => {
+test('format one line api error', () => {
   const apiError = {
     message: 'Some API error',
     requestId: 3,
@@ -25,23 +23,20 @@ test('format one line api error', (t) => {
   const json = JSON.stringify(apiError)
   const error = new Error(json)
   const output = formatLogMessageOneLine({error, level: 'error'})
-  t.equals(output, 'Error: Message: Some API error - Entity: 42 - Details: error detail - Request ID: 3')
-  t.end()
+  expect(output).toBe('Error: Message: Some API error - Entity: 42 - Details: error detail - Request ID: 3')
 })
 
-test('format one line standard error', (t) => {
+test('format one line standard error', () => {
   const output = formatLogMessageOneLine({error: Error('normal error message'), level: 'error'})
-  t.equals(output, 'Error: normal error message')
-  t.end()
+  expect(output).toBe('Error: normal error message')
 })
 
-test('format one line standard warning', (t) => {
+test('format one line standard warning', () => {
   const output = formatLogMessageOneLine({warning: 'warning text', level: 'warning'})
-  t.equals(output, 'warning text')
-  t.end()
+  expect(output).toBe('warning text')
 })
 
-test('format log file api error', (t) => {
+test('format log file api error', () => {
   const apiError = {
     message: 'Some API error',
     requestId: 3,
@@ -61,15 +56,13 @@ test('format log file api error', (t) => {
   const json = JSON.stringify(apiError)
   const error = new Error(json)
   const output = formatLogMessageLogfile({error, level: 'error'})
-  t.equals(output.error.data.requestId, apiError.requestId)
-  t.equals(output.error.data.message, apiError.message)
-  t.equals(output.error.data.details.errors[0].name, apiError.details.errors[0].name)
-  t.end()
+  expect(output.error.data.requestId).toBe(apiError.requestId)
+  expect(output.error.data.message).toBe(apiError.message)
+  expect(output.error.data.details.errors[0].name).toBe(apiError.details.errors[0].name)
 })
 
-test('format log file standard error', (t) => {
+test('format log file standard error', () => {
   const error = new Error('normal error message')
   const output = formatLogMessageLogfile({error, level: 'error'})
-  t.equals(output.error.message, error.message)
-  t.end()
+  expect(output.error.message).toBe(error.message)
 })
