@@ -1,5 +1,3 @@
-import test from 'tape'
-
 import sortEntries from '../../lib/utils/sort-entries'
 
 const entries = [
@@ -31,14 +29,13 @@ const entries = [
   }
 ]
 
-test('Sorts entries by link order', (t) => {
+test('Sorts entries by link order', () => {
   const sortedEntries = sortEntries(entries)
-  t.equals(sortedEntries[0].sys.id, 'abc')
-  t.equals(sortedEntries[1].sys.id, '456')
-  t.equals(sortedEntries[2].sys.id, '789')
-  t.equals(sortedEntries[3].sys.id, '123')
-  t.equals(sortedEntries.length, 4)
-  t.end()
+  expect(sortedEntries[0].sys.id).toBe('abc')
+  expect(sortedEntries[1].sys.id).toBe('456')
+  expect(sortedEntries[2].sys.id).toBe('789')
+  expect(sortedEntries[3].sys.id).toBe('123')
+  expect(sortedEntries).toHaveLength(4)
 })
 
 const complexEntries = [
@@ -191,14 +188,23 @@ const complexEntries = [
   }
 ]
 
-test('Sorts complex entries by link order', (t) => {
+test('Sorts complex entries by link order', () => {
   const sortedEntries = sortEntries(complexEntries)
-  t.ok(findEntityIndex(sortedEntries, '5JQ715oDQW68k8EiEuKOk8') > findEntityIndex(sortedEntries, 'A96usFSlY4G0W4kwAqswk'), '5JQ715oDQW68k8EiEuKOk8 must be after A96usFSlY4G0W4kwAqswk')
-  t.ok(findEntityIndex(sortedEntries, '6EczfGnuHCIYGGwEwIqiq2') > findEntityIndex(sortedEntries, '1asN98Ph3mUiCYIYiiqwko'), '6EczfGnuHCIYGGwEwIqiq2 must be after 1asN98Ph3mUiCYIYiiqwko')
-  t.ok(findEntityIndex(sortedEntries, '1asN98Ph3mUiCYIYiiqwko') > findEntityIndex(sortedEntries, '6XL7nwqRZ6yEw0cUe4y0y6'), '1asN98Ph3mUiCYIYiiqwko must be after 6XL7nwqRZ6yEw0cUe4y0y6')
-  t.ok(findEntityIndex(sortedEntries, '1asN98Ph3mUiCYIYiiqwko') > findEntityIndex(sortedEntries, 'FJlJfypzaewiwyukGi2kI'), '1asN98Ph3mUiCYIYiiqwko must be after FJlJfypzaewiwyukGi2kI')
-  t.ok(findEntityIndex(sortedEntries, 'A96usFSlY4G0W4kwAqswk') > findEntityIndex(sortedEntries, '6XL7nwqRZ6yEw0cUe4y0y6'), 'A96usFSlY4G0W4kwAqswk must be after 6XL7nwqRZ6yEw0cUe4y0y6')
-  t.end()
+  expect(
+    findEntityIndex(sortedEntries, '5JQ715oDQW68k8EiEuKOk8') > findEntityIndex(sortedEntries, 'A96usFSlY4G0W4kwAqswk')
+  ).toBeTruthy()
+  expect(
+    findEntityIndex(sortedEntries, '6EczfGnuHCIYGGwEwIqiq2') > findEntityIndex(sortedEntries, '1asN98Ph3mUiCYIYiiqwko')
+  ).toBeTruthy()
+  expect(
+    findEntityIndex(sortedEntries, '1asN98Ph3mUiCYIYiiqwko') > findEntityIndex(sortedEntries, '6XL7nwqRZ6yEw0cUe4y0y6')
+  ).toBeTruthy()
+  expect(
+    findEntityIndex(sortedEntries, '1asN98Ph3mUiCYIYiiqwko') > findEntityIndex(sortedEntries, 'FJlJfypzaewiwyukGi2kI')
+  ).toBeTruthy()
+  expect(
+    findEntityIndex(sortedEntries, 'A96usFSlY4G0W4kwAqswk') > findEntityIndex(sortedEntries, '6XL7nwqRZ6yEw0cUe4y0y6')
+  ).toBeTruthy()
 })
 
 function findEntityIndex (entities, id) {
