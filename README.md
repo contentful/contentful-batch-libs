@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/contentful-batch-libs.svg)](https://www.npmjs.com/package/contentful-batch-libs)
 [![Build Status](https://travis-ci.org/contentful/contentful-batch-libs.svg?branch=master)](https://travis-ci.org/contentful/contentful-batch-libs)
-[![Coverage Status](https://coveralls.io/repos/github/contentful/contentful-batch-libs/badge.svg?branch=master)](https://coveralls.io/github/contentful/contentful-batch-libs?branch=master)
+[![codecov](https://codecov.io/gh/contentful/contentful-batch-libs/branch/master/graph/badge.svg)](https://codecov.io/gh/contentful/contentful-batch-libs)
 [![Dependency Status](https://david-dm.org/contentful/contentful-batch-libs.svg)](https://david-dm.org/contentful/contentful-batch-libs)
 [![devDependency Status](https://david-dm.org/contentful/contentful-batch-libs/dev-status.svg)](https://david-dm.org/contentful/contentful-batch-libs#info=devDependencies)
 
