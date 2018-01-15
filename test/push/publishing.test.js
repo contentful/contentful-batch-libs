@@ -1,4 +1,7 @@
-import { publishEntities } from '../../lib/push/publishing'
+import {
+  publishEntities,
+  archiveEntities
+} from '../../lib/push/publishing'
 
 import { logEmitter } from '../../lib/utils/logging'
 
@@ -121,5 +124,60 @@ test('Skips publishing when no entities are given', () => {
       expect(logEmitter.emit.mock.calls[lastLogIndex][0]).toBe('info')
       expect(logEmitter.emit.mock.calls[lastLogIndex][1]).toBe('Skipping publishing since zero valid entities passed')
       expect(logEmitter.emit.mock.calls).toHaveLength(1)
+    })
+})
+
+test('Archiving detects entities that can not be archived', () => {
+  return archiveEntities([null, {}])
+    .then((result) => {
+      expect(result).toHaveLength(0)
+      const warningCount = logEmitter.emit.mock.calls.filter((args) => args[0] === 'warning').length
+      const errorCount = logEmitter.emit.mock.calls.filter((args) => args[0] === 'error').length
+      expect(warningCount).toBe(2)
+      expect(errorCount).toBe(0)
+      const lastLogIndex = logEmitter.emit.mock.calls.length - 1
+      expect(logEmitter.emit.mock.calls[lastLogIndex][0]).toBe('info')
+      expect(logEmitter.emit.mock.calls[lastLogIndex][1]).toBe('Skipping archiving since zero valid entities passed')
+      expect(logEmitter.emit.mock.calls).toHaveLength(3)
+    })
+})
+
+test('Skips archiving when no entities are given', () => {
+  const archiveMock = jest.fn()
+  const errorArchiving = new Error('failed to archive')
+  archiveMock.mockImplementationOnce(() => Promise.resolve({archived: true}))
+  archiveMock.mockImplementationOnce(() => Promise.reject(errorArchiving))
+  return archiveEntities([
+    {
+      sys: {
+        type: 'Entry'
+      },
+      archive: archiveMock
+    },
+    {
+      sys: {
+        type: 'Entry'
+      },
+      archive: archiveMock
+    }
+  ])
+    .then((result) => {
+      expect(result).toHaveLength(2)
+      expect(result[0]).toMatchObject({archived: true}, 'First entry gets archived')
+      expect(result[1]).toBe(null, 'Second entry fails and will be returned as null')
+      const warningCount = logEmitter.emit.mock.calls.filter((args) => args[0] === 'warning').length
+      const errorCount = logEmitter.emit.mock.calls.filter((args) => args[0] === 'error').length
+      expect(warningCount).toBe(0)
+      expect(errorCount).toBe(1)
+      // Init info
+      expect(logEmitter.emit.mock.calls[0][0]).toBe('info')
+      expect(logEmitter.emit.mock.calls[0][1]).toBe('Archiving 2 Entrys')
+      // Error log
+      expect(logEmitter.emit.mock.calls[1][0]).toBe('error')
+      expect(logEmitter.emit.mock.calls[1][1]).toBe(errorArchiving)
+      // Success info
+      expect(logEmitter.emit.mock.calls[2][0]).toBe('info')
+      expect(logEmitter.emit.mock.calls[2][1]).toBe('Successfully archived 2 Entrys')
+      expect(logEmitter.emit.mock.calls).toHaveLength(3)
     })
 })
