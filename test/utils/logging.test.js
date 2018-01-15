@@ -30,12 +30,12 @@ const logEmitterEmitSpy = jest.spyOn(logEmitter, 'emit')
 
 const exampleErrorLog = [
   {
-    ts: new Date('2018-01-01T01:01:01+0100'),
+    ts: new Date('2018-01-01T01:01:01'),
     level: 'warning',
     warning: 'warning text'
   },
   {
-    ts: new Date('2018-02-02T02:02:02+0100'),
+    ts: new Date('2018-02-02T02:02:02'),
     level: 'error',
     error: new Error('error message')
   }
