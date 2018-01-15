@@ -7,11 +7,36 @@ import publishing from '../../lib/push/publishing'
 import assets from '../../lib/push/assets'
 
 jest.mock('../../lib/push/creation', () => ({
-  createEntities: jest.fn(() => Promise.resolve([])),
+  createEntities: jest.fn((context) => {
+    // Actually return one content type to get editor interfaces imported
+    if (context.type === 'ContentType') {
+      return Promise.resolve([
+        {
+          sys: {
+            id: 'someId',
+            type: 'ContentType',
+            publishedVersion: 1
+          }
+        }
+      ])
+    }
+    return Promise.resolve([])
+  }),
   createEntries: jest.fn(() => Promise.resolve([]))
 }))
 jest.mock('../../lib/push/publishing', () => ({
-  publishEntities: jest.fn(() => Promise.resolve([])),
+  publishEntities: jest.fn((entitiesToPublish) => {
+    // Actually return one content type to get editor interfaces imported
+    if (entitiesToPublish[0] && entitiesToPublish[0].sys.type === 'ContentType') {
+      return Promise.resolve([{
+        sys: {
+          id: 'someId',
+          type: 'ContentType'
+        }
+      }])
+    }
+    return Promise.resolve([])
+  }),
   archiveEntities: jest.fn(() => Promise.resolve([])),
   unpublishEntities: jest.fn(() => Promise.resolve())
 }))
@@ -21,22 +46,60 @@ jest.mock('../../lib/push/assets', () => ({
 
 const sourceResponse = {
   locales: [],
-  contentTypes: [],
+  contentTypes: [
+    {
+      original: {
+        sys: {
+          id: 'someId',
+          type: 'ContentType',
+          publishedVersion: 1
+        }
+      }
+    }
+  ],
   assets: [],
-  editorInterfaces: [],
+  editorInterfaces: [
+    {
+      sys: {
+        type: 'EditorInterface',
+        contentType: {
+          sys: {
+            id: 'someId'
+          }
+        }
+      }
+    }
+  ],
   entries: []
 }
 
 const destinationResponse = {}
 
+const editorInterfaceUpdateMock = jest.fn()
+
 const clientMock = {
-  getSpace: jest.fn(() => Promise.resolve({}))
+  getSpace: jest.fn(() => Promise.resolve({
+    getEditorInterfaceForContentType: () => {
+      return Promise.resolve({
+        sys: {
+          type: 'EditorInterface',
+          contentType: {
+            sys: {
+              id: 'someId'
+            }
+          }
+        },
+        update: editorInterfaceUpdateMock
+      })
+    }
+  }))
 }
 
 afterEach(() => {
   each(creation, (fn) => fn.mockClear())
   each(publishing, (fn) => fn.mockClear())
   each(assets, (fn) => fn.mockClear())
+  editorInterfaceUpdateMock.mockClear()
 })
 
 test('Push content to destination space', () => {
@@ -53,6 +116,7 @@ test('Push content to destination space', () => {
       expect(creation.createEntries.mock.calls).toHaveLength(1)
       expect(publishing.publishEntities.mock.calls).toHaveLength(3)
       expect(publishing.archiveEntities.mock.calls).toHaveLength(2)
+      expect(editorInterfaceUpdateMock.mock.calls).toHaveLength(1)
       expect(assets.processAssets.mock.calls).toHaveLength(1)
     })
 })
@@ -71,6 +135,7 @@ test('Push only content types and locales to destination space', () => {
       expect(creation.createEntities.mock.calls).toHaveLength(2)
       expect(creation.createEntries.mock.calls).toHaveLength(0)
       expect(publishing.publishEntities.mock.calls).toHaveLength(1)
+      expect(editorInterfaceUpdateMock.mock.calls).toHaveLength(1)
       expect(assets.processAssets.mock.calls).toHaveLength(0)
     })
 })
@@ -90,6 +155,7 @@ test('Push only content types', () => {
       expect(creation.createEntities.mock.calls).toHaveLength(1)
       expect(creation.createEntries.mock.calls).toHaveLength(0)
       expect(publishing.publishEntities.mock.calls).toHaveLength(1)
+      expect(editorInterfaceUpdateMock.mock.calls).toHaveLength(1)
       expect(assets.processAssets.mock.calls).toHaveLength(0)
     })
 })
@@ -109,6 +175,7 @@ test('Push only entries and assets to destination space', () => {
       expect(creation.createEntries.mock.calls).toHaveLength(1)
       expect(publishing.publishEntities.mock.calls).toHaveLength(2)
       expect(assets.processAssets.mock.calls).toHaveLength(1)
+      expect(editorInterfaceUpdateMock.mock.calls).toHaveLength(0)
     })
 })
 
@@ -128,5 +195,6 @@ test('Push only entries and assets to destination space and skip publishing', ()
       expect(creation.createEntries.mock.calls).toHaveLength(1)
       expect(publishing.publishEntities.mock.calls).toHaveLength(0)
       expect(assets.processAssets.mock.calls).toHaveLength(1)
+      expect(editorInterfaceUpdateMock.mock.calls).toHaveLength(0)
     })
 })
