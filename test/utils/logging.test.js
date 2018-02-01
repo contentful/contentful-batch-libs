@@ -152,12 +152,10 @@ test('does not displays error log when empty', () => {
 })
 
 test('writes error log file to disk', () => {
-  expect.assertions(8)
+  expect.assertions(7)
   const destination = '/just/some/path/to/a/file.log'
 
   const promise = writeErrorLogFile(destination, exampleErrorLog)
-
-  expect(promise).rejects.toThrow(new Error('Errors occured'))
 
   return promise.catch(() => {
     expect(consoleLogSpy.mock.calls).toHaveLength(2)
