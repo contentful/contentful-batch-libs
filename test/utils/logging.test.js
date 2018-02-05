@@ -156,7 +156,7 @@ test('writes error log file to disk', () => {
   const destination = '/just/some/path/to/a/file.log'
 
   return writeErrorLogFile(destination, exampleErrorLog)
-    .catch(() => {
+    .then(() => {
       expect(consoleLogSpy.mock.calls).toHaveLength(2)
       expect(consoleLogSpy.mock.calls[0][0]).toBe('\nStored the detailed error log file at:')
       expect(consoleLogSpy.mock.calls[1][0]).toBe(destination)
