@@ -140,8 +140,8 @@ test('displays error log well formatted', () => {
 
   expect(consoleLogSpy.mock.calls).toHaveLength(3)
   expect(consoleLogSpy.mock.calls[0][0]).toContain('The following 1 errors and 1 warnings occurred:')
-  expect(consoleLogSpy.mock.calls[1][0]).toBe('01:01:00 - warning text')
-  expect(consoleLogSpy.mock.calls[2][0]).toBe('02:02:00 - Error: error message')
+  expect(consoleLogSpy.mock.calls[1][0]).toMatch(/\d{2}:\d{2}:\d{2} - warning text/)
+  expect(consoleLogSpy.mock.calls[2][0]).toMatch(/\d{2}:\d{2}:\d{2} - Error: error message/)
 })
 
 test('does not displays error log when empty', () => {
