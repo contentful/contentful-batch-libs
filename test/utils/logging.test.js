@@ -30,12 +30,12 @@ const logEmitterEmitSpy = jest.spyOn(logEmitter, 'emit')
 
 const exampleErrorLog = [
   {
-    ts: new Date('2018-01-01T01:01:01'),
+    ts: new Date('2018-01-01T01:01:01+01:00'),
     level: 'warning',
     warning: 'warning text'
   },
   {
-    ts: new Date('2018-02-02T02:02:02'),
+    ts: new Date('2018-02-02T02:02:02+01:00'),
     level: 'error',
     error: new Error('error message')
   }
@@ -155,21 +155,20 @@ test('writes error log file to disk', () => {
   expect.assertions(7)
   const destination = '/just/some/path/to/a/file.log'
 
-  const promise = writeErrorLogFile(destination, exampleErrorLog)
+  return writeErrorLogFile(destination, exampleErrorLog)
+    .catch(() => {
+      expect(consoleLogSpy.mock.calls).toHaveLength(2)
+      expect(consoleLogSpy.mock.calls[0][0]).toBe('\nStored the detailed error log file at:')
+      expect(consoleLogSpy.mock.calls[1][0]).toBe(destination)
 
-  return promise.catch(() => {
-    expect(consoleLogSpy.mock.calls).toHaveLength(2)
-    expect(consoleLogSpy.mock.calls[0][0]).toBe('\nStored the detailed error log file at:')
-    expect(consoleLogSpy.mock.calls[1][0]).toBe(destination)
-
-    expect(bfj.write.mock.calls).toHaveLength(1)
-    expect(bfj.write.mock.calls[0][0]).toBe(destination)
-    expect(bfj.write.mock.calls[0][1]).toMatchObject(exampleErrorLog)
-    expect(bfj.write.mock.calls[0][2]).toMatchObject({
-      circular: 'ignore',
-      space: 2
+      expect(bfj.write.mock.calls).toHaveLength(1)
+      expect(bfj.write.mock.calls[0][0]).toBe(destination)
+      expect(bfj.write.mock.calls[0][1]).toMatchObject(exampleErrorLog)
+      expect(bfj.write.mock.calls[0][2]).toMatchObject({
+        circular: 'ignore',
+        space: 2
+      })
     })
-  })
 })
 
 test('sets up logging via event emitter', () => {
