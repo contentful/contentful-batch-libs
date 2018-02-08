@@ -163,8 +163,8 @@ test('Skips archiving when no entities are given', () => {
   ])
     .then((result) => {
       expect(result).toHaveLength(2)
-      expect(result[0]).toMatchObject({archived: true}, 'First entry gets archived')
-      expect(result[1]).toBe(null, 'Second entry fails and will be returned as null')
+      expect(result[0]).toMatchObject({archived: true})
+      expect(result[1]).toBeNull()
       const warningCount = logEmitter.emit.mock.calls.filter((args) => args[0] === 'warning').length
       const errorCount = logEmitter.emit.mock.calls.filter((args) => args[0] === 'error').length
       expect(warningCount).toBe(0)
