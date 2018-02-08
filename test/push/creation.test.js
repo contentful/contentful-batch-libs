@@ -59,7 +59,7 @@ test('Create entities handle regular errors', () => {
       expect(logEmitter.emit.mock.calls[0][0]).toBe('error')
       expect(logEmitter.emit.mock.calls[0][1]).toBe(creationError)
       expect(result).toHaveLength(1)
-      expect(result[0]).toBe(null)
+      expect(result[0]).toBeNull()
     })
 })
 
@@ -149,7 +149,7 @@ test('Create entries and handle regular errors', () => {
       expect(logEmitter.emit.mock.calls[0][0]).toBe('error')
       expect(logEmitter.emit.mock.calls[0][1]).toBe(creationError)
       expect(result).toHaveLength(1)
-      expect(result[0]).toBe(null)
+      expect(result[0]).toBeNull()
     })
 })
 
