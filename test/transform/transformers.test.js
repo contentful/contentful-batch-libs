@@ -16,6 +16,21 @@ test('It should transform processed asset', () => {
   expect(transformedAsset.fields.file['de-DE'].upload).toBe('https:' + assetMock.fields.file['de-DE'].url)
 })
 
+test('It should transform processed asset with and without protocol', () => {
+  const assetMock = cloneMock('asset')
+  assetMock.fields = {
+    file: {
+      'en-US': {fileName: 'filename.jpg', url: 'https://server/filename.jpg'},
+      'de-DE': {fileName: 'filename.jpg', url: '//server/filename-de.jpg'}
+    }
+  }
+  const transformedAsset = transformers.assets(assetMock)
+  expect(transformedAsset.fields.file['en-US'].upload).toBeTruthy()
+  expect(transformedAsset.fields.file['de-DE'].upload).toBeTruthy()
+  expect(transformedAsset.fields.file['en-US'].upload).toBe('https:' + assetMock.fields.file['en-US'].url)
+  expect(transformedAsset.fields.file['de-DE'].upload).toBe('https:' + assetMock.fields.file['de-DE'].url)
+})
+
 test('It should transform unprocessed asset', () => {
   const assetMock = cloneMock('asset')
   assetMock.fields = {
