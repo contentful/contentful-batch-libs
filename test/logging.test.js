@@ -6,7 +6,7 @@ import {
   setupLogging,
   logEmitter,
   logToTaskOutput
-} from '../../lib/utils/logging'
+} from '../lib/logging'
 
 import figures from 'figures'
 
@@ -15,10 +15,6 @@ import bfj from 'bfj-node4'
 function isValidDate (date) {
   return !isNaN(Date.parse(date))
 }
-
-jest.mock('bfj-node4', () => ({
-  write: jest.fn(() => Promise.resolve())
-}))
 
 jest.mock('bfj-node4', () => ({
   write: jest.fn(() => Promise.resolve())

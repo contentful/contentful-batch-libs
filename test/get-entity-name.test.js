@@ -1,4 +1,4 @@
-import getEntityName from '../../lib/utils/get-entity-name'
+import getEntityName from '../lib/get-entity-name'
 
 test('get name by name property', () => {
   const name = getEntityName({

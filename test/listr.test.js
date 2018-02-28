@@ -1,14 +1,14 @@
 import {
   wrapTask
-} from '../../lib/utils/listr'
+} from '../lib/listr'
 
 import {
   logToTaskOutput,
   teardownHelperMock,
   formatLogMessageOneLine
-} from '../../lib/utils/logging'
+} from '../lib/logging'
 
-jest.mock('../../lib/utils/logging', () => {
+jest.mock('../lib/logging', () => {
   const teardownHelperMock = jest.fn()
   return {
     formatLogMessageOneLine: jest.fn((logMessage) => `formatted: ${logMessage.error.message}`),
