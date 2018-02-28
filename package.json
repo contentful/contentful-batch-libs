@@ -8,21 +8,15 @@
   },
   "scripts": {
     "build": "npm run clean && babel lib --out-dir dist",
-    "clean": "npm run clean:build && rimraf coverage",
-    "clean:build": "rimraf dist",
-    "prepublishOnly": "npm run build",
-    "postpublish": "npm run clean",
+    "clean": "rimraf dist && rimraf coverage",
     "lint": "eslint lib test/* test",
     "pretest": "npm run lint",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
     "test:watch": "npm run test -- --watch",
-    "browser-coverage": "npm run test:cover && opener coverage/lcov-report/index.html",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "devdep:build": "pushd ../contentful-management.js && npm run build && popd",
-    "devdep:clean": "pushd ../contentful-management.js && npm run clean && popd",
-    "devdep:install": "npm run devdep:build && rm -rf node_modules/contentful-management.js && npm install ../contentful-management.js && npm run devdep:clean",
-    "devdep:uninstall": "npm run devdep:clean && rimraf node_modules/contentful-management.js",
+    "prepublishOnly": "npm run build",
+    "postpublish": "npm run clean",
     "precommit": "npm run lint",
     "prepush": "npm run test"
   },
@@ -50,15 +44,11 @@
     "eslint-plugin-standard": "^3.0.1",
     "husky": "0.14.3",
     "jest": "^22.4.2",
-    "mkdirp": "^0.5.1",
-    "opener": "^1.4.1",
     "rimraf": "^2.4.3",
     "semantic-release": "^12.4.1"
   },
   "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
+    "dist"
   ],
   "repository": {
     "type": "git",
