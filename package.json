@@ -4,7 +4,7 @@
   "description": "Library modules used by contentful batch utility CLI tools.",
   "main": "dist/index.js",
   "engines": {
-    "node": ">=4.7"
+    "node": ">=6"
   },
   "scripts": {
     "build": "npm run clean && babel lib --out-dir dist",
@@ -28,7 +28,7 @@
     "prepush": "npm run test"
   },
   "dependencies": {
-    "bfj-node4": "4.1.0",
+    "bfj": "^5.2.1",
     "figures": "^2.0.0",
     "lodash": "^4.0.1",
     "moment": "^2.18.1"
