@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "npm run clean && babel lib --out-dir dist",
+    "build:watch": "babel lib --out-dir dist --watch",
     "clean": "rimraf dist && rimraf coverage",
     "lint": "eslint lib test/* test",
     "pretest": "npm run lint",
