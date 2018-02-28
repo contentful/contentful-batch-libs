@@ -17,7 +17,6 @@
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
     "test:watch": "npm run test -- --watch",
-    "test:simulate-ci": "trevor",
     "browser-coverage": "npm run test:cover && opener coverage/lcov-report/index.html",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "devdep:build": "pushd ../contentful-management.js && npm run build && popd",
@@ -55,8 +54,7 @@
     "mkdirp": "^0.5.1",
     "opener": "^1.4.1",
     "rimraf": "^2.4.3",
-    "semantic-release": "^12.4.1",
-    "trevor": "^2.3.0"
+    "semantic-release": "^12.4.1"
   },
   "files": [
     "dist",
