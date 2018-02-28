@@ -10,13 +10,13 @@ import {
 
 import figures from 'figures'
 
-import bfj from 'bfj-node4'
+import bfj from 'bfj'
 
 function isValidDate (date) {
   return !isNaN(Date.parse(date))
 }
 
-jest.mock('bfj-node4', () => ({
+jest.mock('bfj', () => ({
   write: jest.fn(() => Promise.resolve())
 }))
 
