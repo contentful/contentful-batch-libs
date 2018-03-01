@@ -64,7 +64,7 @@
     "contentful",
     "batch"
   ],
-  "author": "Tiago Rodrigues <tiago@contentful.com>",
+  "author": "Contentful <opensource@contentful.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/contentful/contentful-batch-libs/issues"
