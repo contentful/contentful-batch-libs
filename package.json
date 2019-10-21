@@ -24,7 +24,7 @@
   "dependencies": {
     "bfj": "^5.2.1",
     "figures": "^2.0.0",
-    "https-proxy-agent": "^2.1.1",
+    "https-proxy-agent": "^3.0.0",
     "lodash": "^4.0.1",
     "moment": "^2.18.1"
   },
