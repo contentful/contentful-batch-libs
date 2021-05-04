@@ -5,5 +5,4 @@ node_js:
 after_success:
   - curl -Lo travis_after_all.py https://raw.githubusercontent.com/contentful/travis_after_all/master/travis_after_all.py
   - python travis_after_all.py
-  - codecov
   - npm run semantic-release
