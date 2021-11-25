@@ -64,22 +64,22 @@ test('format one line api error', () => {
   }
   const json = JSON.stringify(apiError)
   const error = new Error(json)
-  const output = formatLogMessageOneLine({error, level: 'error'})
+  const output = formatLogMessageOneLine({ error, level: 'error' })
   expect(output).toBe('Error: Status: status - status text - Message: Some API error - Entity: 42 - Details: error detail - Request ID: 3')
 })
 
 test('format one line message with level error', () => {
-  const output = formatLogMessageOneLine({error: Error('normal error message'), level: 'error'})
+  const output = formatLogMessageOneLine({ error: Error('normal error message'), level: 'error' })
   expect(output).toBe('Error: normal error message')
 })
 
 test('format one line message with level warning', () => {
-  const output = formatLogMessageOneLine({warning: 'warning text', level: 'warning'})
+  const output = formatLogMessageOneLine({ warning: 'warning text', level: 'warning' })
   expect(output).toBe('warning text')
 })
 
 test('format one line message with level info', () => {
-  const output = formatLogMessageOneLine({info: 'info text', level: 'info'})
+  const output = formatLogMessageOneLine({ info: 'info text', level: 'info' })
   expect(output).toBe('info text')
 })
 
@@ -107,7 +107,7 @@ test('format log file api error', () => {
   }
   const json = JSON.stringify(apiError)
   const error = new Error(json)
-  const output = formatLogMessageLogfile({error, level: 'error'})
+  const output = formatLogMessageLogfile({ error, level: 'error' })
   expect(output.error.data.requestId).toBe(apiError.requestId)
   expect(output.error.data.message).toBe(apiError.message)
   expect(output.error.data.details.errors[0].name).toBe(apiError.details.errors[0].name)
@@ -115,18 +115,18 @@ test('format log file api error', () => {
 
 test('format log file standard error', () => {
   const error = new Error('normal error message')
-  const output = formatLogMessageLogfile({error, level: 'error'})
+  const output = formatLogMessageLogfile({ error, level: 'error' })
   expect(output.error.message).toBe(error.message)
 })
 
 test('format log file log message with level warning', () => {
-  const logMessage = {warning: 'warning text', level: 'warning'}
+  const logMessage = { warning: 'warning text', level: 'warning' }
   const output = formatLogMessageLogfile(logMessage)
   expect(output).toMatchObject(logMessage)
 })
 
 test('format log file log message with level info', () => {
-  const logMessage = {warning: 'info text', level: 'info'}
+  const logMessage = { warning: 'info text', level: 'info' }
   const output = formatLogMessageLogfile(logMessage)
   expect(output).toMatchObject(logMessage)
 })
