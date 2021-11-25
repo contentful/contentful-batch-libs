@@ -1,0 +1,29 @@
+version: 2.1
+jobs:
+  test:
+    docker:
+      - image: cimg/node:16.11
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install
+      - run: npm run build
+      - run: npm run test
+  release:
+    docker:
+      - image: cimg/node:16.11
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: npm run semantic-release
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - release:
+          context: dev-workflows-release
+          requires:
+            - test
