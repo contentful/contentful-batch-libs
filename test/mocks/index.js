@@ -20,7 +20,7 @@ const spaceMock = {
     type: 'Space'
   }),
   name: 'name',
-  locales: [ 'en-US' ]
+  locales: ['en-US']
 }
 
 const contentTypeMock = {
@@ -44,7 +44,7 @@ const contentTypeMock = {
 const entryMock = {
   sys: assign(cloneDeep(sysMock), {
     type: 'Entry',
-    contentType: assign(cloneDeep(linkMock), {linkType: 'ContentType'}),
+    contentType: assign(cloneDeep(linkMock), { linkType: 'ContentType' }),
     locale: 'locale'
   }),
   fields: {
@@ -54,13 +54,13 @@ const entryMock = {
 const editorInterfaceMock = {
   sys: assign(cloneDeep(sysMock), {
     type: 'EditorInterface',
-    contentType: {sys: assign(cloneDeep(linkMock), {linkType: 'ContentType'})},
-    space: assign(cloneDeep(linkMock), {linkType: 'Space'})
+    contentType: { sys: assign(cloneDeep(linkMock), { linkType: 'ContentType' }) },
+    space: assign(cloneDeep(linkMock), { linkType: 'Space' })
   }),
   controls: [
     {
-      'fieldId': 'fieldId',
-      'widgetId': 'singleLine'
+      fieldId: 'fieldId',
+      widgetId: 'singleLine'
     }
   ]
 }
