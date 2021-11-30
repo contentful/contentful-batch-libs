@@ -8,18 +8,6 @@ import {
   formatLogMessageOneLine
 } from '../lib/logging'
 
-// class NoErrorThrownError extends Error { }
-
-// const getError = async (call) => {
-//   try {
-//     await call()
-
-//     throw new NoErrorThrownError()
-//   } catch (error) {
-//     return error
-//   }
-// }
-
 jest.mock('../lib/logging', () => {
   const teardownHelperMock = jest.fn()
   return {
@@ -81,22 +69,4 @@ test('wraps task and properly formats and throws error', async () => {
   expect(formatLogMessageOneLine.mock.calls[0][0].ts).not.toHaveLength(0, 'log message contains a timestamp')
   expect(formatLogMessageOneLine.mock.calls[0][0].level).toBe('error', 'log message has level of error')
   expect(formatLogMessageOneLine.mock.calls[0][0].error.message).toBe('Task failed', 'log message error has original error message')
-
-  // const wrappedTask = wrapTask((taskCtx) => {
-  //   return Promise.reject(new Error('Task failed'))
-  // })
-
-  // const err = await getError(async () => { wrappedTask(ctx) })
-
-  // expect(Object.keys(ctx)).toHaveLength(0, 'context got not modified by the task since it failed')
-  // expect(err.message).toBe('formatted: Task failed', 'error message contains formatted error message')
-  // expect(err.originalError.message).toBe('Task failed', 'original error message is still present')
-
-  // expect(logToTaskOutput.mock.calls).toHaveLength(1, 'task listener was initialized')
-  // expect(teardownHelperMock.mock.calls).toHaveLength(1, 'task listener was teared down again')
-  // expect(formatLogMessageOneLine.mock.calls).toHaveLength(1, 'error message was formatted')
-
-  // expect(formatLogMessageOneLine.mock.calls[0][0].ts).not.toHaveLength(0, 'log message contains a timestamp')
-  // expect(formatLogMessageOneLine.mock.calls[0][0].level).toBe('error', 'log message has level of error')
-  // expect(formatLogMessageOneLine.mock.calls[0][0].error.message).toBe('Task failed', 'log message error has original error message')
 })
