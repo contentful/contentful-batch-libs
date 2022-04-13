@@ -127,7 +127,8 @@ test('agentFromProxy creates https agent and removes proxy env variables', () =>
   process.env.https_proxy = true
   const agentParams = {
     host: 'foo.bar',
-    port: 1234
+    port: 1234,
+    protocol: 'http'
   }
   const agent = agentFromProxy(agentParams)
   expect(process.env).not.toHaveProperty('HTTP_PROXY')
