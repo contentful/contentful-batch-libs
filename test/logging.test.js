@@ -180,7 +180,7 @@ test('sets up logging via event emitter', () => {
 
   function assertLogValues (logMessage) {
     if (logMessage.level === 'info') {
-      // Info messages are not logged
+      //  Info messages are not logged
       return
     }
     const lastLogItem = log[log.length - 1]
