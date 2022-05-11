@@ -1,12 +1,5 @@
-import {
-  wrapTask
-} from '../lib/listr'
-
-import {
-  logToTaskOutput,
-  teardownHelperMock,
-  formatLogMessageOneLine
-} from '../lib/logging'
+import { wrapTask } from '../lib'
+import { logToTaskOutput, teardownHelperMock, formatLogMessageOneLine } from '../lib/logging'
 
 jest.mock('../lib/logging', () => {
   const teardownHelperMock = jest.fn()

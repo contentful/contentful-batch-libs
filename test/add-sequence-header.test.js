@@ -1,4 +1,4 @@
-import addSequenceHeader from '../lib/add-sequence-header'
+import { addSequenceHeader } from '../lib'
 
 test('adds sequence header to empty object', () => {
   const headers = addSequenceHeader({})
