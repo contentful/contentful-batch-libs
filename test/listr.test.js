@@ -40,7 +40,7 @@ test('wraps task and properly formats and throws error', async () => {
 
   const ctx = {}
 
-  const wrappedTask = wrapTask((taskCtx) => {
+  const wrappedTask = wrapTask(() => {
     return Promise.reject(new Error('Task failed'))
   })
 
