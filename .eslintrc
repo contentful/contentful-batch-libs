@@ -11,6 +11,10 @@
     ],
     "env": {
       "jest/globals": true
-    }
+    },
+    "ignorePatterns": [
+      "node_modules",
+      "dist"
+    ]
   }
   
