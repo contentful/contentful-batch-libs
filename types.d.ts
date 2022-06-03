@@ -11,8 +11,8 @@ export interface AssetDownloads {
 }
 
 export interface Context {
-  client: ClientAPI
-  cdaClient?: ContentfulClientApi
+  client: ClientAPI;
+  cdaClient?: ContentfulClientApi;
 
   assetDownloads?: AssetDownloads;
   data?: Record<string, unknown[]>;

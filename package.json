@@ -11,7 +11,7 @@
     "build": "npm run clean && babel lib --out-dir dist",
     "build:watch": "babel lib --out-dir dist --watch",
     "clean": "rimraf dist && rimraf coverage",
-    "lint": "eslint lib test/* test",
+    "lint": "eslint lib test/* test types.d.ts",
     "pretest": "npm run lint",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
