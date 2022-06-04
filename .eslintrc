@@ -1,20 +1,22 @@
 {
-    "extends": [
-      "standard",
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "plugins": [
-      "promise",
-      "jest"
-    ],
-    "env": {
-      "jest/globals": true
-    },
-    "ignorePatterns": [
-      "node_modules",
-      "dist"
-    ]
-  }
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "standard",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "promise",
+    "jest"
+  ],
+  "env": {
+    "jest/globals": true
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "coverage"
+  ]
+}
   
