@@ -4,7 +4,7 @@ import { logToTaskOutput, formatLogMessageOneLine } from '../lib/logging'
 jest.mock('../lib/logging', () => {
   return {
     formatLogMessageOneLine: jest.fn((logMessage) => `formatted: ${logMessage.error.message}`),
-    logToTaskOutput: jest.fn(() => null)
+    logToTaskOutput: jest.fn(() => jest.fn())
   }
 })
 
