@@ -1,24 +1,19 @@
 import { wrapTask } from '../lib'
-import { logToTaskOutput, teardownHelperMock, formatLogMessageOneLine } from '../lib/logging'
+import { logToTaskOutput, formatLogMessageOneLine } from '../lib/logging'
 
 jest.mock('../lib/logging', () => {
-  const teardownHelperMock = jest.fn()
   return {
     formatLogMessageOneLine: jest.fn((logMessage) => `formatted: ${logMessage.error.message}`),
-    logToTaskOutput: jest.fn(() => {
-      return teardownHelperMock
-    }),
-    teardownHelperMock
+    logToTaskOutput: jest.fn(() => null)
   }
 })
 
 afterEach(() => {
   logToTaskOutput.mockClear()
-  teardownHelperMock.mockClear()
   formatLogMessageOneLine.mockClear()
 })
 
-test('wraps task, sets up listeners and allows modification of task context', () => {
+test('wraps task, sets up listeners and allows modification of task context', async () => {
   const ctx = {}
 
   const wrappedTask = wrapTask((taskCtx) => {
@@ -26,40 +21,33 @@ test('wraps task, sets up listeners and allows modification of task context', ()
     return Promise.resolve()
   })
 
-  return wrappedTask(ctx)
-    .then(() => {
-      expect(ctx.done).toBe(true, 'context got modified by the task')
-      expect(logToTaskOutput.mock.calls).toHaveLength(1, 'task listener was initialized')
-      expect(teardownHelperMock.mock.calls).toHaveLength(1, 'task listener was teared down again')
-      expect(formatLogMessageOneLine.mock.calls).toHaveLength(0, 'no error was formatted')
-    })
+  await wrappedTask(ctx)
+
+  expect(ctx.done).toBe(true)
+  expect(logToTaskOutput.mock.calls).toHaveLength(1)
+  expect(formatLogMessageOneLine.mock.calls).toHaveLength(0)
 })
 
 test('wraps task and properly formats and throws error', async () => {
-  expect.assertions(9)
+  expect.assertions(7)
 
   const ctx = {}
+  const errorMessage = 'Task failed'
 
-  const wrappedTask = wrapTask(() => {
-    return Promise.reject(new Error('Task failed'))
+  const wrappedTask = wrapTask(() => Promise.reject(new Error(errorMessage)))
+
+  await expect(wrappedTask(ctx)).rejects.toThrow({
+    message: `formatted: ${errorMessage}`,
+    originalError: {
+      message: errorMessage
+    }
   })
 
-  let err
+  expect(Object.keys(ctx)).toHaveLength(0)
+  expect(logToTaskOutput.mock.calls).toHaveLength(1)
+  expect(formatLogMessageOneLine.mock.calls).toHaveLength(1)
 
-  await wrappedTask(ctx)
-    .catch((error) => {
-      err = error
-    })
-
-  expect(Object.keys(ctx)).toHaveLength(0, 'context got not modified by the task since it failed')
-  expect(err.message).toBe('formatted: Task failed', 'error message contains formatted error message')
-  expect(err.originalError.message).toBe('Task failed', 'original error message is still present')
-
-  expect(logToTaskOutput.mock.calls).toHaveLength(1, 'task listener was initialized')
-  expect(teardownHelperMock.mock.calls).toHaveLength(1, 'task listener was teared down again')
-  expect(formatLogMessageOneLine.mock.calls).toHaveLength(1, 'error message was formatted')
-
-  expect(formatLogMessageOneLine.mock.calls[0][0].ts).not.toHaveLength(0, 'log message contains a timestamp')
-  expect(formatLogMessageOneLine.mock.calls[0][0].level).toBe('error', 'log message has level of error')
-  expect(formatLogMessageOneLine.mock.calls[0][0].error.message).toBe('Task failed', 'log message error has original error message')
+  expect(formatLogMessageOneLine.mock.calls[0][0].ts).not.toHaveLength(0)
+  expect(formatLogMessageOneLine.mock.calls[0][0].level).toBe('error')
+  expect(formatLogMessageOneLine.mock.calls[0][0].error.message).toBe(errorMessage)
 })
