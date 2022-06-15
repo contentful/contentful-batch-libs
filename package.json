@@ -3,7 +3,7 @@
   "version": "0.0.0-determined-by-semantic-release",
   "description": "Library modules used by contentful batch utility CLI tools.",
   "main": "dist/index.js",
-  "types": "types.d.ts",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": ">=14"
   },
@@ -11,7 +11,7 @@
     "build": "npm run clean && tsc",
     "build:watch": "tsc --watch",
     "clean": "rimraf dist && rimraf coverage",
-    "lint": "eslint . --ext .ts,.js",
+    "lint": "eslint lib test",
     "pretest": "npm run lint",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
@@ -31,6 +31,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/jest": "^27.5.2",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^17.0.39",
     "@types/uuid": "^8.3.4",
