@@ -87,6 +87,13 @@
       "!**/node_modules/**",
       "!**/vendor/**"
     ],
-    "preset": "ts-jest"
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "./test/tsconfig.json"
+      }
+    },
+    "transform": {
+      "^.+\\.(ts|js)x?$": "ts-jest"
+    }
   }
 }

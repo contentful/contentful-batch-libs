@@ -1,10 +1,10 @@
-import cloneDeep from 'lodash.clonedeep'
+import cloneDeep from 'lodash.clonedeep';
 
 const linkMock = {
   id: 'linkid',
   type: 'Link',
   linkType: 'linkType'
-}
+};
 
 const sysMock = {
   type: 'Type',
@@ -12,13 +12,13 @@ const sysMock = {
   space: cloneDeep(linkMock),
   createdAt: 'createdatdate',
   updatedAt: 'updatedatdate'
-}
+};
 
 const spaceMock = {
   sys: Object.assign(cloneDeep(sysMock), { type: 'Space' }),
   name: 'name',
   locales: ['en-US']
-}
+};
 
 const contentTypeMock = {
   sys: Object.assign(cloneDeep(sysMock), { type: 'ContentType' }),
@@ -34,7 +34,7 @@ const contentTypeMock = {
       required: false
     }
   ]
-}
+};
 
 const entryMock = {
   sys: Object.assign(cloneDeep(sysMock), {
@@ -45,7 +45,7 @@ const entryMock = {
   fields: {
     field1: 'str'
   }
-}
+};
 const editorInterfaceMock = {
   sys: Object.assign(cloneDeep(sysMock), {
     type: 'EditorInterface',
@@ -58,7 +58,7 @@ const editorInterfaceMock = {
       widgetId: 'singleLine'
     }
   ]
-}
+};
 const assetMock = {
   sys: Object.assign(cloneDeep(sysMock), {
     type: 'Asset',
@@ -67,7 +67,7 @@ const assetMock = {
   fields: {
     field1: 'str'
   }
-}
+};
 
 const assetWithFilesMock = {
   sys: Object.assign(cloneDeep(sysMock), {
@@ -100,14 +100,14 @@ const assetWithFilesMock = {
       }
     }
   }
-}
+};
 
 const uploadMock = {
   sys: Object.assign(cloneDeep(sysMock), {
     type: 'Upload',
     id: 'some_random_id'
   })
-}
+};
 
 const localeMock = {
   sys: Object.assign(cloneDeep(sysMock), {
@@ -118,23 +118,23 @@ const localeMock = {
   contentDeliveryApi: true,
   contentManagementApi: true,
   default: true
-}
+};
 
 const webhookMock = {
   sys: Object.assign(cloneDeep(sysMock), { type: 'WebhookDefinition' })
-}
+};
 
 const spaceMembershipMock = {
   sys: Object.assign(cloneDeep(sysMock), { type: 'SpaceMembership' })
-}
+};
 
 const roleMock = {
   sys: Object.assign(cloneDeep(sysMock), { type: 'Role' })
-}
+};
 
 const apiKeyMock = {
   sys: Object.assign(cloneDeep(sysMock), { type: 'ApiKey' })
-}
+};
 
 const errorMock = {
   config: {
@@ -146,7 +146,7 @@ const errorMock = {
     status: 404,
     statusText: 'Not Found'
   }
-}
+};
 
 const mocks = {
   link: linkMock,
@@ -162,22 +162,22 @@ const mocks = {
   apiKey: apiKeyMock,
   error: errorMock,
   upload: uploadMock
+};
+
+function cloneMock(name) {
+  return cloneDeep(mocks[name]);
 }
 
-function cloneMock (name) {
-  return cloneDeep(mocks[name])
-}
-
-function mockCollection (entityMock) {
+function mockCollection(entityMock) {
   return {
     total: 1,
     skip: 0,
     limit: 100,
     items: [entityMock]
-  }
+  };
 }
 
-function setupEntitiesMock (rewiredModuleApi) {
+function setupEntitiesMock(rewiredModuleApi) {
   const entitiesMock = {
     space: {
       wrapSpace: jest.fn(),
@@ -221,10 +221,10 @@ function setupEntitiesMock (rewiredModuleApi) {
     upload: {
       wrapUpload: jest.fn()
     }
-  }
-  rewiredModuleApi.__Rewire__('entities', entitiesMock)
+  };
+  rewiredModuleApi.__Rewire__('entities', entitiesMock);
 
-  return entitiesMock
+  return entitiesMock;
 }
 
 export {
@@ -246,4 +246,4 @@ export {
   mockCollection,
   setupEntitiesMock,
   uploadMock
-}
+};
