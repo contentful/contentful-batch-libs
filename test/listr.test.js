@@ -1,11 +1,13 @@
 import { wrapTask } from '../lib';
-import { logToTaskOutput, formatLogMessageOneLine } from '../lib/logging';
+import * as logging from '../lib/logging';
 
-jest.mock('../lib/logging', () => {
-  return {
-    formatLogMessageOneLine: jest.fn((logMessage) => `formatted: ${logMessage.error.message}`),
-    logToTaskOutput: jest.fn(() => jest.fn())
-  };
+jest.mock('../lib/logging');
+
+const { logToTaskOutput, formatLogMessageOneLine } = logging;
+
+beforeEach(() => {
+  formatLogMessageOneLine.mockImplementation((logMessage) => `formatted: ${logMessage.error.message}`);
+  logToTaskOutput.mockImplementation(() => jest.fn());
 });
 
 afterEach(() => {
@@ -36,12 +38,16 @@ test('wraps task and properly formats and throws error', async () => {
 
   const wrappedTask = wrapTask(() => Promise.reject(new Error(errorMessage)));
 
-  await expect(wrappedTask(ctx)).rejects.toThrow({
-    message: `formatted: ${errorMessage}`,
-    originalError: {
-      message: errorMessage
-    }
-  });
+  try {
+    await wrappedTask(ctx);
+  } catch (err) {
+    expect(err).toMatchObject({
+      message: `formatted: ${errorMessage}`,
+      originalError: {
+        message: errorMessage
+      }
+    });
+  }
 
   expect(Object.keys(ctx)).toHaveLength(0);
   expect(logToTaskOutput.mock.calls).toHaveLength(1);

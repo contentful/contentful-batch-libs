@@ -8,9 +8,8 @@ import {
   logToTaskOutput
 } from '../lib/logging';
 
-import figures from 'figures';
-
 import bfj from 'bfj';
+import figures from 'figures';
 
 function isValidDate(date: string) {
   return !isNaN(Date.parse(date));
