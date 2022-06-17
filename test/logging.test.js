@@ -147,24 +147,23 @@ test('does not displays error log when empty', () => {
   expect(consoleLogSpy.mock.calls[0][0]).toContain('No errors or warnings occurred')
 })
 
-test('writes error log file to disk', () => {
-  expect.assertions(7)
+test('writes error log file to disk', async () => {
+  expect.assertions(8)
   const destination = '/just/some/path/to/a/file.log'
 
-  return writeErrorLogFile(destination, exampleErrorLog)
-    .then(() => {
-      expect(consoleLogSpy.mock.calls).toHaveLength(2)
-      expect(consoleLogSpy.mock.calls[0][0]).toBe('\nStored the detailed error log file at:')
-      expect(consoleLogSpy.mock.calls[1][0]).toBe(destination)
+  await expect(writeErrorLogFile(destination, exampleErrorLog)).resolves.not.toThrow()
 
-      expect(bfj.write.mock.calls).toHaveLength(1)
-      expect(bfj.write.mock.calls[0][0]).toBe(destination)
-      expect(bfj.write.mock.calls[0][1]).toMatchObject(exampleErrorLog)
-      expect(bfj.write.mock.calls[0][2]).toMatchObject({
-        circular: 'ignore',
-        space: 2
-      })
-    })
+  expect(consoleLogSpy.mock.calls).toHaveLength(2)
+  expect(consoleLogSpy.mock.calls[0][0]).toBe('\nStored the detailed error log file at:')
+  expect(consoleLogSpy.mock.calls[1][0]).toBe(destination)
+
+  expect(bfj.write.mock.calls).toHaveLength(1)
+  expect(bfj.write.mock.calls[0][0]).toBe(destination)
+  expect(bfj.write.mock.calls[0][1]).toMatchObject(exampleErrorLog)
+  expect(bfj.write.mock.calls[0][2]).toMatchObject({
+    circular: 'ignore',
+    space: 2
+  })
 })
 
 test('sets up logging via event emitter', () => {
@@ -196,21 +195,21 @@ test('sets up logging via event emitter', () => {
   logEmitterEmitSpy.mockClear()
   logEmitter.emit('info', 'example info')
   expect(logEmitterEmitSpy.mock.calls[1][0]).toBe('display')
-  expect(isValidDate(logEmitterEmitSpy.mock.calls[1][1].ts)).toBe(true, 'attaches valid timestamp to log message')
+  expect(isValidDate(logEmitterEmitSpy.mock.calls[1][1].ts)).toBe(true)
   expect(logEmitterEmitSpy.mock.calls[1][1].level).toBe('info')
   expect(logEmitterEmitSpy.mock.calls[1][1].info).toBe('example info')
 
   logEmitterEmitSpy.mockClear()
   logEmitter.emit('warning', 'example warning')
   expect(logEmitterEmitSpy.mock.calls[1][0]).toBe('display')
-  expect(isValidDate(logEmitterEmitSpy.mock.calls[1][1].ts)).toBe(true, 'attaches valid timestamp to log message')
+  expect(isValidDate(logEmitterEmitSpy.mock.calls[1][1].ts)).toBe(true)
   expect(logEmitterEmitSpy.mock.calls[1][1].level).toBe('warning')
   expect(logEmitterEmitSpy.mock.calls[1][1].warning).toBe('example warning')
 
   logEmitterEmitSpy.mockClear()
   logEmitter.emit('error', 'example error')
   expect(logEmitterEmitSpy.mock.calls[1][0]).toBe('display')
-  expect(isValidDate(logEmitterEmitSpy.mock.calls[1][1].ts)).toBe(true, 'attaches valid timestamp to log message')
+  expect(isValidDate(logEmitterEmitSpy.mock.calls[1][1].ts)).toBe(true)
   expect(logEmitterEmitSpy.mock.calls[1][1].level).toBe('error')
   expect(logEmitterEmitSpy.mock.calls[1][1].error).toBe('example error')
 

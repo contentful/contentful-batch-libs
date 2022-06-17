@@ -1,18 +1,11 @@
+import HttpsProxyAgent from 'https-proxy-agent'
 import {
   proxyStringToObject,
   proxyObjectToString,
   agentFromProxy
 } from '../lib/proxy'
 
-jest.mock('https-proxy-agent', () => {
-  const mock = jest.fn()
-  return class mocked {
-    constructor (args) {
-      this.mock = mock
-      mock(args)
-    }
-  }
-})
+jest.mock('https-proxy-agent')
 
 test('proxyString with basic auth, with protocol', () => {
   const proxyString = 'http://foo:bar@127.0.0.1:8213'
@@ -130,10 +123,14 @@ test('agentFromProxy creates https agent and removes proxy env variables', () =>
     port: 1234,
     protocol: 'http'
   }
+
   const agent = agentFromProxy(agentParams)
+
+  expect(agent).toBeInstanceOf(HttpsProxyAgent)
+  expect(HttpsProxyAgent.mock.calls[0][0]).toMatchObject(agentParams)
+
   expect(process.env).not.toHaveProperty('HTTP_PROXY')
   expect(process.env).not.toHaveProperty('http_proxy')
   expect(process.env).not.toHaveProperty('HTTPS_PROXY')
   expect(process.env).not.toHaveProperty('https_proxy')
-  expect(agent.mock.mock.calls[0][0]).toMatchObject(agentParams)
 })
