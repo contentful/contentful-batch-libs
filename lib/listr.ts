@@ -1,10 +1,12 @@
-// import type { ListrDefaultRendererValue, ListrGetRendererClassFromValue, ListrRendererValue, ListrTask } from 'listr2';
-// import type { Context } from './types';
-
+import type { ListrContext, ListrDefaultRenderer, ListrRendererFactory, ListrTask } from 'listr2';
 import { logToTaskOutput, formatLogMessageOneLine } from './logging';
 
-// Set up log emitter listening from SDK, proper error catching and throwing of SDK errors
-export function wrapTask(func) {
+/**
+ * Set up log emitter listening from SDK, proper error catching and throwing of SDK errors
+ */
+export function wrapTask<Ctx = ListrContext, Renderer extends ListrRendererFactory = ListrDefaultRenderer>(
+  func: ListrTask<Ctx, Renderer>['task']
+): ListrTask<Ctx, Renderer>['task'] {
   return async (ctx, task) => {
     const teardownTaskListeners = logToTaskOutput(task);
 
@@ -23,7 +25,7 @@ export function wrapTask(func) {
       const enrichedError = new Error(formattedMessage);
 
       // Attach original error object for error log
-      enrichedError.originalError = err;
+      (enrichedError as any).originalError = err;
       throw enrichedError;
     }
   };

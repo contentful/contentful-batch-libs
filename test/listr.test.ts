@@ -1,3 +1,4 @@
+import type { ListrContext } from 'listr2';
 import { wrapTask } from '../lib';
 import * as logging from '../lib/logging';
 
@@ -16,14 +17,14 @@ afterEach(() => {
 });
 
 test('wraps task, sets up listeners and allows modification of task context', async () => {
-  const ctx: Record<string, unknown> = {};
+  const ctx: ListrContext = {};
 
   const wrappedTask = wrapTask((taskCtx) => {
     taskCtx.done = true;
     return Promise.resolve();
   });
 
-  await wrappedTask(ctx);
+  await wrappedTask(ctx, {} as any);
 
   expect(ctx.done).toBe(true);
   expect(logToTaskOutput.mock.calls).toHaveLength(1);
@@ -33,13 +34,13 @@ test('wraps task, sets up listeners and allows modification of task context', as
 test('wraps task and properly formats and throws error', async () => {
   expect.assertions(7);
 
-  const ctx = {};
+  const ctx: ListrContext = {};
   const errorMessage = 'Task failed';
 
   const wrappedTask = wrapTask(() => Promise.reject(new Error(errorMessage)));
 
   try {
-    await wrappedTask(ctx);
+    await wrappedTask(ctx, {} as any);
   } catch (err) {
     expect(err).toMatchObject({
       message: `formatted: ${errorMessage}`,
