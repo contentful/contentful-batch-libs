@@ -7,6 +7,11 @@ export interface AssetDownloads {
   errorCount: number;
 }
 
+export interface Authorization {
+  username?: string;
+  password?: string;
+}
+
 export interface Context {
   client: ClientAPI;
   cdaClient?: ContentfulClientApi;

@@ -3,7 +3,7 @@ import * as logging from '../lib/logging';
 
 jest.mock('../lib/logging');
 
-const { logToTaskOutput, formatLogMessageOneLine } = logging;
+const { logToTaskOutput, formatLogMessageOneLine } = logging as jest.MockedObject<typeof logging>;
 
 beforeEach(() => {
   formatLogMessageOneLine.mockImplementation((logMessage) => `formatted: ${logMessage.error.message}`);
@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 test('wraps task, sets up listeners and allows modification of task context', async () => {
-  const ctx = {};
+  const ctx: Record<string, unknown> = {};
 
   const wrappedTask = wrapTask((taskCtx) => {
     taskCtx.done = true;
