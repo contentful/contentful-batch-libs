@@ -1,5 +1,5 @@
 import type { ListrContext } from 'listr2';
-import { wrapTask } from '../lib';
+import { ErrorLogMessage, wrapTask } from '../lib';
 import * as logging from '../lib/logging';
 
 jest.mock('../lib/logging');
@@ -7,8 +7,10 @@ jest.mock('../lib/logging');
 const { logToTaskOutput, formatLogMessageOneLine } = logging as jest.MockedObject<typeof logging>;
 
 beforeEach(() => {
-  formatLogMessageOneLine.mockImplementation((logMessage) => `formatted: ${logMessage.error.message}`);
   logToTaskOutput.mockImplementation(() => jest.fn());
+  formatLogMessageOneLine.mockImplementation((logMessage) => {
+    return `formatted: ${(logMessage as ErrorLogMessage).error.message}`;
+  });
 });
 
 afterEach(() => {
@@ -54,7 +56,8 @@ test('wraps task and properly formats and throws error', async () => {
   expect(logToTaskOutput.mock.calls).toHaveLength(1);
   expect(formatLogMessageOneLine.mock.calls).toHaveLength(1);
 
-  expect(formatLogMessageOneLine.mock.calls[0][0].ts).not.toHaveLength(0);
-  expect(formatLogMessageOneLine.mock.calls[0][0].level).toBe('error');
-  expect(formatLogMessageOneLine.mock.calls[0][0].error.message).toBe(errorMessage);
+  const firstCall = formatLogMessageOneLine.mock.calls[0][0] as ErrorLogMessage;
+  expect(firstCall.ts).not.toHaveLength(0);
+  expect(firstCall.level).toBe('error');
+  expect(firstCall.error.message).toBe(errorMessage);
 });

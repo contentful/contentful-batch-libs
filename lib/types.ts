@@ -1,5 +1,4 @@
-import type { ContentfulClientApi } from 'contentful';
-import type { ClientAPI } from 'contentful-management';
+import { ContentfulTaskError } from './errors';
 
 export interface AssetDownloads {
   successCount: number;
@@ -12,11 +11,24 @@ export interface Authorization {
   password?: string;
 }
 
-export interface Context {
-  client: ClientAPI;
-  cdaClient?: ContentfulClientApi;
+type BaseLogMessage = {
+  level: string;
+  ts: string;
+};
 
-  assetDownloads?: AssetDownloads;
-  data?: Record<string, unknown[]>;
-  logDirectoryExists?: boolean;
-}
+export type InfoLogMessage = BaseLogMessage & {
+  level: 'info';
+  ['info']: string;
+};
+
+export type WarningLogMessage = BaseLogMessage & {
+  level: 'warning';
+  ['warning']: string;
+};
+
+export type ErrorLogMessage = BaseLogMessage & {
+  level: 'error';
+  ['error']: ContentfulTaskError | Error;
+};
+
+export type LogMessage = InfoLogMessage | WarningLogMessage | ErrorLogMessage;

@@ -10,6 +10,7 @@ import {
 
 import bfj from 'bfj';
 import figures from 'figures';
+import type { LogMessage } from '../lib';
 
 function isValidDate(date: string) {
   return !isNaN(Date.parse(date));
@@ -23,7 +24,7 @@ const consoleLogSpy = jest.spyOn(global.console, 'log');
 const logEmitterAddListenerSpy = jest.spyOn(logEmitter, 'addListener');
 const logEmitterEmitSpy = jest.spyOn(logEmitter, 'emit');
 
-const exampleErrorLog = [
+const exampleErrorLog: LogMessage[] = [
   {
     ts: new Date('2018-01-01T01:01:43+01:00').toJSON(),
     level: 'warning',
@@ -221,7 +222,7 @@ test('log messages are logged to task output', () => {
   const taskMock = {
     output: 'nothing to see here'
   };
-  const teardown = logToTaskOutput(taskMock);
+  const teardown = logToTaskOutput(taskMock as any);
 
   logEmitter.emit('display', {
     level: 'info',

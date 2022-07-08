@@ -1,4 +1,5 @@
 import type { ListrContext, ListrDefaultRenderer, ListrRendererFactory, ListrTask } from 'listr2';
+import { ContentfulTaskError } from './errors';
 import { logToTaskOutput, formatLogMessageOneLine } from './logging';
 
 /**
@@ -20,13 +21,10 @@ export function wrapTask<Ctx = ListrContext, Renderer extends ListrRendererFacto
       const formattedMessage = formatLogMessageOneLine({
         ts: new Date().toJSON(),
         level: 'error',
-        error: err
+        error: err as Error
       });
-      const enrichedError = new Error(formattedMessage);
 
-      // Attach original error object for error log
-      (enrichedError as any).originalError = err;
-      throw enrichedError;
+      throw new ContentfulTaskError(formattedMessage, err as Error);
     }
   };
 }

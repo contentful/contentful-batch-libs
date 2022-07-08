@@ -84,6 +84,7 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "lib/**/*.js",
+      "lib/**/*.ts",
       "!**/node_modules/**",
       "!**/vendor/**"
     ],

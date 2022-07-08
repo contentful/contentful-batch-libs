@@ -1,15 +1,20 @@
-import EventEmitter from 'events';
+import type { PathLike } from 'fs';
+import type { ListrContext, ListrDefaultRenderer, ListrRendererFactory, ListrTaskWrapper } from 'listr2';
+import type { LogMessage } from './types';
 
+import EventEmitter from 'events';
 import bfj from 'bfj';
 import figures from 'figures';
 import format from 'date-fns/format';
 import parseISO from 'date-fns/parseISO';
 
 import { getEntityName } from './get-entity-name';
+import { ContentfulTaskError } from './errors';
+import { isLogMessage } from './utils';
 
 export const logEmitter = new EventEmitter();
 
-function extractErrorInformation(error) {
+function extractErrorInformation(error: ContentfulTaskError) {
   const source = error.originalError || error;
   try {
     const data = JSON.parse(source.message);
@@ -21,21 +26,19 @@ function extractErrorInformation(error) {
   }
 }
 
-export function formatLogMessageOneLine(logMessage) {
-  const { level } = logMessage;
-  if (!level) {
-    return logMessage.toString().replace(/\s+/g, ' ');
+export function formatLogMessageOneLine<T>(message: T): string {
+  if (!isLogMessage(message)) {
+    return (message as Object).toString().replace(/\s+/g, ' '); // eslint-disable-line @typescript-eslint/ban-types
   }
-  if (level === 'info') {
-    return logMessage.info;
-  }
-  if (level === 'warning') {
-    return logMessage.warning;
-  }
+
+  // Might be able to tidy this up more if I can get the types to play nicely.
+  if (message.level === 'info') return message[message.level];
+  if (message.level === 'warning') return message[message.level];
+
   try {
     // Display enhanced API error message when available
-    const errorOutput = [];
-    const data = extractErrorInformation(logMessage.error);
+    const errorOutput: string[] = [];
+    const data = extractErrorInformation(message.error);
     if ('status' in data || 'statusText' in data) {
       const status = [data.status, data.statusText].filter((a) => a).join(' - ');
       errorOutput.push(`Status: ${status}`);
@@ -47,24 +50,26 @@ export function formatLogMessageOneLine(logMessage) {
       errorOutput.push(`Entity: ${getEntityName(data.entity)}`);
     }
     if ('details' in data && 'errors' in data.details) {
-      const errorList = data.details.errors.map((error) => error.details || error.name);
+      const errorList = data.details.errors.map((error: any) => error.details || error.name);
       errorOutput.push(`Details: ${errorList.join(', ')}`);
     }
     if ('requestId' in data) {
       errorOutput.push(`Request ID: ${data.requestId}`);
     }
-    return `${logMessage.error.name}: ${errorOutput.join(' - ')}`;
+    return `${message.error.name}: ${errorOutput.join(' - ')}`;
   } catch (err) {
     // Fallback for errors without API information
-    return logMessage.error.toString().replace(/\s+/g, ' ');
+    return message.error.toString().replace(/\s+/g, ' ');
   }
 }
 
-export function formatLogMessageLogfile(logMessage) {
+export function formatLogMessageLogfile(logMessage: any) {
   const { level } = logMessage;
+
   if (level === 'info' || level === 'warning') {
     return logMessage;
   }
+
   if (!logMessage.error) {
     // Enhance node errors to logMessage format
     logMessage.error = logMessage;
@@ -92,7 +97,7 @@ export function formatLogMessageLogfile(logMessage) {
 }
 
 // Display all errors
-export function displayErrorLog(errorLog) {
+export function displayErrorLog(errorLog: LogMessage[]) {
   if (errorLog.length) {
     const warningsCount = errorLog.filter((error) => Object.prototype.hasOwnProperty.call(error, 'warning')).length;
     const errorsCount = errorLog.filter((error) => Object.prototype.hasOwnProperty.call(error, 'warning')).length;
@@ -108,7 +113,7 @@ export function displayErrorLog(errorLog) {
 }
 
 // Write all log messages instead of infos to the error log file
-export async function writeErrorLogFile(destination, errorLog) {
+export async function writeErrorLogFile(destination: PathLike, errorLog: LogMessage[]) {
   const logFileData = errorLog.map(formatLogMessageLogfile);
 
   try {
@@ -126,16 +131,16 @@ export async function writeErrorLogFile(destination, errorLog) {
 }
 
 // Init listeners for log messages, transform them into proper format and logs/displays them
-export function setupLogging(log) {
-  function errorLogger(level, error) {
+export function setupLogging(log: LogMessage[]) {
+  function errorLogger(level: 'info' | 'warning' | 'error', error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),
       level,
       [level]: error
-    };
-    if (level !== 'info') {
-      log.push(logMessage);
-    }
+    } as LogMessage;
+
+    if (level !== 'info') log.push(logMessage);
+
     logEmitter.emit('display', logMessage);
   }
 
@@ -145,8 +150,10 @@ export function setupLogging(log) {
 }
 
 // Format log message to display them as task status
-export function logToTaskOutput(task) {
-  function logToTask(logMessage) {
+export function logToTaskOutput<Ctx = ListrContext, Renderer extends ListrRendererFactory = ListrDefaultRenderer>(
+  task: ListrTaskWrapper<Ctx, Renderer>
+) {
+  function logToTask(logMessage: LogMessage) {
     const content = formatLogMessageOneLine(logMessage);
     const symbols = {
       info: figures.tick,
