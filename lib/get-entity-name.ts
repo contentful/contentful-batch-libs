@@ -1,4 +1,6 @@
-export function getEntityName(entity) {
+import type { Entry } from 'contentful-management';
+
+export function getEntityName(entity: Partial<Entry> & { name?: string }) {
   const name = entity?.name;
   if (name) {
     return attachId(name, entity);
@@ -24,7 +26,7 @@ export function getEntityName(entity) {
   return 'unknown';
 }
 
-function attachId(val, entity) {
+function attachId(val: string, entity: Partial<Entry>): string {
   const id = entity?.sys?.id;
   if (id) {
     return `${val} (${id})`;
