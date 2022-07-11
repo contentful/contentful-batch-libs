@@ -1,7 +1,8 @@
 import { URL, format } from 'url';
 import HttpsProxyAgent from 'https-proxy-agent';
+import type { Authorization, ProxyObject } from './types';
 
-function serializeAuth({ username, password } = {}) {
+function serializeAuth({ username, password }: Authorization = {}) {
   if (!username) {
     return '';
   }
@@ -13,7 +14,7 @@ function serializeAuth({ username, password } = {}) {
   return `${username}:${password}`;
 }
 
-export function proxyStringToObject(proxyString) {
+export function proxyStringToObject(proxyString: string): Pick<ProxyObject, 'host' | 'isHttps' | 'port' | 'auth'> {
   if (!proxyString.startsWith('http')) {
     return proxyStringToObject(`http://${proxyString}`);
   }
@@ -44,7 +45,7 @@ export function proxyStringToObject(proxyString) {
   };
 }
 
-export function proxyObjectToString(proxyObject) {
+export function proxyObjectToString(proxyObject: Pick<ProxyObject, 'host' | 'port' | 'auth'>): string {
   const { host: hostname, port, auth: authObject } = proxyObject;
   const auth = serializeAuth(authObject);
 
@@ -54,7 +55,7 @@ export function proxyObjectToString(proxyObject) {
   return formatted.replace(/^\/\//, '');
 }
 
-export function agentFromProxy(proxy) {
+export function agentFromProxy(proxy?: Pick<ProxyObject, 'host' | 'port' | 'protocol'>) {
   if (!proxy) {
     return {};
   }

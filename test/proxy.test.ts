@@ -91,8 +91,8 @@ test('proxyString with username', () => {
   const parsed = proxyStringToObject(proxyString);
   const stringified = proxyObjectToString(parsed);
   const expectedStringified = 'user@127.0.0.1:8213';
-  expect(parsed.auth.username).toBe('user');
-  expect(parsed.auth.password).toBeFalsy();
+  expect(parsed.auth?.username).toBe('user');
+  expect(parsed.auth?.password).toBeFalsy();
   expect(stringified).toBe(expectedStringified);
 });
 
@@ -101,8 +101,8 @@ test('parseString with username & password', () => {
   const parsed = proxyStringToObject(proxyString);
   const stringified = proxyObjectToString(parsed);
   const expectedStringified = 'user:53cr37@127.0.0.1:8213';
-  expect(parsed.auth.username).toBe('user');
-  expect(parsed.auth.password).toBe('53cr37');
+  expect(parsed.auth?.username).toBe('user');
+  expect(parsed.auth?.password).toBe('53cr37');
   expect(stringified).toBe(expectedStringified);
 });
 

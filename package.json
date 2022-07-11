@@ -86,7 +86,8 @@
       "lib/**/*.js",
       "lib/**/*.ts",
       "!**/node_modules/**",
-      "!**/vendor/**"
+      "!**/vendor/**",
+      "!lib/index.ts"
     ],
     "globals": {
       "ts-jest": {

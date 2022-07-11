@@ -11,6 +11,14 @@ export interface Authorization {
   password?: string;
 }
 
+export interface ProxyObject {
+  auth?: Authorization;
+  host: string;
+  isHttps: boolean;
+  port: number;
+  protocol: string;
+}
+
 type BaseLogMessage = {
   level: string;
   ts: string;
