@@ -99,9 +99,16 @@ export function formatLogMessageLogfile(logMessage: any) {
 // Display all errors
 export function displayErrorLog(errorLog: LogMessage[]) {
   if (errorLog.length) {
-    const warningsCount = errorLog.filter((error) => Object.prototype.hasOwnProperty.call(error, 'warning')).length;
-    const errorsCount = errorLog.filter((error) => Object.prototype.hasOwnProperty.call(error, 'warning')).length;
-    console.log(`\n\nThe following ${errorsCount} errors and ${warningsCount} warnings occurred:\n`);
+    const count = errorLog.reduce(
+      (count, curr) => {
+        if (Object.prototype.hasOwnProperty.call(curr, 'warning')) count.warnings++;
+        else if (Object.prototype.hasOwnProperty.call(curr, 'error')) count.errors++;
+        return count;
+      },
+      { warnings: 0, errors: 0 }
+    );
+
+    console.log(`\n\nThe following ${count.errors} errors and ${count.warnings} warnings occurred:\n`);
 
     errorLog
       .map((logMessage) => `${format(parseISO(logMessage.ts), 'HH:mm:ss')} - ${formatLogMessageOneLine(logMessage)}`)
