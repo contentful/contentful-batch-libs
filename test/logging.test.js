@@ -132,12 +132,19 @@ test('format log file log message with level info', () => {
 })
 
 test('displays error log well formatted', () => {
-  displayErrorLog(exampleErrorLog)
+  const extendedExampleErrorLog = [...exampleErrorLog, {
+    ts: new Date('2022-01-01T01:05:43+01:00').toJSON(),
+    level: 'warning',
+    warning: 'another warning'
+  }]
 
-  expect(consoleLogSpy.mock.calls).toHaveLength(3)
-  expect(consoleLogSpy.mock.calls[0][0]).toContain('The following 1 errors and 1 warnings occurred:')
+  displayErrorLog(extendedExampleErrorLog)
+
+  expect(consoleLogSpy.mock.calls).toHaveLength(4)
+  expect(consoleLogSpy.mock.calls[0][0]).toContain('The following 1 errors and 2 warnings occurred:')
   expect(consoleLogSpy.mock.calls[1][0]).toMatch(/\d{2}:\d{2}:\d{2} - warning text/)
   expect(consoleLogSpy.mock.calls[2][0]).toMatch(/\d{2}:\d{2}:\d{2} - Error: error message/)
+  expect(consoleLogSpy.mock.calls[3][0]).toMatch(/\d{2}:\d{2}:\d{2} - another warning/)
 })
 
 test('does not displays error log when empty', () => {
