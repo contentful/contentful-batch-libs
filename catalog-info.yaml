@@ -3,7 +3,7 @@ kind: Component
 metadata:
   name: contentful-batch-libs
   description: |
-    Contentful command line interface. Use Contentful features straight from the command line.
+    Library modules used by contentful batch utility CLI tools.
   annotations:
     circleci.com/project-slug: github/contentful/contentful-batch-libs
     github.com/project-slug: contentful/contentful-batch-libs
