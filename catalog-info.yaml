@@ -9,6 +9,6 @@ metadata:
     github.com/project-slug: contentful/contentful-batch-libs
     contentful.com/ci-alert-slack: prd-phoenix-ci-alerts
 spec:
-  type: cli
+  type: library
   lifecycle: production
   owner: group:team-phoenix
