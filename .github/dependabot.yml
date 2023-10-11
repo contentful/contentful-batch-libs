@@ -8,6 +8,13 @@ updates:
       time: "00:00"
       timezone: UTC
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: bfj # ignore ESM only versions
+        versions:
+          - ">=8.0.0"
+      - dependency-name: figures  # ignore ESM only versions
+        versions:
+          - ">=4.0.0"
     commit-message:
       prefix: build
       include: scope
