@@ -23,9 +23,9 @@
     "prepush": "npm run test"
   },
   "dependencies": {
-    "bfj": "^8.0.0",
+    "bfj": "7.1.0",
     "date-fns": "^2.28.0",
-    "figures": "^5.0.0",
+    "figures": "3.2.0",
     "https-proxy-agent": "^7.0.2",
     "lodash.clonedeep": "^4.5.0",
     "uuid": "^9.0.1"
