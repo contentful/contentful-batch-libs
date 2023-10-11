@@ -187,5 +187,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+.idea
+.tool-versions
 
 # End of https://www.gitignore.io/api/vim,code,linux,macos,windows,sublimetext,node
