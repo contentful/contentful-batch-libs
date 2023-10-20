@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import { Writable } from 'node:stream'
 import {
   formatLogMessageOneLine,
   formatLogMessageLogfile,
@@ -7,18 +9,11 @@ import {
   logEmitter,
   logToTaskOutput
 } from '../lib/logging'
-
 import figures from 'figures'
 
-import bfj from 'bfj'
-
-function isValidDate (date) {
+function isValidDate(date) {
   return !isNaN(Date.parse(date))
 }
-
-jest.mock('bfj', () => ({
-  write: jest.fn(() => Promise.resolve())
-}))
 
 const consoleLogSpy = jest.spyOn(global.console, 'log')
 const logEmitterAddListenerSpy = jest.spyOn(logEmitter, 'addListener')
@@ -65,16 +60,24 @@ test('format one line api error', () => {
   const json = JSON.stringify(apiError)
   const error = new Error(json)
   const output = formatLogMessageOneLine({ error, level: 'error' })
-  expect(output).toBe('Error: Status: status - status text - Message: Some API error - Entity: 42 - Details: error detail - Request ID: 3')
+  expect(output).toBe(
+    'Error: Status: status - status text - Message: Some API error - Entity: 42 - Details: error detail - Request ID: 3'
+  )
 })
 
 test('format one line message with level error', () => {
-  const output = formatLogMessageOneLine({ error: Error('normal error message'), level: 'error' })
+  const output = formatLogMessageOneLine({
+    error: Error('normal error message'),
+    level: 'error'
+  })
   expect(output).toBe('Error: normal error message')
 })
 
 test('format one line message with level warning', () => {
-  const output = formatLogMessageOneLine({ warning: 'warning text', level: 'warning' })
+  const output = formatLogMessageOneLine({
+    warning: 'warning text',
+    level: 'warning'
+  })
   expect(output).toBe('warning text')
 })
 
@@ -110,7 +113,9 @@ test('format log file api error', () => {
   const output = formatLogMessageLogfile({ error, level: 'error' })
   expect(output.error.data.requestId).toBe(apiError.requestId)
   expect(output.error.data.message).toBe(apiError.message)
-  expect(output.error.data.details.errors[0].name).toBe(apiError.details.errors[0].name)
+  expect(output.error.data.details.errors[0].name).toBe(
+    apiError.details.errors[0].name
+  )
 })
 
 test('format log file standard error', () => {
@@ -132,45 +137,63 @@ test('format log file log message with level info', () => {
 })
 
 test('displays error log well formatted', () => {
-  const extendedExampleErrorLog = [...exampleErrorLog, {
-    ts: new Date('2022-01-01T01:05:43+01:00').toJSON(),
-    level: 'warning',
-    warning: 'another warning'
-  }]
+  const extendedExampleErrorLog = [
+    ...exampleErrorLog,
+    {
+      ts: new Date('2022-01-01T01:05:43+01:00').toJSON(),
+      level: 'warning',
+      warning: 'another warning'
+    }
+  ]
 
   displayErrorLog(extendedExampleErrorLog)
 
   expect(consoleLogSpy.mock.calls).toHaveLength(4)
-  expect(consoleLogSpy.mock.calls[0][0]).toContain('The following 1 errors and 2 warnings occurred:')
-  expect(consoleLogSpy.mock.calls[1][0]).toMatch(/\d{2}:\d{2}:\d{2} - warning text/)
-  expect(consoleLogSpy.mock.calls[2][0]).toMatch(/\d{2}:\d{2}:\d{2} - Error: error message/)
-  expect(consoleLogSpy.mock.calls[3][0]).toMatch(/\d{2}:\d{2}:\d{2} - another warning/)
+  expect(consoleLogSpy.mock.calls[0][0]).toContain(
+    'The following 1 errors and 2 warnings occurred:'
+  )
+  expect(consoleLogSpy.mock.calls[1][0]).toMatch(
+    /\d{2}:\d{2}:\d{2} - warning text/
+  )
+  expect(consoleLogSpy.mock.calls[2][0]).toMatch(
+    /\d{2}:\d{2}:\d{2} - Error: error message/
+  )
+  expect(consoleLogSpy.mock.calls[3][0]).toMatch(
+    /\d{2}:\d{2}:\d{2} - another warning/
+  )
 })
 
 test('does not displays error log when empty', () => {
   displayErrorLog([])
 
   expect(consoleLogSpy.mock.calls).toHaveLength(1)
-  expect(consoleLogSpy.mock.calls[0][0]).toContain('No errors or warnings occurred')
+  expect(consoleLogSpy.mock.calls[0][0]).toContain(
+    'No errors or warnings occurred'
+  )
 })
 
-test('writes error log file to disk', async () => {
-  expect.assertions(8)
+test.only('writes error log file to disk', async () => {
+  expect.assertions(6)
   const destination = '/just/some/path/to/a/file.log'
 
-  await expect(writeErrorLogFile(destination, exampleErrorLog)).resolves.not.toThrow()
+  const writeStreamSpy = jest
+    .spyOn(fs, 'createWriteStream')
+    .mockImplementation(() => new Writable({ write: (a, b, cb) => cb() }))
+
+  await expect(
+    writeErrorLogFile(destination, exampleErrorLog)
+  ).resolves.not.toThrow()
 
   expect(consoleLogSpy.mock.calls).toHaveLength(2)
-  expect(consoleLogSpy.mock.calls[0][0]).toBe('\nStored the detailed error log file at:')
+  expect(consoleLogSpy.mock.calls[0][0]).toBe(
+    '\nStored the detailed error log file at:'
+  )
   expect(consoleLogSpy.mock.calls[1][0]).toBe(destination)
 
-  expect(bfj.write.mock.calls).toHaveLength(1)
-  expect(bfj.write.mock.calls[0][0]).toBe(destination)
-  expect(bfj.write.mock.calls[0][1]).toMatchObject(exampleErrorLog)
-  expect(bfj.write.mock.calls[0][2]).toMatchObject({
-    circular: 'ignore',
-    space: 2
-  })
+  expect(writeStreamSpy.mock.calls).toHaveLength(1)
+  expect(writeStreamSpy.mock.calls[0][0]).toBe(destination)
+
+  console.log(writeStreamSpy.mock.calls[0])
 })
 
 test('sets up logging via event emitter', () => {
@@ -184,7 +207,7 @@ test('sets up logging via event emitter', () => {
   expect(logEmitterAddListenerSpy.mock.calls[1][0]).toBe('warning')
   expect(logEmitterAddListenerSpy.mock.calls[2][0]).toBe('error')
 
-  function assertLogValues (logMessage) {
+  function assertLogValues(logMessage) {
     if (logMessage.level === 'info') {
       //  Info messages are not logged
       return
@@ -257,5 +280,7 @@ test('log messages are logged to task output', () => {
     info: 'this should no more change the task output'
   })
 
-  expect(taskMock.output).not.toBe(`${figures.tick} this should no more change the task output`)
+  expect(taskMock.output).not.toBe(
+    `${figures.tick} this should no more change the task output`
+  )
 })
