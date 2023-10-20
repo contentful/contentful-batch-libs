@@ -11,7 +11,7 @@ import {
 } from '../lib/logging'
 import figures from 'figures'
 
-function isValidDate(date) {
+function isValidDate (date) {
   return !isNaN(Date.parse(date))
 }
 
@@ -207,7 +207,7 @@ test('sets up logging via event emitter', () => {
   expect(logEmitterAddListenerSpy.mock.calls[1][0]).toBe('warning')
   expect(logEmitterAddListenerSpy.mock.calls[2][0]).toBe('error')
 
-  function assertLogValues(logMessage) {
+  function assertLogValues (logMessage) {
     if (logMessage.level === 'info') {
       //  Info messages are not logged
       return
