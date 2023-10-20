@@ -172,7 +172,7 @@ test('does not displays error log when empty', () => {
   )
 })
 
-test.only('writes error log file to disk', async () => {
+test('writes error log file to disk', async () => {
   expect.assertions(6)
   const destination = '/just/some/path/to/a/file.log'
 
