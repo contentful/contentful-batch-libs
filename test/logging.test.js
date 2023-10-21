@@ -1,5 +1,4 @@
-import fs from 'node:fs'
-import { Writable } from 'node:stream'
+import fs, { WriteStream } from 'node:fs'
 import {
   formatLogMessageOneLine,
   formatLogMessageLogfile,
@@ -181,7 +180,7 @@ test('writes error log file to disk', async () => {
   const writeStreamSpy = jest
     .spyOn(fs, 'createWriteStream')
     .mockImplementation(() => {
-      return new Writable({
+      return new WriteStream({
         write: (chunk, b, cb) => {
           try {
             chunks.push(JSON.parse(chunk.toString('utf-8')))
