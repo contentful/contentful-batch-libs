@@ -2,6 +2,7 @@ import type { EventEmitter } from 'events'
 import type { ContentfulClientApi } from 'contentful'
 import type { ClientAPI, EntryProps } from 'contentful-management'
 import type HttpsProxyAgent from 'https-proxy-agent'
+import type { PathLike } from 'node:fs'
 import type { ListrDefaultRendererValue, ListrGetRendererClassFromValue, ListrRendererValue, ListrTask } from 'listr2'
 
 export interface AssetDownloads {
@@ -43,7 +44,7 @@ export function displayErrorLog(errorLog: unknown[]): void;
 
 export function setupLogging(log: unknown[]): void;
 
-export function writeErrorLogFile(destination: string, errorLog: unknown[]): Promise<void>;
+export function writeErrorLogFile(destination: PathLike, errorLog: unknown[]): Promise<void>;
 
 export function proxyStringToObject(proxyString: string): ProxyObject;
 
