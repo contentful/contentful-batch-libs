@@ -166,11 +166,11 @@ const mocks = {
   upload: uploadMock
 }
 
-function cloneMock(name) {
+function cloneMock (name) {
   return structuredClone(mocks[name])
 }
 
-function mockCollection(entityMock) {
+function mockCollection (entityMock) {
   return {
     total: 1,
     skip: 0,
@@ -179,7 +179,7 @@ function mockCollection(entityMock) {
   }
 }
 
-function setupEntitiesMock(rewiredModuleApi) {
+function setupEntitiesMock (rewiredModuleApi) {
   const entitiesMock = {
     space: {
       wrapSpace: jest.fn(),

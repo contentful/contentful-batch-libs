@@ -37,7 +37,7 @@ export type LogMessage = InfoMessage | WarningMessage | ErrorMessage
 
 export const logEmitter = new EventEmitter()
 
-function extractErrorInformation(error: Record<'message', string>) {
+function extractErrorInformation (error: Record<'message', string>) {
   const source =
     'originalError' in error && isMessage(error.originalError)
       ? error.originalError
@@ -58,7 +58,7 @@ function extractErrorInformation(error: Record<'message', string>) {
 
 export function formatLogMessageOneLine<
   TMessage extends LogMessage | { level: undefined }
->(logMessage: TMessage) {
+> (logMessage: TMessage) {
   const { level } = logMessage
   if (!level) {
     return logMessage.toString().replace(/\s+/g, ' ')
@@ -105,7 +105,7 @@ export function formatLogMessageOneLine<
   }
 }
 
-export function formatLogMessageLogfile(logMessage: Record<string, unknown>) {
+export function formatLogMessageLogfile (logMessage: Record<string, unknown>) {
   const { level } = logMessage
   if (level === 'info' || level === 'warning') {
     return logMessage
@@ -142,7 +142,7 @@ export function formatLogMessageLogfile(logMessage: Record<string, unknown>) {
 }
 
 // Display all errors
-export function displayErrorLog(errorLog: LogMessage[]) {
+export function displayErrorLog (errorLog: LogMessage[]) {
   if (errorLog.length) {
     const count = errorLog.reduce(
       (count, curr) => {
@@ -178,7 +178,7 @@ export function displayErrorLog(errorLog: LogMessage[]) {
 /**
  * Write all log messages instead of infos to the error log file
  */
-export async function writeErrorLogFile(
+export async function writeErrorLogFile (
   destination: PathLike,
   errorLog: ErrorMessage[]
 ) {
@@ -210,8 +210,8 @@ export async function writeErrorLogFile(
 /**
  * Init listeners for log messages, transform them into proper format and logs/displays them
  */
-export function setupLogging(log: (WarningMessage | ErrorMessage)[]) {
-  function errorLogger(level: LogMessage['level'], error: unknown) {
+export function setupLogging (log: (WarningMessage | ErrorMessage)[]) {
+  function errorLogger (level: LogMessage['level'], error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),
       level,
@@ -237,8 +237,8 @@ export function logToTaskOutput<
   Ctx = ListrContext,
   Renderer extends ListrRendererFactory = ListrDefaultRenderer,
   FallbackRenderer extends ListrRendererFactory = ListrDefaultRenderer
->(task: ListrTaskWrapper<Ctx, Renderer, FallbackRenderer>) {
-  function logToTask(logMessage: LogMessage) {
+> (task: ListrTaskWrapper<Ctx, Renderer, FallbackRenderer>) {
+  function logToTask (logMessage: LogMessage) {
     const content = formatLogMessageOneLine(logMessage)
     const symbols = {
       info: figures.tick,

@@ -1,6 +1,6 @@
 import { type SysLink, type KeyValueMap } from 'contentful-management'
 
-export function isDetails(
+export function isDetails (
   input: Record<string, unknown>
 ): input is { details: Record<string, unknown> } {
   return Boolean(
@@ -8,7 +8,7 @@ export function isDetails(
   )
 }
 
-export function isErrors(
+export function isErrors (
   input: Record<string, unknown>
 ): input is { errors: { name: string }[] } {
   return Boolean(
@@ -18,7 +18,7 @@ export function isErrors(
   )
 }
 
-export function isFields<T = KeyValueMap>(
+export function isFields<T = KeyValueMap> (
   input: NonNullable<unknown>
 ): input is { fields: T } {
   return Boolean(
@@ -26,7 +26,7 @@ export function isFields<T = KeyValueMap>(
   )
 }
 
-export function isMessage(input: unknown): input is { message: string } {
+export function isMessage (input: unknown): input is { message: string } {
   return Boolean(
     input &&
       typeof input === 'object' &&
@@ -35,7 +35,7 @@ export function isMessage(input: unknown): input is { message: string } {
   )
 }
 
-export function isSysLink(input: NonNullable<unknown>): input is SysLink {
+export function isSysLink (input: NonNullable<unknown>): input is SysLink {
   return Boolean(
     'sys' in input &&
       typeof input.sys === 'object' &&

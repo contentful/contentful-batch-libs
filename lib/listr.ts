@@ -13,7 +13,7 @@ export function wrapTask<
   Ctx = ListrContext,
   Renderer extends ListrRendererFactory = ListrDefaultRenderer,
   FallbackRenderer extends ListrRendererFactory = ListrDefaultRenderer
->(
+> (
   func: ListrTaskFn<Ctx, Renderer, FallbackRenderer>
 ): ListrTaskFn<Ctx, Renderer, FallbackRenderer> {
   return async (ctx, task) => {
