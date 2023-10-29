@@ -85,7 +85,7 @@ test('proxyString without username & password (empty auth in url.parse)', () => 
   const parsed = proxyStringToObject(proxyString)
   const stringified = proxyObjectToString(parsed)
   const expectedStringified = '127.0.0.1:8213'
-  expect(parsed).not.toHaveProperty('auth')
+  expect(parsed.auth).toBeUndefined()
   expect(stringified).toBe(expectedStringified)
 })
 
@@ -128,7 +128,9 @@ test('agentFromProxy creates https agent and removes proxy env variables', () =>
   const agent = agentFromProxy(agentParams)
 
   expect(agent).toBeInstanceOf(HttpsProxyAgent)
-  expect(HttpsProxyAgent.mock.calls[0][0]).toBe(proxyObjectToString(agentParams))
+  expect(HttpsProxyAgent.mock.calls[0][0]).toBe(
+    proxyObjectToString(agentParams)
+  )
 
   expect(process.env).not.toHaveProperty('HTTP_PROXY')
   expect(process.env).not.toHaveProperty('http_proxy')

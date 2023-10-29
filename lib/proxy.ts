@@ -1,7 +1,18 @@
 import { format, URL } from 'url'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 
-function serializeAuth ({ username, password } = {}) {
+export interface BasicAuthorization {
+  username?: string
+  password?: string
+}
+
+export interface ProxyOptions {
+  host: string
+  port: number
+  auth?: BasicAuthorization
+}
+
+function serializeAuth ({ username, password }: BasicAuthorization = {}) {
   if (!username) {
     return ''
   }
@@ -13,7 +24,7 @@ function serializeAuth ({ username, password } = {}) {
   return `${username}:${password}`
 }
 
-export function proxyStringToObject (proxyString) {
+export function proxyStringToObject (proxyString: string) {
   if (!proxyString.startsWith('http')) {
     return proxyStringToObject(`http://${proxyString}`)
   }
@@ -21,7 +32,7 @@ export function proxyStringToObject (proxyString) {
   const parsedUrl = new URL(proxyString)
 
   const host = parsedUrl.hostname
-  const portString = parsedUrl.port
+  const port = parseInt(parsedUrl.port)
   const protocol = parsedUrl.protocol
 
   const auth = {
@@ -29,22 +40,15 @@ export function proxyStringToObject (proxyString) {
     password: parsedUrl.password
   }
 
-  const port = parseInt(portString)
-  const isHttps = protocol === 'https:'
-
-  if (!auth.username) {
-    return { host, port, isHttps }
-  }
-
   return {
     host,
-    isHttps,
     port,
-    auth
+    isHttps: protocol === 'https:',
+    auth: auth?.username ? auth : undefined
   }
 }
 
-export function proxyObjectToString (proxyObject) {
+export function proxyObjectToString (proxyObject: ProxyOptions) {
   const { host: hostname, port, auth: authObject } = proxyObject
   const auth = serializeAuth(authObject)
 
@@ -54,7 +58,7 @@ export function proxyObjectToString (proxyObject) {
   return formatted.replace(/^\/\//, '')
 }
 
-export function agentFromProxy (proxy) {
+export function agentFromProxy (proxy?: ProxyOptions) {
   if (!proxy) {
     return {}
   }
