@@ -1,6 +1,6 @@
 import { isFields, isSysLink } from './type-guards'
 
-export default function getEntityName (entity: NonNullable<unknown>): string {
+export function getEntityName (entity: NonNullable<unknown>): string {
   if ('name' in entity && typeof entity.name === 'string') {
     return attachId(entity.name, entity)
   }

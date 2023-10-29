@@ -11,7 +11,7 @@
     "build": "npm run clean && tsc",
     "build:watch": "tsc --watch",
     "clean": "rimraf dist && rimraf coverage",
-    "lint": "eslint lib test/* test types.d.ts",
+    "lint": "eslint lib test/* test",
     "pretest": "npm run lint",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
@@ -53,8 +53,7 @@
   },
   "files": [
     "dist",
-    "test",
-    "types.d.ts"
+    "test"
   ],
   "repository": {
     "type": "git",

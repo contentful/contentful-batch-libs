@@ -8,11 +8,11 @@ import type {
   ListrTaskWrapper
 } from 'listr2'
 import EventEmitter from 'node:events'
-import { PathLike, createWriteStream } from 'node:fs'
+import { createWriteStream, type PathLike } from 'node:fs'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { isNativeError } from 'node:util/types'
-import getEntityName from './get-entity-name'
+import { getEntityName } from './get-entity-name'
 import { isDetails, isErrors, isMessage } from './type-guards'
 
 interface InfoMessage {
