@@ -3,7 +3,7 @@
   "version": "0.0.0-determined-by-semantic-release",
   "description": "Library modules used by contentful batch utility CLI tools.",
   "main": "dist/index.js",
-  "types": "types.d.ts",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": ">=18"
   },
@@ -11,7 +11,7 @@
     "build": "npm run clean && tsc",
     "build:watch": "tsc --watch",
     "clean": "rimraf dist && rimraf coverage",
-    "lint": "eslint lib test/* test types.d.ts",
+    "lint": "eslint lib test/* test",
     "pretest": "npm run lint",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand --watch",
@@ -26,14 +26,10 @@
     "date-fns": "^2.28.0",
     "figures": "3.2.0",
     "https-proxy-agent": "^7.0.2",
-    "lodash.clonedeep": "^4.5.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.6",
-    "@babel/preset-env": "^7.16.4",
     "@types/jest": "^29.5.6",
-    "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^20.8.4",
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
@@ -57,8 +53,7 @@
   },
   "files": [
     "dist",
-    "test",
-    "types.d.ts"
+    "test"
   ],
   "repository": {
     "type": "git",

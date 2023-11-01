@@ -1,27 +1,64 @@
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import figures from 'figures'
+import type {
+  ListrContext,
+  ListrDefaultRenderer,
+  ListrRendererFactory,
+  ListrTaskWrapper
+} from 'listr2'
 import EventEmitter from 'node:events'
-import { createWriteStream } from 'node:fs'
+import { createWriteStream, type PathLike } from 'node:fs'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-import getEntityName from './get-entity-name'
+import { isNativeError } from 'node:util/types'
+import { getEntityName } from './get-entity-name'
+import { isDetails, isErrors, isMessage } from './type-guards'
+
+interface InfoMessage {
+  ts: string
+  level: 'info'
+  info: string
+}
+
+interface WarningMessage {
+  ts: string
+  level: 'warning'
+  warning: string
+}
+
+interface ErrorMessage {
+  ts: string
+  level: 'error'
+  error: Error
+}
+
+export type LogMessage = InfoMessage | WarningMessage | ErrorMessage
 
 export const logEmitter = new EventEmitter()
 
-function extractErrorInformation (error) {
-  const source = error.originalError || error
+function extractErrorInformation (error: Record<'message', string>) {
+  const source =
+    'originalError' in error && isMessage(error.originalError)
+      ? error.originalError
+      : error
+
   try {
     const data = JSON.parse(source.message)
-    if (data && typeof data === 'object') {
-      return data
+
+    if (!data || typeof data !== 'object') {
+      throw new TypeError('Unexpected data format, expected object')
     }
+
+    return data as Record<string, unknown>
   } catch (err) {
     throw new Error('Unable to extract API error data')
   }
 }
 
-export function formatLogMessageOneLine (logMessage) {
+export function formatLogMessageOneLine<
+  TMessage extends LogMessage | { level: undefined }
+> (logMessage: TMessage) {
   const { level } = logMessage
   if (!level) {
     return logMessage.toString().replace(/\s+/g, ' ')
@@ -36,25 +73,31 @@ export function formatLogMessageOneLine (logMessage) {
     // Display enhanced API error message when available
     const errorOutput = []
     const data = extractErrorInformation(logMessage.error)
+
     if ('status' in data || 'statusText' in data) {
       const status = [data.status, data.statusText].filter((a) => a).join(' - ')
       errorOutput.push(`Status: ${status}`)
     }
+
     if ('message' in data) {
       errorOutput.push(`Message: ${data.message}`)
     }
-    if ('entity' in data) {
+
+    if ('entity' in data && data.entity) {
       errorOutput.push(`Entity: ${getEntityName(data.entity)}`)
     }
-    if ('details' in data && 'errors' in data.details) {
-      const errorList = data.details.errors.map(
-        (error) => error.details || error.name
+
+    if (isDetails(data) && isErrors(data.details)) {
+      const errorList = data.details.errors.map((error) =>
+        isDetails(error) ? error.details : error.name
       )
       errorOutput.push(`Details: ${errorList.join(', ')}`)
     }
+
     if ('requestId' in data) {
       errorOutput.push(`Request ID: ${data.requestId}`)
     }
+
     return `${logMessage.error.name}: ${errorOutput.join(' - ')}`
   } catch (err) {
     // Fallback for errors without API information
@@ -62,41 +105,44 @@ export function formatLogMessageOneLine (logMessage) {
   }
 }
 
-export function formatLogMessageLogfile (logMessage) {
+export function formatLogMessageLogfile (logMessage: Record<string, unknown>) {
   const { level } = logMessage
   if (level === 'info' || level === 'warning') {
     return logMessage
   }
-  if (!logMessage.error) {
-    // Enhance node errors to logMessage format
-    logMessage.error = logMessage
-  }
-  try {
-    // Enhance error with extracted API error log
-    const data = extractErrorInformation(logMessage.error)
-    const errorOutput = Object.assign({}, logMessage.error, { data })
-    delete errorOutput.message
-    logMessage.error = errorOutput
-  } catch (err) {
-    // Fallback for errors without API information
-    if (logMessage.error.stack) {
-      logMessage.error.stacktrace = logMessage.error.stack
-        .toString()
-        .split(/\n +at /)
+
+  // Enhance node errors to logMessage format
+  let formattedError: NonNullable<unknown> = logMessage.error ?? logMessage
+
+  if (isNativeError(formattedError)) {
+    try {
+      // Enhance error with extracted API error log
+      const data = extractErrorInformation(formattedError)
+      const errorOutput = { ...formattedError, data } as Partial<Error>
+      delete errorOutput.message
+      formattedError = errorOutput
+    } catch (err) {
+      // Fallback for errors without API information
+      if ('stack' in formattedError && formattedError.stack) {
+        const stacktrace = formattedError.stack.toString().split(/\n +at /)
+        Object.defineProperty(formattedError, 'stacktrace', {
+          value: stacktrace
+        })
+      }
     }
   }
 
   // Listr attaches the whole context to error messages.
   // Remove it to avoid error log file pollution.
-  if (typeof logMessage.error === 'object' && 'context' in logMessage.error) {
-    delete logMessage.error.context
+  if (typeof formattedError === 'object' && 'context' in formattedError) {
+    delete formattedError.context
   }
 
-  return logMessage
+  return { ...structuredClone(logMessage), error: formattedError }
 }
 
 // Display all errors
-export function displayErrorLog (errorLog) {
+export function displayErrorLog (errorLog: LogMessage[]) {
   if (errorLog.length) {
     const count = errorLog.reduce(
       (count, curr) => {
@@ -131,11 +177,11 @@ export function displayErrorLog (errorLog) {
 
 /**
  * Write all log messages instead of infos to the error log file
- * @param {import('node:fs').PathLike} destination
- * @param {Record<string, unknown>[]} errorLog
- * @returns {Promise<void>}
  */
-export async function writeErrorLogFile (destination, errorLog) {
+export async function writeErrorLogFile (
+  destination: PathLike,
+  errorLog: ErrorMessage[]
+) {
   const formatLogTransformer = new Transform({
     objectMode: true,
     transform: (chunk, encoding, callback) => {
@@ -163,19 +209,19 @@ export async function writeErrorLogFile (destination, errorLog) {
 
 /**
  * Init listeners for log messages, transform them into proper format and logs/displays them
- * @param {Record<string,unknown>[]} log
- * @returns {Promise<void>}
  */
-export function setupLogging (log) {
-  function errorLogger (level, error) {
+export function setupLogging (log: (WarningMessage | ErrorMessage)[]) {
+  function errorLogger (level: LogMessage['level'], error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),
       level,
       [level]: error
-    }
-    if (level !== 'info') {
+    } as unknown as LogMessage
+
+    if (logMessage.level !== 'info') {
       log.push(logMessage)
     }
+
     logEmitter.emit('display', logMessage)
   }
 
@@ -186,17 +232,20 @@ export function setupLogging (log) {
 
 /**
  * Format log message to display them as task status
- * @template {Ctx}
- * @param {import('listr').ListrTaskWrapper<Ctx>} task
  */
-export function logToTaskOutput (task) {
-  function logToTask (logMessage) {
+export function logToTaskOutput<
+  Ctx = ListrContext,
+  Renderer extends ListrRendererFactory = ListrDefaultRenderer,
+  FallbackRenderer extends ListrRendererFactory = ListrDefaultRenderer
+> (task: ListrTaskWrapper<Ctx, Renderer, FallbackRenderer>) {
+  function logToTask (logMessage: LogMessage) {
     const content = formatLogMessageOneLine(logMessage)
     const symbols = {
       info: figures.tick,
       warning: figures.warning,
       error: figures.cross
-    }
+    } as const
+
     task.output = `${symbols[logMessage.level]} ${content}`.trim()
   }
 
