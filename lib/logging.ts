@@ -210,7 +210,7 @@ export async function writeErrorLogFile (
 /**
  * Init listeners for log messages, transform them into proper format and logs/displays them
  */
-export function setupLogging (log: (WarningMessage | ErrorMessage)[]) {
+export function setupLogging (log: (WarningMessage | ErrorMessage)[] = []) {
   function errorLogger (level: LogMessage['level'], error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),
@@ -228,6 +228,8 @@ export function setupLogging (log: (WarningMessage | ErrorMessage)[]) {
   logEmitter.addListener('info', (error) => errorLogger('info', error))
   logEmitter.addListener('warning', (error) => errorLogger('warning', error))
   logEmitter.addListener('error', (error) => errorLogger('error', error))
+
+  return log
 }
 
 /**
