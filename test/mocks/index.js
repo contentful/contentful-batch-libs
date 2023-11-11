@@ -1,22 +1,22 @@
 const linkMock = {
   id: 'linkid',
   type: 'Link',
-  linkType: 'linkType'
-}
+  linkType: 'linkType',
+};
 
 const sysMock = {
   type: 'Type',
   id: 'id',
   space: structuredClone(linkMock),
   createdAt: 'createdatdate',
-  updatedAt: 'updatedatdate'
-}
+  updatedAt: 'updatedatdate',
+};
 
 const spaceMock = {
   sys: Object.assign(structuredClone(sysMock), { type: 'Space' }),
   name: 'name',
-  locales: ['en-US']
-}
+  locales: ['en-US'],
+};
 
 const contentTypeMock = {
   sys: Object.assign(structuredClone(sysMock), { type: 'ContentType' }),
@@ -29,52 +29,54 @@ const contentTypeMock = {
       name: 'fieldname',
       type: 'Text',
       localized: true,
-      required: false
-    }
-  ]
-}
+      required: false,
+    },
+  ],
+};
 
 const entryMock = {
   sys: Object.assign(structuredClone(sysMock), {
     type: 'Entry',
     contentType: Object.assign(structuredClone(linkMock), {
-      linkType: 'ContentType'
+      linkType: 'ContentType',
     }),
-    locale: 'locale'
+    locale: 'locale',
   }),
   fields: {
-    field1: 'str'
-  }
-}
+    field1: 'str',
+  },
+};
 const editorInterfaceMock = {
   sys: Object.assign(structuredClone(sysMock), {
     type: 'EditorInterface',
     contentType: {
-      sys: Object.assign(structuredClone(linkMock), { linkType: 'ContentType' })
+      sys: Object.assign(structuredClone(linkMock), {
+        linkType: 'ContentType',
+      }),
     },
-    space: Object.assign(structuredClone(linkMock), { linkType: 'Space' })
+    space: Object.assign(structuredClone(linkMock), { linkType: 'Space' }),
   }),
   controls: [
     {
       fieldId: 'fieldId',
-      widgetId: 'singleLine'
-    }
-  ]
-}
+      widgetId: 'singleLine',
+    },
+  ],
+};
 const assetMock = {
   sys: Object.assign(structuredClone(sysMock), {
     type: 'Asset',
-    locale: 'locale'
+    locale: 'locale',
   }),
   fields: {
-    field1: 'str'
-  }
-}
+    field1: 'str',
+  },
+};
 
 const assetWithFilesMock = {
   sys: Object.assign(structuredClone(sysMock), {
     type: 'Asset',
-    locale: 'locale'
+    locale: 'locale',
   }),
   fields: {
     files: {
@@ -85,9 +87,9 @@ const assetWithFilesMock = {
           sys: {
             type: 'Link',
             linkType: 'Upload',
-            id: 'some_random_id'
-          }
-        }
+            id: 'some_random_id',
+          },
+        },
       },
       locale2: {
         contentType: 'image/svg',
@@ -96,59 +98,59 @@ const assetWithFilesMock = {
           sys: {
             type: 'Link',
             linkType: 'Upload',
-            id: 'some_random_id'
-          }
-        }
-      }
-    }
-  }
-}
+            id: 'some_random_id',
+          },
+        },
+      },
+    },
+  },
+};
 
 const uploadMock = {
   sys: Object.assign(structuredClone(sysMock), {
     type: 'Upload',
-    id: 'some_random_id'
-  })
-}
+    id: 'some_random_id',
+  }),
+};
 
 const localeMock = {
   sys: Object.assign(structuredClone(sysMock), {
-    type: 'Locale'
+    type: 'Locale',
   }),
   name: 'English',
   code: 'en',
   contentDeliveryApi: true,
   contentManagementApi: true,
-  default: true
-}
+  default: true,
+};
 
 const webhookMock = {
-  sys: Object.assign(structuredClone(sysMock), { type: 'WebhookDefinition' })
-}
+  sys: Object.assign(structuredClone(sysMock), { type: 'WebhookDefinition' }),
+};
 
 const spaceMembershipMock = {
-  sys: Object.assign(structuredClone(sysMock), { type: 'SpaceMembership' })
-}
+  sys: Object.assign(structuredClone(sysMock), { type: 'SpaceMembership' }),
+};
 
 const roleMock = {
-  sys: Object.assign(structuredClone(sysMock), { type: 'Role' })
-}
+  sys: Object.assign(structuredClone(sysMock), { type: 'Role' }),
+};
 
 const apiKeyMock = {
-  sys: Object.assign(structuredClone(sysMock), { type: 'ApiKey' })
-}
+  sys: Object.assign(structuredClone(sysMock), { type: 'ApiKey' }),
+};
 
 const errorMock = {
   config: {
     url: 'requesturl',
-    headers: {}
+    headers: {},
   },
   data: {},
   response: {
     status: 404,
-    statusText: 'Not Found'
-  }
-}
+    statusText: 'Not Found',
+  },
+};
 
 const mocks = {
   link: linkMock,
@@ -163,70 +165,70 @@ const mocks = {
   role: roleMock,
   apiKey: apiKeyMock,
   error: errorMock,
-  upload: uploadMock
+  upload: uploadMock,
+};
+
+function cloneMock(name) {
+  return structuredClone(mocks[name]);
 }
 
-function cloneMock (name) {
-  return structuredClone(mocks[name])
-}
-
-function mockCollection (entityMock) {
+function mockCollection(entityMock) {
   return {
     total: 1,
     skip: 0,
     limit: 100,
-    items: [entityMock]
-  }
+    items: [entityMock],
+  };
 }
 
-function setupEntitiesMock (rewiredModuleApi) {
+function setupEntitiesMock(rewiredModuleApi) {
   const entitiesMock = {
     space: {
       wrapSpace: jest.fn(),
-      wrapSpaceCollection: jest.fn()
+      wrapSpaceCollection: jest.fn(),
     },
     contentType: {
       wrapContentType: jest.fn(),
-      wrapContentTypeCollection: jest.fn()
+      wrapContentTypeCollection: jest.fn(),
     },
     entry: {
       wrapEntry: jest.fn(),
-      wrapEntryCollection: jest.fn()
+      wrapEntryCollection: jest.fn(),
     },
     asset: {
       wrapAsset: jest.fn(),
-      wrapAssetCollection: jest.fn()
+      wrapAssetCollection: jest.fn(),
     },
     locale: {
       wrapLocale: jest.fn(),
-      wrapLocaleCollection: jest.fn()
+      wrapLocaleCollection: jest.fn(),
     },
     webhook: {
       wrapWebhook: jest.fn(),
-      wrapWebhookCollection: jest.fn()
+      wrapWebhookCollection: jest.fn(),
     },
     spaceMembership: {
       wrapSpaceMembership: jest.fn(),
-      wrapSpaceMembershipCollection: jest.fn()
+      wrapSpaceMembershipCollection: jest.fn(),
     },
     role: {
       wrapRole: jest.fn(),
-      wrapRoleCollection: jest.fn()
+      wrapRoleCollection: jest.fn(),
     },
     apiKey: {
       wrapApiKey: jest.fn(),
-      wrapApiKeyCollection: jest.fn()
+      wrapApiKeyCollection: jest.fn(),
     },
     editorInterface: {
-      wrapEditorInterface: jest.fn()
+      wrapEditorInterface: jest.fn(),
     },
     upload: {
-      wrapUpload: jest.fn()
-    }
-  }
-  rewiredModuleApi.__Rewire__('entities', entitiesMock)
+      wrapUpload: jest.fn(),
+    },
+  };
+  rewiredModuleApi.__Rewire__('entities', entitiesMock);
 
-  return entitiesMock
+  return entitiesMock;
 }
 
 export {
@@ -247,5 +249,5 @@ export {
   cloneMock,
   mockCollection,
   setupEntitiesMock,
-  uploadMock
-}
+  uploadMock,
+};
