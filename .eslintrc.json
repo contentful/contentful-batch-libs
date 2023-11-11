@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "plugins": ["jest"],
+  "env": {
+    "node": true,
+    "jest/globals": true
+  },
+  "ignorePatterns": ["node_modules", "dist"]
+}
