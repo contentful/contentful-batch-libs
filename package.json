@@ -23,7 +23,7 @@
     "prepush": "npm run test"
   },
   "dependencies": {
-    "date-fns": "^2.28.0",
+    "date-fns": "^3.6.0",
     "figures": "3.2.0",
     "https-proxy-agent": "^7.0.2",
     "uuid": "^9.0.1"
