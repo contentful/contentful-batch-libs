@@ -33,7 +33,7 @@
     "@types/node": "^22.0.0",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
-    "contentful": "^10.6.1",
+    "contentful": "^11.0.2",
     "contentful-management": "^11.1.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.51.0",
