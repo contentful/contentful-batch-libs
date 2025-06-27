@@ -12,8 +12,8 @@ import { createWriteStream, type PathLike } from 'node:fs'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { isNativeError } from 'node:util/types'
-import { getEntityName } from './get-entity-name'
-import { isDetails, isErrors, isMessage } from './type-guards'
+import { getEntityName } from './get-entity-name.js'
+import { isDetails, isErrors, isMessage } from './type-guards.js'
 
 interface InfoMessage {
   ts: string
@@ -210,7 +210,7 @@ export async function writeErrorLogFile (
 /**
  * Init listeners for log messages, transform them into proper format and logs/displays them
  */
-export function setupLogging (log: (WarningMessage | ErrorMessage)[] = []) {
+export function setupLogging (log: (LogMessage)[] = []) {
   function errorLogger (level: LogMessage['level'], error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),

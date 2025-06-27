@@ -1,4 +1,4 @@
-import { isFields, isSysLink } from './type-guards'
+import { isFields, isSysLink } from './type-guards.js'
 
 export function getEntityName (entity?: NonNullable<unknown>): string {
   if (!entity) {
