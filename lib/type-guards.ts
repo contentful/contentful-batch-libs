@@ -1,4 +1,4 @@
-import { type SysLink, type KeyValueMap } from 'contentful-management'
+import { type Link, type KeyValueMap } from 'contentful-management'
 
 export function isDetails (
   input: Record<string, unknown>
@@ -35,7 +35,7 @@ export function isMessage (input: unknown): input is { message: string } {
   )
 }
 
-export function isSysLink (input: NonNullable<unknown>): input is SysLink {
+export function isSysLink (input: NonNullable<unknown>): input is Link<'sys'> {
   return Boolean(
     'sys' in input &&
       typeof input.sys === 'object' &&
