@@ -1,5 +1,6 @@
-import fs from 'node:fs'
+import { afterEach, expect, test, vi } from 'vitest'
 import { Writable } from 'node:stream'
+import { createWriteStream } from 'node:fs'
 import {
   formatLogMessageOneLine,
   formatLogMessageLogfile,
@@ -7,7 +8,8 @@ import {
   writeErrorLogFile,
   setupLogging,
   logEmitter,
-  logToTaskOutput
+  logToTaskOutput,
+  LogMessage
 } from '../lib/logging'
 import figures from 'figures'
 
@@ -15,9 +17,16 @@ function isValidDate (date) {
   return !isNaN(Date.parse(date))
 }
 
-const consoleLogSpy = jest.spyOn(global.console, 'log')
-const logEmitterAddListenerSpy = jest.spyOn(logEmitter, 'addListener')
-const logEmitterEmitSpy = jest.spyOn(logEmitter, 'emit')
+const consoleLogSpy = vi.spyOn(global.console, 'log')
+const logEmitterAddListenerSpy = vi.spyOn(logEmitter, 'addListener')
+const logEmitterEmitSpy = vi.spyOn(logEmitter, 'emit')
+
+vi.mock('node:fs', async () => {
+  return {
+    ...(await vi.importActual<typeof import('node:fs')>('node:fs')),
+    createWriteStream: vi.fn()
+  }
+})
 
 const exampleErrorLog = [
   {
@@ -59,7 +68,7 @@ test('format one line api error', () => {
   }
   const json = JSON.stringify(apiError)
   const error = new Error(json)
-  const output = formatLogMessageOneLine({ error, level: 'error' })
+  const output = formatLogMessageOneLine({ error, level: 'error', ts: Date.toString() })
   expect(output).toBe(
     'Error: Status: status - status text - Message: Some API error - Entity: 42 - Details: error detail - Request ID: 3'
   )
@@ -68,7 +77,8 @@ test('format one line api error', () => {
 test('format one line message with level error', () => {
   const output = formatLogMessageOneLine({
     error: Error('normal error message'),
-    level: 'error'
+    level: 'error',
+    ts: Date.toString()
   })
   expect(output).toBe('Error: normal error message')
 })
@@ -76,13 +86,18 @@ test('format one line message with level error', () => {
 test('format one line message with level warning', () => {
   const output = formatLogMessageOneLine({
     warning: 'warning text',
-    level: 'warning'
+    level: 'warning',
+    ts: Date.toString()
   })
   expect(output).toBe('warning text')
 })
 
 test('format one line message with level info', () => {
-  const output = formatLogMessageOneLine({ info: 'info text', level: 'info' })
+  const output = formatLogMessageOneLine({
+    info: 'info text',
+    level: 'info',
+    ts: Date.toString()
+  })
   expect(output).toBe('info text')
 })
 
@@ -110,7 +125,8 @@ test('format log file api error', () => {
   }
   const json = JSON.stringify(apiError)
   const error = new Error(json)
-  const output = formatLogMessageLogfile({ error, level: 'error' })
+  const output = formatLogMessageLogfile({ error, level: 'error', ts: Date.toString() })
+
   expect(output.error.data.requestId).toBe(apiError.requestId)
   expect(output.error.data.message).toBe(apiError.message)
   expect(output.error.data.details.errors[0].name).toBe(
@@ -120,18 +136,18 @@ test('format log file api error', () => {
 
 test('format log file standard error', () => {
   const error = new Error('normal error message')
-  const output = formatLogMessageLogfile({ error, level: 'error' })
-  expect(output.error.message).toBe(error.message)
+  const output = formatLogMessageLogfile({ error, level: 'error', ts: Date.toString() })
+  expect(output.error?.message).toBe(error.message)
 })
 
 test('format log file log message with level warning', () => {
-  const logMessage = { warning: 'warning text', level: 'warning' }
+  const logMessage = { warning: 'warning text', level: 'warning', ts: Date.toString() }
   const output = formatLogMessageLogfile(logMessage)
   expect(output).toMatchObject(logMessage)
 })
 
 test('format log file log message with level info', () => {
-  const logMessage = { warning: 'info text', level: 'info' }
+  const logMessage = { warning: 'info text', level: 'info', ts: Date.toString() }
   const output = formatLogMessageLogfile(logMessage)
   expect(output).toMatchObject(logMessage)
 })
@@ -178,20 +194,21 @@ test('writes error log file to disk', async () => {
 
   const chunks = []
 
-  const writeStreamSpy = jest
-    .spyOn(fs, 'createWriteStream')
-    .mockImplementation(() => {
-      return new Writable({
-        write: (chunk, b, cb) => {
-          try {
-            chunks.push(JSON.parse(chunk.toString('utf-8')))
-            cb()
-          } catch (err) {
-            cb(err)
-          }
+  const writeStreamSpy = vi
+    .mocked(createWriteStream)
+
+  writeStreamSpy.mockImplementationOnce(() => {
+    return new Writable({
+      write: (chunk, b, cb) => {
+        try {
+          chunks.push(JSON.parse(chunk.toString('utf-8')))
+          cb()
+        } catch (err) {
+          cb(err)
         }
-      })
+      }
     })
+  })
 
   await expect(
     writeErrorLogFile(destination, exampleErrorLog)
@@ -220,7 +237,7 @@ test('writes error log file to disk', async () => {
 test('sets up logging via event emitter', () => {
   expect.assertions(20)
 
-  const log = []
+  const log: LogMessage[] = []
   setupLogging(log)
 
   expect(logEmitterAddListenerSpy.mock.calls).toHaveLength(3)

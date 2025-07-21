@@ -12,8 +12,8 @@ import { createWriteStream, type PathLike } from 'node:fs'
 import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { isNativeError } from 'node:util/types'
-import { getEntityName } from './get-entity-name'
-import { isDetails, isErrors, isMessage } from './type-guards'
+import { getEntityName } from './get-entity-name.js'
+import { isDetails, isErrors, isMessage } from './type-guards.js'
 
 interface InfoMessage {
   ts: string
@@ -57,9 +57,11 @@ function extractErrorInformation (error: Record<'message', string>) {
 }
 
 export function formatLogMessageOneLine<
-  TMessage extends LogMessage | { level: undefined }
+  TMessage extends LogMessage | { level: undefined } | string
 > (logMessage: TMessage) {
-  const { level } = logMessage
+  if (typeof logMessage === 'string') {
+    return logMessage
+  } const { level } = logMessage
   if (!level) {
     return logMessage.toString().replace(/\s+/g, ' ')
   }
@@ -105,14 +107,20 @@ export function formatLogMessageOneLine<
   }
 }
 
-export function formatLogMessageLogfile (logMessage: Record<string, unknown>) {
+export function formatLogMessageLogfile (logMessage: LogMessage) {
   const { level } = logMessage
   if (level === 'info' || level === 'warning') {
     return logMessage
   }
 
   // Enhance node errors to logMessage format
-  let formattedError: NonNullable<unknown> = logMessage.error ?? logMessage
+  let formattedError: Partial<Error> & {
+    data?: {
+      requestId: string
+      message: string
+      details: unknown
+    };
+  } = logMessage.error ?? logMessage
 
   if (isNativeError(formattedError)) {
     try {
@@ -210,7 +218,7 @@ export async function writeErrorLogFile (
 /**
  * Init listeners for log messages, transform them into proper format and logs/displays them
  */
-export function setupLogging (log: (WarningMessage | ErrorMessage)[] = []) {
+export function setupLogging (log: (LogMessage)[] = []) {
   function errorLogger (level: LogMessage['level'], error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),

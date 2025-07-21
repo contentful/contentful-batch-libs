@@ -1,12 +1,12 @@
+import { expect, test, vi } from 'vitest'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import {
   proxyStringToObject,
   proxyObjectToString,
   agentFromProxy
 } from '../lib/proxy'
-import expect from 'expect'
 
-jest.mock('https-proxy-agent')
+vi.mock('https-proxy-agent')
 
 test('proxyString with basic auth, with protocol', () => {
   const proxyString = 'http://foo:bar@127.0.0.1:8213'
@@ -94,8 +94,8 @@ test('proxyString with username', () => {
   const parsed = proxyStringToObject(proxyString)
   const stringified = proxyObjectToString(parsed)
   const expectedStringified = 'user@127.0.0.1:8213'
-  expect(parsed.auth.username).toBe('user')
-  expect(parsed.auth.password).toBeFalsy()
+  expect(parsed.auth?.username).toBe('user')
+  expect(parsed.auth?.password).toBeFalsy()
   expect(stringified).toBe(expectedStringified)
 })
 
@@ -104,8 +104,8 @@ test('parseString with username & password', () => {
   const parsed = proxyStringToObject(proxyString)
   const stringified = proxyObjectToString(parsed)
   const expectedStringified = 'user:53cr37@127.0.0.1:8213'
-  expect(parsed.auth.username).toBe('user')
-  expect(parsed.auth.password).toBe('53cr37')
+  expect(parsed.auth?.username).toBe('user')
+  expect(parsed.auth?.password).toBe('53cr37')
   expect(stringified).toBe(expectedStringified)
 })
 
@@ -115,10 +115,10 @@ test('agentFromProxy with no proxy passed', () => {
 })
 
 test('agentFromProxy creates https agent and removes proxy env variables', () => {
-  process.env.HTTP_PROXY = true
-  process.env.http_proxy = true
-  process.env.HTTPS_PROXY = true
-  process.env.https_proxy = true
+  process.env.HTTP_PROXY = 'true'
+  process.env.http_proxy = 'true'
+  process.env.HTTPS_PROXY = 'true'
+  process.env.https_proxy = 'true'
   const agentParams = {
     host: 'foo.bar',
     port: 1234,
@@ -128,7 +128,7 @@ test('agentFromProxy creates https agent and removes proxy env variables', () =>
   const agent = agentFromProxy(agentParams)
 
   expect(agent).toBeInstanceOf(HttpsProxyAgent)
-  expect(HttpsProxyAgent.mock.calls[0][0]).toBe(
+  expect(vi.mocked(HttpsProxyAgent).mock.calls[0][0]).toBe(
     proxyObjectToString(agentParams)
   )
 

@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 const linkMock = {
   id: 'linkid',
   type: 'Link',
@@ -182,46 +183,46 @@ function mockCollection (entityMock) {
 function setupEntitiesMock (rewiredModuleApi) {
   const entitiesMock = {
     space: {
-      wrapSpace: jest.fn(),
-      wrapSpaceCollection: jest.fn()
+      wrapSpace: vi.fn(),
+      wrapSpaceCollection: vi.fn()
     },
     contentType: {
-      wrapContentType: jest.fn(),
-      wrapContentTypeCollection: jest.fn()
+      wrapContentType: vi.fn(),
+      wrapContentTypeCollection: vi.fn()
     },
     entry: {
-      wrapEntry: jest.fn(),
-      wrapEntryCollection: jest.fn()
+      wrapEntry: vi.fn(),
+      wrapEntryCollection: vi.fn()
     },
     asset: {
-      wrapAsset: jest.fn(),
-      wrapAssetCollection: jest.fn()
+      wrapAsset: vi.fn(),
+      wrapAssetCollection: vi.fn()
     },
     locale: {
-      wrapLocale: jest.fn(),
-      wrapLocaleCollection: jest.fn()
+      wrapLocale: vi.fn(),
+      wrapLocaleCollection: vi.fn()
     },
     webhook: {
-      wrapWebhook: jest.fn(),
-      wrapWebhookCollection: jest.fn()
+      wrapWebhook: vi.fn(),
+      wrapWebhookCollection: vi.fn()
     },
     spaceMembership: {
-      wrapSpaceMembership: jest.fn(),
-      wrapSpaceMembershipCollection: jest.fn()
+      wrapSpaceMembership: vi.fn(),
+      wrapSpaceMembershipCollection: vi.fn()
     },
     role: {
-      wrapRole: jest.fn(),
-      wrapRoleCollection: jest.fn()
+      wrapRole: vi.fn(),
+      wrapRoleCollection: vi.fn()
     },
     apiKey: {
-      wrapApiKey: jest.fn(),
-      wrapApiKeyCollection: jest.fn()
+      wrapApiKey: vi.fn(),
+      wrapApiKeyCollection: vi.fn()
     },
     editorInterface: {
-      wrapEditorInterface: jest.fn()
+      wrapEditorInterface: vi.fn()
     },
     upload: {
-      wrapUpload: jest.fn()
+      wrapUpload: vi.fn()
     }
   }
   rewiredModuleApi.__Rewire__('entities', entitiesMock)

@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { getEntityName } from '../lib'
 
 test('get name by name property', () => {
