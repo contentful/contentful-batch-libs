@@ -1,18 +1,19 @@
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { wrapTask } from '../lib'
 import * as logging from '../lib/logging'
 
-jest.mock('../lib/logging')
+vi.mock('../lib/logging')
 
 const { logToTaskOutput, formatLogMessageOneLine } = logging
 
 beforeEach(() => {
-  formatLogMessageOneLine.mockImplementation((logMessage) => `formatted: ${logMessage.error.message}`)
-  logToTaskOutput.mockImplementation(() => jest.fn())
+  vi.mocked(formatLogMessageOneLine).mockImplementation((logMessage) => `formatted: ${logMessage.error.message}`)
+  vi.mocked(logToTaskOutput).mockImplementation(() => vi.fn())
 })
 
 afterEach(() => {
-  logToTaskOutput.mockClear()
-  formatLogMessageOneLine.mockClear()
+  vi.mocked(logToTaskOutput).mockClear()
+  vi.mocked(formatLogMessageOneLine).mockClear()
 })
 
 test('wraps task, sets up listeners and allows modification of task context', async () => {
@@ -26,8 +27,8 @@ test('wraps task, sets up listeners and allows modification of task context', as
   await wrappedTask(ctx)
 
   expect(ctx.done).toBe(true)
-  expect(logToTaskOutput.mock.calls).toHaveLength(1)
-  expect(formatLogMessageOneLine.mock.calls).toHaveLength(0)
+  expect(vi.mocked(logToTaskOutput).mock.calls).toHaveLength(1)
+  expect(vi.mocked(formatLogMessageOneLine).mock.calls).toHaveLength(0)
 })
 
 test('wraps task and properly formats and throws error', async () => {
@@ -50,10 +51,10 @@ test('wraps task and properly formats and throws error', async () => {
   }
 
   expect(Object.keys(ctx)).toHaveLength(0)
-  expect(logToTaskOutput.mock.calls).toHaveLength(1)
-  expect(formatLogMessageOneLine.mock.calls).toHaveLength(1)
+  expect(vi.mocked(logToTaskOutput).mock.calls).toHaveLength(1)
+  expect(vi.mocked(formatLogMessageOneLine).mock.calls).toHaveLength(1)
 
-  expect(formatLogMessageOneLine.mock.calls[0][0].ts).not.toHaveLength(0)
-  expect(formatLogMessageOneLine.mock.calls[0][0].level).toBe('error')
-  expect(formatLogMessageOneLine.mock.calls[0][0].error.message).toBe(errorMessage)
+  expect(vi.mocked(formatLogMessageOneLine).mock.calls[0][0].ts).not.toHaveLength(0)
+  expect(vi.mocked(formatLogMessageOneLine).mock.calls[0][0].level).toBe('error')
+  expect(vi.mocked(formatLogMessageOneLine).mock.calls[0][0].error.message).toBe(errorMessage)
 })

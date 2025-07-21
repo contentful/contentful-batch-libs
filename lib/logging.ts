@@ -57,9 +57,11 @@ function extractErrorInformation (error: Record<'message', string>) {
 }
 
 export function formatLogMessageOneLine<
-  TMessage extends LogMessage | { level: undefined }
+  TMessage extends LogMessage | { level: undefined } | string
 > (logMessage: TMessage) {
-  const { level } = logMessage
+  if (typeof logMessage === 'string') {
+    return logMessage
+  } const { level } = logMessage
   if (!level) {
     return logMessage.toString().replace(/\s+/g, ' ')
   }
@@ -105,14 +107,20 @@ export function formatLogMessageOneLine<
   }
 }
 
-export function formatLogMessageLogfile (logMessage: Record<string, unknown>) {
+export function formatLogMessageLogfile (logMessage: LogMessage) {
   const { level } = logMessage
   if (level === 'info' || level === 'warning') {
     return logMessage
   }
 
   // Enhance node errors to logMessage format
-  let formattedError: NonNullable<unknown> = logMessage.error ?? logMessage
+  let formattedError: Partial<Error> & {
+    data?: {
+      requestId: string
+      message: string
+      details: unknown
+    };
+  } = logMessage.error ?? logMessage
 
   if (isNativeError(formattedError)) {
     try {
