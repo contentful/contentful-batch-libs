@@ -50,7 +50,7 @@
     "husky": "9.1.7",
     "listr2": "^9.0.0",
     "rimraf": "^6.0.0",
-    "semantic-release": "^22.0.5",
+    "semantic-release": "^22.0.12",
     "typescript": "^5.2.2",
     "vitest": "^3.2.4"
   },
@@ -76,5 +76,15 @@
   "bugs": {
     "url": "https://github.com/contentful/contentful-batch-libs/issues"
   },
-  "homepage": "https://github.com/contentful/contentful-batch-libs#readme"
+  "homepage": "https://github.com/contentful/contentful-batch-libs#readme",
+  "release": {
+    "branches": [
+      "master",
+      {
+        "name": "beta",
+        "channel": "beta",
+        "prerelease": true
+      }
+    ]
+  }
 }
