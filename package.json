@@ -1,6 +1,6 @@
 {
   "name": "contentful-batch-libs",
-  "version": "11.0.0-beta.0",
+  "version": "11.0.0-beta.1",
   "description": "Library modules used by contentful batch utility CLI tools.",
   "type": "module",
   "exports": {
