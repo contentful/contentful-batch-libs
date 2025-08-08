@@ -9,9 +9,9 @@
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.cjs"
     },
-    "./dist/contentful-management.node.cjs": "./dist/contentful-management.node.cjs",
-    "./dist/contentful-management.browser.js": "./dist/contentful-management.browser.js",
-    "./dist/contentful-management.react-native.js": "./dist/contentful-management.react-native.js",
+    "./dist/contentful-batch-libs.node.cjs": "./dist/contentful-batch-libs.node.cjs",
+    "./dist/contentful-batch-libs.browser.js": "./dist/contentful-batch-libs.browser.js",
+    "./dist/contentful-batch-libs.react-native.js": "./dist/contentful-batch-libs.react-native.js",
     "./test/mocks/index.js": "./test/mocks/index.js"
   },
   "main": "./dist/cjs/index.cjs",
@@ -26,8 +26,8 @@
     "build:docs": "typedoc",
     "postbuild": "npm run check",
     "check": "npm run check:cjs && npm run check:esm && npm run check:browser && npm run check:browser-min",
-    "check:browser": "es-check es2018 ./dist/contentful-management.browser.js",
-    "check:browser-min": "es-check es2018 ./dist/contentful-management.browser.min.js",
+    "check:browser": "es-check es2018 ./dist/contentful-batch-libs.browser.js",
+    "check:browser-min": "es-check es2018 ./dist/contentful-batch-libs.browser.min.js",
     "check:cjs": "es-check es2021 './dist/**/*.cjs'",
     "check:esm": "es-check es2021 --module './dist/esm/*.js'",
     "clean": "rimraf dist && rimraf coverage",
