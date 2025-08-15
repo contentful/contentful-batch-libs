@@ -2,16 +2,19 @@ version: 2
 
 updates:
   - package-ecosystem: npm
-    directory: "/"
+    directory: '/'
     schedule:
       interval: daily
-      time: "00:00"
+      time: '00:00'
       timezone: UTC
     open-pull-requests-limit: 10
     ignore:
-      - dependency-name: figures  # ignore ESM only versions
+      - dependency-name: figures # ignore ESM only versions
         versions:
-          - ">=4.0.0"
+          - '>=4.0.0'
+      - dependency-name: semantic-release
+        versions:
+          - '>= 20.0.0'
     commit-message:
       prefix: build
       include: scope
