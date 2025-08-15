@@ -6,8 +6,11 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.cjs"
+      "node": "./dist/contentful-batch-libs.node.cjs",
+      "browser": "./dist/contentful-batch-libs.browser.cjs",
+      "react-native": "./dist/contentful-batch-libs.react-native.cjs",
+      "require": "./dist/cjs/index.cjs",
+      "default": "./dist/esm/index.js"
     },
     "./dist/contentful-batch-libs.node.cjs": "./dist/contentful-batch-libs.node.cjs",
     "./dist/contentful-batch-libs.browser.js": "./dist/contentful-batch-libs.browser.js",
@@ -16,6 +19,7 @@
   },
   "main": "./dist/cjs/index.cjs",
   "types": "dist/types/index.d.ts",
+  "react-native": "./dist/contentful-batch-libs.react-native.cjs",
   "engines": {
     "node": ">=20"
   },
