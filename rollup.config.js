@@ -71,7 +71,7 @@ const cjsConfig = {
 const cjsBundleConfig = {
   ...baseConfig,
   output: {
-    file: 'dist/contentful-management.node.cjs',
+    file: 'dist/contentful-batch-libs.node.cjs',
     format: 'cjs'
   },
   plugins: [
@@ -105,7 +105,7 @@ const cjsBundleConfig = {
 const browserConfig = {
   ...baseConfig,
   output: {
-    file: 'dist/contentful-management.browser.js',
+    file: 'dist/contentful-batch-libs.browser.js',
     format: 'iife',
     name: 'contentfulManagement'
   },
@@ -155,7 +155,7 @@ const browserMinConfig = {
   ...browserConfig,
   output: {
     ...browserConfig.output,
-    file: 'dist/contentful-management.browser.min.js'
+    file: 'dist/contentful-batch-libs.browser.min.js'
   },
   plugins: [
     ...browserConfig.plugins,
@@ -197,7 +197,7 @@ const reactNativeConfig = {
   ...browserConfig,
   output: {
     ...browserConfig.output,
-    file: 'dist/contentful-management.react-native.js',
+    file: 'dist/contentful-batch-libs.react-native.js',
     format: 'cjs'
   }
 }
