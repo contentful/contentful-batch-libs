@@ -12,37 +12,49 @@ import replace from '@rollup/plugin-replace'
 import { optimizeLodashImports } from '@optimize-lodash/rollup-plugin'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { babel } from '@rollup/plugin-babel'
+import typescript from '@rollup/plugin-typescript'
+import polyfillNode from 'rollup-plugin-polyfill-node'
+import dts from 'rollup-plugin-dts'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+const tsPlugin = typescript({
+  tsconfig: './tsconfig.json',
+  declaration: false,
+  noEmitOnError: true
+})
+
 const baseConfig = {
-  input: 'dist/esm-raw/index.js',
+  input: 'lib/index.ts',
   plugins: [
-    optimizeLodashImports(),
-    replace({
-      preventAssignment: true,
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      __VERSION__: JSON.stringify(pkg.version)
-    }),
+    tsPlugin,
     commonjs({
       sourceMap: false,
       transformMixedEsModules: true,
       ignoreGlobal: true,
       ignoreDynamicRequires: true,
       requireReturnsDefault: 'auto'
+      // defaultIsModuleExports: true
     }),
-    json()
+    json(),
+    optimizeLodashImports(),
+    replace({
+      preventAssignment: true,
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      __VERSION__: JSON.stringify(pkg.version)
+    })
   ]
 }
 
 const esmConfig = {
-  input: 'dist/esm-raw/index.js',
+  input: 'lib/index.ts',
   output: {
     dir: 'dist/esm',
     format: 'esm',
     preserveModules: true
   },
   plugins: [
+    tsPlugin,
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -52,7 +64,7 @@ const esmConfig = {
 }
 
 const cjsConfig = {
-  input: 'dist/esm-raw/index.js',
+  input: 'lib/index.ts',
   output: {
     dir: 'dist/cjs',
     format: 'cjs',
@@ -60,6 +72,7 @@ const cjsConfig = {
     entryFileNames: '[name].cjs'
   },
   plugins: [
+    tsPlugin,
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -103,17 +116,14 @@ const cjsBundleConfig = {
 }
 
 const browserConfig = {
-  ...baseConfig,
+  input: 'dist/esm/index.js',
   output: {
     file: 'dist/contentful-batch-libs.browser.js',
     format: 'iife',
     name: 'contentfulManagement'
   },
   plugins: [
-    nodeResolve({
-      preferBuiltins: false,
-      browser: true
-    }),
+    polyfillNode(),
     alias({
       entries: [
         {
@@ -126,7 +136,6 @@ const browserConfig = {
         }
       ]
     }),
-    ...baseConfig.plugins,
     babel({
       babelHelpers: 'runtime',
       presets: [
@@ -202,4 +211,19 @@ const reactNativeConfig = {
   }
 }
 
-export default [esmConfig, cjsConfig, cjsBundleConfig, browserConfig, browserMinConfig, reactNativeConfig]
+// Types build in Rollup
+const typesConfig = {
+  input: 'lib/index.ts',
+  output: {
+    dir: 'dist/types',
+    format: 'esm',
+    preserveModules: true
+  },
+  plugins: [
+    dts({
+      respectExternal: true
+    })
+  ]
+}
+
+export default [esmConfig, cjsConfig, cjsBundleConfig, browserConfig, browserMinConfig, reactNativeConfig, typesConfig]

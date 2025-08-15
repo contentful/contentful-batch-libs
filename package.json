@@ -24,9 +24,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "npm run clean && npm run build:esm && npm run build:rollup && rm -rf dist/esm-raw",
-    "build:esm": "tsc",
-    "build:rollup": "NODE_ENV=production rollup -c",
+    "build": "npm run clean && NODE_ENV=production rollup -c",
     "build:docs": "typedoc",
     "postbuild": "npm run check",
     "check": "npm run check:cjs && npm run check:esm && npm run check:browser && npm run check:browser-min",
@@ -56,6 +54,7 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@semantic-release/changelog": "^6.0.3",
     "@size-limit/file": "^11.2.0",
     "@types/json-patch": "^0.0.33",
@@ -78,6 +77,8 @@
     "prettier": "^3.6.2",
     "process": "^0.11.10",
     "rollup": "^4.46.2",
+    "rollup-plugin-dts": "^6.2.1",
+    "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "uuid": "^11.0.1"
   },
