@@ -15,6 +15,7 @@ import { babel } from '@rollup/plugin-babel'
 import typescript from '@rollup/plugin-typescript'
 import polyfillNode from 'rollup-plugin-polyfill-node'
 import dts from 'rollup-plugin-dts'
+import sourcemaps from 'rollup-plugin-sourcemaps'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -28,6 +29,7 @@ const baseConfig = {
   input: 'lib/index.ts',
   plugins: [
     tsPlugin,
+    sourcemaps(),
     commonjs({
       sourceMap: false,
       transformMixedEsModules: true,
@@ -51,10 +53,12 @@ const esmConfig = {
   output: {
     dir: 'dist/esm',
     format: 'esm',
-    preserveModules: true
+    preserveModules: true,
+    sourcemap: true
   },
   plugins: [
     tsPlugin,
+    sourcemaps(),
     replace({
       preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -69,7 +73,8 @@ const cjsConfig = {
     dir: 'dist/cjs',
     format: 'cjs',
     preserveModules: true,
-    entryFileNames: '[name].cjs'
+    entryFileNames: '[name].cjs',
+    sourcemap: true
   },
   plugins: [
     tsPlugin,
@@ -85,7 +90,8 @@ const cjsBundleConfig = {
   ...baseConfig,
   output: {
     file: 'dist/contentful-batch-libs.node.cjs',
-    format: 'cjs'
+    format: 'cjs',
+    sourcemap: true
   },
   plugins: [
     ...baseConfig.plugins,
@@ -102,7 +108,9 @@ const cjsBundleConfig = {
           // However, we cannot ensure it will operate without issues on Node.js v8
           { targets: { node: 8 }, modules: false, bugfixes: true }
         ]
-      ]
+      ],
+      sourceMaps: true,
+      inputSourceMap: true
     }),
     alias({
       entries: [
@@ -120,10 +128,12 @@ const browserConfig = {
   output: {
     file: 'dist/contentful-batch-libs.browser.js',
     format: 'iife',
-    name: 'contentfulManagement'
+    name: 'contentfulManagement',
+    sourcemap: true
   },
   plugins: [
-    polyfillNode(),
+    sourcemaps(),
+    polyfillNode({ sourceMap: true }),
     alias({
       entries: [
         {

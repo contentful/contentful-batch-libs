@@ -9,7 +9,9 @@
     "importHelpers": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "inlineSources": true,
+    "sourceMap": true
   },
   "include": ["lib", "types"]
 }
