@@ -7,13 +7,10 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import alias from '@rollup/plugin-alias'
-import terser from '@rollup/plugin-terser'
 import replace from '@rollup/plugin-replace'
 import { optimizeLodashImports } from '@optimize-lodash/rollup-plugin'
-import { visualizer } from 'rollup-plugin-visualizer'
 import { babel } from '@rollup/plugin-babel'
 import typescript from '@rollup/plugin-typescript'
-import polyfillNode from 'rollup-plugin-polyfill-node'
 import dts from 'rollup-plugin-dts'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 
@@ -123,104 +120,6 @@ const cjsBundleConfig = {
   ]
 }
 
-const browserConfig = {
-  input: 'dist/esm/index.js',
-  output: {
-    file: 'dist/contentful-batch-libs.browser.js',
-    format: 'iife',
-    name: 'contentfulManagement',
-    sourcemap: true
-  },
-  plugins: [
-    sourcemaps(),
-    polyfillNode({ sourceMap: true }),
-    alias({
-      entries: [
-        {
-          find: 'axios',
-          replacement: resolve(__dirname, './node_modules/axios/dist/browser/axios.cjs')
-        },
-        {
-          find: 'process',
-          replacement: resolve(__dirname, 'node_modules', 'process/browser')
-        }
-      ]
-    }),
-    babel({
-      babelHelpers: 'runtime',
-      presets: [
-        [
-          '@babel/preset-env',
-          {
-            targets: pkg.browserslist,
-            modules: false,
-            bugfixes: true
-          }
-        ]
-      ],
-      plugins: [
-        [
-          '@babel/plugin-transform-runtime',
-          {
-            regenerator: true
-          }
-        ]
-      ]
-    })
-  ]
-}
-
-const browserMinConfig = {
-  ...browserConfig,
-  output: {
-    ...browserConfig.output,
-    file: 'dist/contentful-batch-libs.browser.min.js'
-  },
-  plugins: [
-    ...browserConfig.plugins,
-    terser({
-      compress: {
-        passes: 5,
-        ecma: 2018,
-        drop_console: true,
-        drop_debugger: true,
-        sequences: true,
-        booleans: true,
-        loops: true,
-        unused: true,
-        evaluate: true,
-        if_return: true,
-        join_vars: true,
-        collapse_vars: true,
-        reduce_vars: true,
-        pure_getters: true,
-        pure_new: true,
-        keep_classnames: false,
-        keep_fnames: false,
-        keep_fargs: false,
-        keep_infinity: false
-      },
-      format: {
-        comments: false,
-        beautify: false
-      }
-    }),
-    visualizer({
-      emitFile: true,
-      filename: 'stats-browser-min.html'
-    })
-  ]
-}
-
-const reactNativeConfig = {
-  ...browserConfig,
-  output: {
-    ...browserConfig.output,
-    file: 'dist/contentful-batch-libs.react-native.js',
-    format: 'cjs'
-  }
-}
-
 // Types build in Rollup
 const typesConfig = {
   input: 'lib/index.ts',
@@ -233,7 +132,8 @@ const typesConfig = {
     dts({
       respectExternal: true
     })
-  ]
+  ],
+  external: baseConfig.external
 }
 
-export default [esmConfig, cjsConfig, cjsBundleConfig, browserConfig, browserMinConfig, reactNativeConfig, typesConfig]
+export default [esmConfig, cjsConfig, cjsBundleConfig, typesConfig]
