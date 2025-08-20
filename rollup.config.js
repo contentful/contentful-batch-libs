@@ -42,6 +42,20 @@ const baseConfig = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       __VERSION__: JSON.stringify(pkg.version)
     })
+  ],
+  external: [
+    'date-fns/format',
+    'date-fns/parseISO',
+    'figures',
+    'https-proxy-agent',
+    'node:events',
+    'node:fs',
+    'node:stream',
+    'node:stream/promises',
+    'node:util/types',
+    'stream',
+    'url',
+    'uuid'
   ]
 }
 
@@ -61,7 +75,8 @@ const esmConfig = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       __VERSION__: JSON.stringify(pkg.version)
     })
-  ]
+  ],
+  external: baseConfig.external
 }
 
 const cjsConfig = {
@@ -80,7 +95,8 @@ const cjsConfig = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       __VERSION__: JSON.stringify(pkg.version)
     })
-  ]
+  ],
+  external: baseConfig.external
 }
 
 const cjsBundleConfig = {
