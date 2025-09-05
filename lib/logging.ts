@@ -73,7 +73,7 @@ export function formatLogMessageOneLine<
   }
   try {
     // Display enhanced API error message when available
-    const errorOutput = []
+    const errorOutput: string[] = []
     const data = extractErrorInformation(logMessage.error)
 
     if ('status' in data || 'statusText' in data) {
