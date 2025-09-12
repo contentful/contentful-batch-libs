@@ -10,8 +10,8 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm install
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run: npm ci --prefer-offline
       - run: npm run build
       - run: npm run test
   release:
@@ -21,7 +21,7 @@ jobs:
       - checkout
       - vault/get-secrets: # Loads vault secrets
           template-preset: "semantic-release-ecosystem"
-      - run: npm install
+      - run: npm ci  --prefer-offline
       - run: npm run build
       - run: npm run semantic-release
 workflows:
