@@ -4,7 +4,7 @@ import type {
   ListrRendererFactory,
   ListrTaskFn
 } from 'listr2'
-import { formatLogMessageOneLine, logToTaskOutput } from './logging'
+import { formatLogMessageOneLine, logToTaskOutput } from './logging.js'
 
 /**
  * Set up log emitter listening from SDK, proper error catching and throwing of SDK errors

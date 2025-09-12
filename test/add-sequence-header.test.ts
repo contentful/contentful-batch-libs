@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import { addSequenceHeader } from '../lib'
 
 test('adds sequence header to empty object', () => {
@@ -22,5 +23,6 @@ test('adds sequence header to headers object', () => {
 test('throws error when input is not an object', () => {
   const predefinedHeaders = 'Accept: Any'
 
+  // @ts-expect-error we are testing if it fails, so the passed type is intentionally wrong here
   expect(() => addSequenceHeader(predefinedHeaders)).toThrow()
 })
