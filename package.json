@@ -89,7 +89,7 @@
   },
   "files": [
     "dist",
-    "test"
+    "test/mocks"
   ],
   "repository": {
     "type": "git",
