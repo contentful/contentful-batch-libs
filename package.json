@@ -15,7 +15,6 @@
   },
   "main": "./dist/cjs/index.cjs",
   "types": "dist/types/index.d.ts",
-  "react-native": "./dist/contentful-batch-libs.react-native.cjs",
   "engines": {
     "node": ">=20"
   },
