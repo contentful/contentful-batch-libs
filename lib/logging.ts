@@ -1,5 +1,4 @@
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
+import {format, parseISO} from 'date-fns'
 import figures from 'figures'
 import type {
   ListrContext,

@@ -33,8 +33,7 @@ const baseConfig = {
     })
   ],
   external: [
-    'date-fns/format',
-    'date-fns/parseISO',
+    'date-fns',
     'figures',
     'https-proxy-agent',
     'node:events',
