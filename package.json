@@ -6,14 +6,11 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "node": "./dist/contentful-batch-libs.node.cjs",
-      "require": "./dist/cjs/index.cjs",
       "default": "./dist/esm/index.js"
     },
-    "./dist/contentful-batch-libs.node.cjs": "./dist/contentful-batch-libs.node.cjs",
     "./test/mocks/index.js": "./test/mocks/index.js"
   },
-  "main": "./dist/cjs/index.cjs",
+  "main": "./dist/esm/index.js",
   "types": "dist/types/index.d.ts",
   "engines": {
     "node": ">=20"
