@@ -39,7 +39,6 @@
     "figures": "3.2.0",
     "https-proxy-agent": "^7.0.2",
     "listr2": "^9.0.0",
-    "lodash": "^4.17.21",
     "uuid": "^11.0.1"
   },
   "devDependencies": {
@@ -48,8 +47,6 @@
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-typescript": "^12.1.4",
     "@semantic-release/changelog": "^6.0.3",
-    "@types/json-patch": "^0.0.33",
-    "@types/lodash": "^4.17.20",
     "@types/node": "^24.2.0",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
