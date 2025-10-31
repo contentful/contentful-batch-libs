@@ -49,7 +49,7 @@
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@vitest/browser": "^3.2.4",
     "@vitest/coverage-v8": "^3.2.4",
-    "contentful-management": "^12.0.0-beta.12",
+    "contentful-management": "^12.0.0-beta.13",
     "cz-conventional-changelog": "^3.3.0",
     "es-check": "^9.2.0",
     "eslint": "^8.57.1",
