@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/check.yaml
 
   release:
-    if: github.event_name == 'push' && contains(fromJson('["refs/heads/master", "refs/heads/beta"]'), github.ref)
+    if: github.event_name == 'push' && contains(fromJson('["refs/heads/master", "refs/heads/beta", "refs/heads/test-oidc-trusted-publishing"]'), github.ref)
     needs: [build, check]
     permissions:
       contents: write   # Required for semantic-release to push commits and tags
