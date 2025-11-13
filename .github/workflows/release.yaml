@@ -44,6 +44,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch all tags
+        run: git fetch --tags
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -67,6 +70,9 @@ jobs:
         run: |
           echo "Starting Semantic Release Process"
           echo "npm version: $(npm -v)"
+          echo "Current branch: $(git branch --show-current)"
+          echo "Latest tags:"
+          git tag --sort=-v:refname | head -10
           npm run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
