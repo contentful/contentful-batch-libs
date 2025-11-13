@@ -46,7 +46,7 @@ Entity publishing methods.
 
 ### pushToSpace
 
-Pushes all changes, including deletions to a given space. Handles (un)publishing
+Pushes all changes, including deletions, to a given space. Handles (un)publishing
 as well as delays after creation and before publishing.
 
 Creates everything in the right order so that a content type for a given entry
