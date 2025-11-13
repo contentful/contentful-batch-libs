@@ -82,11 +82,6 @@
         "name": "beta",
         "channel": "beta",
         "prerelease": true
-      },
-      {
-        "name": "test-oidc-trusted-publishing",
-        "channel": "test-oidc-trusted-publishing",
-        "prerelease": true
       }
     ],
     "plugins": [
