@@ -76,4 +76,4 @@ Gathers errors in an internal buffer which can then be drained in order to outpu
 
 # Changelog
 
-Check out the [releases](https://github.com/contentful/contentful-space-sync/releases) page.
+Check out the [releases](https://github.com/contentful/contentful-batch-libs/releases) page.
