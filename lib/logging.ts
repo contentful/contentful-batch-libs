@@ -182,11 +182,27 @@ export async function writeErrorLogFile (
   destination: PathLike,
   errorLog: ErrorMessage[]
 ) {
+  let hasWrittenAnyChunk = false
+
   const formatLogTransformer = new Transform({
     objectMode: true,
-    transform: (chunk, encoding, callback) => {
+    transform (chunk, _encoding, callback) {
       const formattedChunk = formatLogMessageLogfile(chunk)
-      callback(null, Buffer.from(JSON.stringify(formattedChunk)))
+      const serialized = JSON.stringify(formattedChunk)
+      if (!hasWrittenAnyChunk) {
+        hasWrittenAnyChunk = true
+        callback(null, Buffer.from(`[${serialized}`))
+      } else {
+        callback(null, Buffer.from(`,${serialized}`))
+      }
+    },
+    flush (callback) {
+      if (!hasWrittenAnyChunk) {
+        this.push(Buffer.from('[]'))
+      } else {
+        this.push(Buffer.from(']'))
+      }
+      callback()
     }
   })
 
