@@ -7,7 +7,7 @@
 | Tool | Version | Notes |
 |---|---|---|
 | Node.js | 24 (see `.nvmrc`) | Use `nvm use` to switch; `engines.node` requires `>=22` |
-| npm | 10+ | Ships with Node.js; lockfile version 3 |
+| npm | 10+ | Ships with Node.js; lockfile version 2 |
 
 `.npmrc` is configured with `ignore-scripts=true` to prevent lifecycle script execution on install.
 
@@ -60,7 +60,7 @@ npm run test:watch     # source: package.json → scripts.test:watch (jest --wat
 
 ## Code Style & Conventions
 
-- **Linting:** ESLint with `standard` + `@typescript-eslint/recommended` (`.eslintrc`)
+- **Linting:** ESLint with `standard` + `eslint:recommended` + `@typescript-eslint/eslint-recommended` + `@typescript-eslint/recommended` (`.eslintrc`)
 - **Module system:** Node16 (CommonJS output with TypeScript source)
 - **Target:** ES2022
 - **Strict mode:** TypeScript strict enabled

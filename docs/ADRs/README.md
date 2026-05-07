@@ -4,6 +4,6 @@
 
 | ADR | Date | Status | Title |
 |---|---|---|---|
-| [001](./2026-04-15-drop-node-lt-22-and-adopt-cma-v12.md) | 2026-04-15 | Accepted | Drop Node < 22 and adopt CMA.js v12 |
-| [002](./2026-04-15-add-breaking-release-rule.md) | 2026-04-15 | Accepted | Add explicit breaking release rule to semantic-release |
-| [003](./2026-05-07-utility-library-scope-reduction.md) | 2026-05-07 | Accepted | Scope reduction to cross-cutting utilities |
+| [001](./2026-04-15-drop-node-lt-22-and-adopt-cma-v12.md) | 2026-04-15 | Accepted | Drop Node < 22 and Adopt CMA.js v12 |
+| [002](./2026-04-15-add-breaking-release-rule.md) | 2026-04-15 | Accepted | Add Explicit Breaking Release Rule to Semantic-Release |
+| [003](./2026-05-07-utility-library-scope-reduction.md) | 2026-05-07 | Accepted | Scope Reduction to Cross-Cutting Utilities |
