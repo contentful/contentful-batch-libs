@@ -1,0 +1,19 @@
+Domain invariants for contentful-batch-libs:
+
+1. PUBLIC API SURFACE: All exports must go through lib/index.ts. Adding a new export is a public API change that affects downstream consumers.
+
+2. NO RUNTIME CMA/CDA: contentful-management and contentful are devDependencies for type imports only. Never import runtime code from these packages. Consumers bring their own SDK clients.
+
+3. test/ IS PUBLISHED: The test directory is included in the npm package (via the "files" field). Never put secrets, large fixtures, or sensitive data in test/.
+
+4. LOGGING CONTRACT: The logEmitter EventEmitter uses three event names: "info", "warning", "error". The "display" event is used internally for task output. Do not change these event names — consumers depend on them.
+
+5. PROXY ENV CLEANUP: agentFromProxy() deliberately deletes http_proxy/https_proxy environment variables to prevent double-proxying. This is intentional behavior, not a bug.
+
+6. SEQUENCE HEADER FORMAT: The CF-Sequence header must be a valid UUIDv4. Do not change the header name or format — it is used for request tracing across Contentful's infrastructure.
+
+7. ERROR EXTRACTION: formatLogMessageOneLine attempts to JSON.parse error messages to extract structured API error data. Errors that are not JSON-parseable fall through to toString(). Both paths must remain functional.
+
+8. SEMANTIC-RELEASE RULES: build(deps) scope triggers a patch release. feat! or BREAKING CHANGE footer triggers a major. Missing the breaking rule previously caused a silent breaking patch (v10.1.7 incident).
+
+9. NODE VERSION: engines.node is >=22. Do not lower this — it was a deliberate v11 breaking change. .nvmrc pins to 24 for local development.
