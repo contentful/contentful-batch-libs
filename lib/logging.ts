@@ -202,8 +202,11 @@ export async function writeErrorLogFile (
     console.log('\nStored the detailed error log file at:')
     console.log(destination)
   } catch (err) {
-    // avoid crashing when writing the log file fails
-    console.error(err)
+    // Avoid crashing when writing the log file fails. Surface a generic
+    // message rather than the raw error to avoid disclosing stack traces or
+    // other internal details (CWE-209).
+    const reason = isNativeError(err) ? err.message : 'Unknown error'
+    console.error(`\nFailed to write the detailed error log file: ${reason}`)
   }
 }
 
