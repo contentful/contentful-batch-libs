@@ -114,7 +114,7 @@ Releases are fully automated via [semantic-release](https://github.com/semantic-
 - CI must pass (build, lint, test)
 - At least one approval required
 - Squash merge is typical
-- Dependabot PRs are auto-approved and merge-requested via workflow
+- Renovate PRs are auto-merged via the org-level Renovate GitHub App
 
 ## CI/CD
 
@@ -124,7 +124,7 @@ Releases are fully automated via [semantic-release](https://github.com/semantic-
 | Check | After Build | Restores build cache, runs lint + test |
 | Release | Push to `master` or `beta` | Runs semantic-release (changelog, npm publish, GitHub release) |
 | CodeQL | Push/PR to `master` (workflow files only) | Scans GitHub Actions for security issues |
-| Dependabot auto-approve | Dependabot PRs | Auto-approves and requests merge |
+| Renovate | Dependency update PRs | Opened by org-level Renovate app; auto-merged when CI passes |
 
 ## File-Level Guidance
 
