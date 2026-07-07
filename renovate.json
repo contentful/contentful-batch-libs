@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>contentful/renovate-config"],
+  "packageRules": [
+    {
+      "description": "Ignore ESM-only versions of figures",
+      "matchPackageNames": ["figures"],
+      "allowedVersions": "<4.0.0"
+    }
+  ]
+}

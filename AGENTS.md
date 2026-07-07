@@ -20,7 +20,7 @@ Read this file first. It tells you where to find context in this repo.
 - **Never instantiate CMA/CDA clients in this library.** `contentful-management` and `contentful` are devDependencies for type imports only. Consumers provide their own clients.
 - **All public exports must go through `lib/index.ts`.** Do not add internal modules to the barrel without confirming downstream consumers need them.
 - **`test/` is published to npm** (via `files` field in package.json). Do not put secrets, fixtures with real data, or large binary files in the test directory.
-- **`build(deps)` commits trigger patch releases.** Dependabot PRs that merge will automatically publish. Be aware that merging a dep bump is equivalent to cutting a release.
+- **`build(deps)` commits trigger patch releases.** Renovate PRs that merge will automatically publish. Be aware that merging a dep bump is equivalent to cutting a release.
 - **Breaking changes require `feat!:` or `BREAKING CHANGE` footer.** The `{ breaking: true, release: "major" }` rule in semantic-release maps these to major versions. Missing this causes silent breaking patches (see ADR-002).
 - **Do not downgrade `engines.node` below `>=22`.** This was a deliberate v11 breaking change; reverting it would break consumers who upgraded.
 
