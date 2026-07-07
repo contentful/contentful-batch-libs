@@ -6,11 +6,6 @@
       "description": "Ignore ESM-only versions of figures",
       "matchPackageNames": ["figures"],
       "allowedVersions": "<4.0.0"
-    },
-    {
-      "description": "Ignore semantic-release v20+ (breaking change not yet adopted)",
-      "matchPackageNames": ["semantic-release"],
-      "allowedVersions": "<20.0.0"
     }
   ]
 }
