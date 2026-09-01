@@ -37,6 +37,16 @@ export type LogMessage = InfoMessage | WarningMessage | ErrorMessage
 
 export const logEmitter = new EventEmitter()
 
+type LoggingLog = (WarningMessage | ErrorMessage)[]
+type LoggingListener = (error: unknown) => void
+type LoggingListeners = {
+  info: LoggingListener
+  warning: LoggingListener
+  error: LoggingListener
+}
+
+const loggingListeners = new WeakMap<LoggingLog, Set<LoggingListeners>>()
+
 function extractErrorInformation (error: Record<'message', string>) {
   const source =
     'originalError' in error && isMessage(error.originalError)
@@ -210,7 +220,7 @@ export async function writeErrorLogFile (
 /**
  * Init listeners for log messages, transform them into proper format and logs/displays them
  */
-export function setupLogging (log: (WarningMessage | ErrorMessage)[] = []) {
+export function setupLogging (log: LoggingLog = []) {
   function errorLogger (level: LogMessage['level'], error: unknown) {
     const logMessage = {
       ts: new Date().toJSON(),
@@ -225,11 +235,42 @@ export function setupLogging (log: (WarningMessage | ErrorMessage)[] = []) {
     logEmitter.emit('display', logMessage)
   }
 
-  logEmitter.addListener('info', (error) => errorLogger('info', error))
-  logEmitter.addListener('warning', (error) => errorLogger('warning', error))
-  logEmitter.addListener('error', (error) => errorLogger('error', error))
+  const listeners: LoggingListeners = {
+    info: (error) => errorLogger('info', error),
+    warning: (error) => errorLogger('warning', error),
+    error: (error) => errorLogger('error', error)
+  }
+
+  const listenersForLog = loggingListeners.get(log) ?? new Set<LoggingListeners>()
+  listenersForLog.add(listeners)
+  loggingListeners.set(log, listenersForLog)
+
+  logEmitter.addListener('info', listeners.info)
+  logEmitter.addListener('warning', listeners.warning)
+  logEmitter.addListener('error', listeners.error)
 
   return log
+}
+
+/**
+ * Remove the listeners installed by setupLogging for a log array.
+ *
+ * This keeps the process-global emitter API backwards compatible while
+ * allowing consumers that own an import lifecycle to clean up after it.
+ */
+export function teardownLogging (log: LoggingLog) {
+  const listenersForLog = loggingListeners.get(log)
+  if (!listenersForLog) {
+    return
+  }
+
+  for (const listeners of listenersForLog) {
+    logEmitter.removeListener('info', listeners.info)
+    logEmitter.removeListener('warning', listeners.warning)
+    logEmitter.removeListener('error', listeners.error)
+  }
+
+  loggingListeners.delete(log)
 }
 
 /**
