@@ -37,7 +37,7 @@ export type LogMessage = InfoMessage | WarningMessage | ErrorMessage
 
 export const logEmitter = new EventEmitter()
 
-type LoggingLog = (WarningMessage | ErrorMessage)[]
+type LoggingLog = LogMessage[]
 type LoggingListener = (error: unknown) => void
 type LoggingListeners = {
   info: LoggingListener
