@@ -6,6 +6,7 @@ import {
   displayErrorLog,
   writeErrorLogFile,
   setupLogging,
+  teardownLogging,
   logEmitter,
   logToTaskOutput
 } from '../lib/logging'
@@ -265,6 +266,27 @@ test('sets up logging via event emitter', () => {
   expect(logEmitterEmitSpy.mock.calls[1][1].error).toBe('example error')
 
   logEmitter.removeListener('display', assertLogValues)
+  teardownLogging(log)
+})
+
+test('tears down logging listeners for a log array', () => {
+  const log = []
+  const eventNames = ['info', 'warning', 'error']
+  const listenerCountsBefore = eventNames.map((eventName) => logEmitter.listenerCount(eventName))
+
+  setupLogging(log)
+
+  expect(eventNames.map((eventName) => logEmitter.listenerCount(eventName))).toEqual(
+    listenerCountsBefore.map((count) => count + 1)
+  )
+
+  teardownLogging(log)
+  teardownLogging(log)
+
+  expect(eventNames.map((eventName) => logEmitter.listenerCount(eventName))).toEqual(listenerCountsBefore)
+
+  logEmitter.emit('warning', 'ignored warning')
+  expect(log).toHaveLength(0)
 })
 
 test('log messages are logged to task output', () => {
