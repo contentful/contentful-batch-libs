@@ -6,11 +6,18 @@
       "plugin:@typescript-eslint/recommended"
     ],
     "plugins": [
-      "promise",
-      "jest"
+      "promise"
     ],
     "env": {
-      "jest/globals": true
+      "node": true
+    },
+    "globals": {
+      "describe": "readonly",
+      "test": "readonly",
+      "expect": "readonly",
+      "beforeEach": "readonly",
+      "afterEach": "readonly",
+      "vi": "readonly"
     },
     "ignorePatterns": [
       "node_modules",

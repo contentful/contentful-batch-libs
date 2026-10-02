@@ -1,13 +1,13 @@
 import { wrapTask } from '../lib'
 import * as logging from '../lib/logging'
 
-jest.mock('../lib/logging')
+vi.mock('../lib/logging')
 
 const { logToTaskOutput, formatLogMessageOneLine } = logging
 
 beforeEach(() => {
   formatLogMessageOneLine.mockImplementation((logMessage) => `formatted: ${logMessage.error.message}`)
-  logToTaskOutput.mockImplementation(() => jest.fn())
+  logToTaskOutput.mockImplementation(() => vi.fn())
 })
 
 afterEach(() => {
