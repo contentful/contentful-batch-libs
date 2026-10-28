@@ -1,4 +1,4 @@
-import fs from 'node:fs'
+import { createWriteStream } from 'node:fs'
 import { Writable } from 'node:stream'
 import {
   formatLogMessageOneLine,
@@ -11,13 +11,21 @@ import {
 } from '../lib/logging'
 import figures from 'figures'
 
+vi.mock('node:fs', async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    createWriteStream: vi.fn(actual.createWriteStream)
+  }
+})
+
 function isValidDate (date) {
   return !isNaN(Date.parse(date))
 }
 
-const consoleLogSpy = jest.spyOn(global.console, 'log')
-const logEmitterAddListenerSpy = jest.spyOn(logEmitter, 'addListener')
-const logEmitterEmitSpy = jest.spyOn(logEmitter, 'emit')
+const consoleLogSpy = vi.spyOn(global.console, 'log')
+const logEmitterAddListenerSpy = vi.spyOn(logEmitter, 'addListener')
+const logEmitterEmitSpy = vi.spyOn(logEmitter, 'emit')
 
 const exampleErrorLog = [
   {
@@ -178,20 +186,18 @@ test('writes error log file to disk', async () => {
 
   const chunks = []
 
-  const writeStreamSpy = jest
-    .spyOn(fs, 'createWriteStream')
-    .mockImplementation(() => {
-      return new Writable({
-        write: (chunk, b, cb) => {
-          try {
-            chunks.push(JSON.parse(chunk.toString('utf-8')))
-            cb()
-          } catch (err) {
-            cb(err)
-          }
+  const writeStreamSpy = createWriteStream.mockImplementation(() => {
+    return new Writable({
+      write: (chunk, b, cb) => {
+        try {
+          chunks.push(JSON.parse(chunk.toString('utf-8')))
+          cb()
+        } catch (err) {
+          cb(err)
         }
-      })
+      }
     })
+  })
 
   await expect(
     writeErrorLogFile(destination, exampleErrorLog)
