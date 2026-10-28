@@ -5,6 +5,7 @@ export {
   logEmitter,
   displayErrorLog,
   setupLogging,
+  teardownLogging,
   writeErrorLogFile,
   type LogMessage
 } from './logging'
