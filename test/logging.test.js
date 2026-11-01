@@ -173,22 +173,18 @@ test('does not displays error log when empty', () => {
 })
 
 test('writes error log file to disk', async () => {
-  expect.assertions(9)
+  expect.assertions(10)
   const destination = '/just/some/path/to/a/file.log'
 
-  const chunks = []
+  let collected = ''
 
   const writeStreamSpy = jest
     .spyOn(fs, 'createWriteStream')
     .mockImplementation(() => {
       return new Writable({
         write: (chunk, b, cb) => {
-          try {
-            chunks.push(JSON.parse(chunk.toString('utf-8')))
-            cb()
-          } catch (err) {
-            cb(err)
-          }
+          collected += chunk.toString('utf-8')
+          cb()
         }
       })
     })
@@ -206,7 +202,9 @@ test('writes error log file to disk', async () => {
   expect(writeStreamSpy.mock.calls).toHaveLength(1)
   expect(writeStreamSpy.mock.calls[0][0]).toBe(destination)
 
-  chunks.forEach((chunk) => {
+  const parsed = JSON.parse(collected)
+  expect(Array.isArray(parsed)).toBe(true)
+  parsed.forEach((chunk) => {
     if ('error' in chunk) {
       const { error, ...rest } = chunk
       expect(typeof error).toBe('object')
