@@ -4,9 +4,8 @@ import {
   proxyObjectToString,
   agentFromProxy
 } from '../lib/proxy'
-import expect from 'expect'
 
-jest.mock('https-proxy-agent')
+vi.mock('https-proxy-agent')
 
 test('proxyString with basic auth, with protocol', () => {
   const proxyString = 'http://foo:bar@127.0.0.1:8213'
